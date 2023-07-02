@@ -4,8 +4,7 @@ class Middleware {
 
     public $perms = array(
         "admin" => 'admin',
-        "teacher" => 'teacher',
-        "student" => 'student'
+        "client" => 'client',
     );
 
     public function __construct() {

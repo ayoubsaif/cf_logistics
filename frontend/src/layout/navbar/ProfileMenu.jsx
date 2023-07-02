@@ -26,11 +26,7 @@ export default function ProfileMenu({ session, signOut }) {
         </Flex>
       </MenuButton>
       <MenuList
-        rounded={".25em"}
         overflow={"hidden"}
-        border={"1px"}
-        borderColor="black"
-        boxShadow={".25rem .25rem 0 black"}
         alignItems={"center"}
       >
         <Flex direction={"row"} align={"center"} p={2}>
@@ -43,7 +39,7 @@ export default function ProfileMenu({ session, signOut }) {
               ml={2}
               fontSize={"sm"}
               color={"gray.500"}
-            >{`@${session?.user?.username}`}</Text>
+            >{session?.user?.email}</Text>
           </Box>
         </Flex>
         <MenuDivider />

@@ -7,7 +7,11 @@ import Footer from "./Footer";
 export default function Layout({ children, siteConfig, menuItems }) {
   return (
     <Grid
-      templateAreas={`"header" "main" "footer"`}
+      templateAreas={`
+        "header" 
+        "main"
+        "footer"`}
+      gap='1'
       minHeight="100vh"
       templateRows="auto 1fr auto"
     >

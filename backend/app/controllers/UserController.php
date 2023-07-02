@@ -18,14 +18,8 @@ class UserController
             $data = json_decode(file_get_contents("php://input"));
 
             $user = new UserModel();
-            $user->firstname = $data->firstname;
-            $user->lastname = $data->lastname;
-
-            if (isset($data->username) && !empty($data->username)) {
-                $user->username = $data->username;
-            } else {
-                $user->username = explode("@", $data->email)[0] . "_" . uniqid();
-            }
+            $user->firstName = $data->firstName;
+            $user->lastName = $data->lastName;
             $user->email = $data->email;
             $user->password = $data->password;
 
@@ -76,9 +70,8 @@ class UserController
             $data = json_decode(file_get_contents("php://input"));
             $user = new UserModel();
             $user->email = $data->email;
-            $user->firstname = $data->firstname;
-            $user->lastname = $data->lastname;
-            $user->username = isset($data->username) ? $data->username : explode("@", $data->email)[0] . "_" . uniqid();
+            $user->firstName = $data->firstName;
+            $user->lastName = $data->lastName;
             $user->image = isset($data->image) ? $data->image : null;
             $user->google_id = strval($data->google_id);
             if (!$user->emailExists()) {
@@ -112,9 +105,8 @@ class UserController
             "exp" => time() + 30 * 24 * 60 * 60,
             "data" => array(
                 "id" => $user->id,
-                "name" => $user->display_name,
+                "name" => $user->name,
                 "email" => $user->email,
-                "username" => $user->username,
             )
         );
 
@@ -124,10 +116,9 @@ class UserController
         echo json_encode(array(
             "status" => "success",
             "id" => intval($user->id),
-            "name" => $user->display_name,
-            "firstname" => $user->firstname,
+            "name" => $user->name,
+            "firstName" => $user->firstName,
             "email" => $user->email,
-            "username" => $user->username,
             "image" => $user->image,
             "role" => $user->role,
             "accessToken" => $jwt,
@@ -139,7 +130,7 @@ class UserController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'teacher', 'student');
+            $allowed = array('admin', 'client');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -152,14 +143,11 @@ class UserController
             http_response_code(200);
             echo json_encode(array(
                 "id" => $user->id,
-                "name" => $user->display_name,
-                "username" => $user->username,
-                "firstname" => $user->firstname,
-                "lastname" => $user->lastname,
-                "username" => $user->username,
+                "name" => $user->name,
+                "firstName" => $user->firstName,
+                "lastName" => $user->lastName,
                 "email" => $user->email,
                 "image" => $user->image,
-                "bio" => $user->bio,
             ));
         } catch (Exception $e) {
             http_response_code(401);
@@ -171,7 +159,7 @@ class UserController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'teacher', 'student');
+            $allowed = array('admin', 'client');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -201,32 +189,22 @@ class UserController
                 }
             }
 
-            if ($data['firstname'] !== $user->firstname) {
-                $user->firstname = htmlspecialchars(strip_tags($data['firstname']));
-                $updateProfileValues[] = "firstname = '{$user->firstname}'";
+            if ($data['firstName'] !== $user->firstName) {
+                $user->firstName = htmlspecialchars(strip_tags($data['firstName']));
+                $updateProfileValues[] = "firstName = '{$user->firstName}'";
             }
-            if ($data['lastname'] !== $user->lastname) {
-                $user->lastname = htmlspecialchars(strip_tags($data['lastname']));
-                $updateProfileValues[] = "lastname = '{$user->lastname}'";
-            }
-            if ($data['username'] !== $user->username) {
-                $user->username = htmlspecialchars(strip_tags($data['username']));
-                $updateProfileValues[] = "username = '{$user->username}'";
-            }
-            if ($data['bio'] !== $user->bio) {
-                $user->bio = htmlspecialchars(strip_tags($data['bio']));
-                $updateProfileValues[] = "bio = '{$user->bio}'";
+            if ($data['lastName'] !== $user->lastName) {
+                $user->lastName = htmlspecialchars(strip_tags($data['lastName']));
+                $updateProfileValues[] = "lastName = '{$user->lastName}'";
             }
 
             if ($user->updateProfile($updateProfileValues)) {
                 http_response_code(200);
                 echo json_encode(array(
                     "id" => intval($user->id),
-                    "name" => $user->display_name,
-                    "firstname" => $user->firstname,
-                    "lastname" => $user->lastname,
-                    "username" => $user->username,
-                    "bio" => $user->bio,
+                    "name" => $user->name,
+                    "firstName" => $user->firstName,
+                    "lastName" => $user->lastName,
                     "email" => $user->email,
                     "image" => $user->image
                 ));
@@ -271,11 +249,9 @@ class UserController
             http_response_code(200);
             echo json_encode(array(
                 "id" => intval($user->id),
-                "name" => $user->display_name,
-                "firstname" => $user->firstname,
-                "lastname" => $user->lastname,
-                "username" => $user->username,
-                "bio" => $user->bio,
+                "name" => $user->name,
+                "firstName" => $user->firstName,
+                "lastName" => $user->lastName,
                 "email" => $user->email,
                 "role" => $user->role,
                 "image" => $user->image
@@ -318,17 +294,13 @@ class UserController
                 }
             }
 
-            if ($data['firstname'] !== $user->firstname) {
-                $user->firstname = htmlspecialchars(strip_tags($data['firstname']));
-                $updateProfileValues[] = "firstname = '{$user->firstname}'";
+            if ($data['firstName'] !== $user->firstName) {
+                $user->firstName = htmlspecialchars(strip_tags($data['firstName']));
+                $updateProfileValues[] = "firstName = '{$user->firstName}'";
             }
-            if ($data['lastname'] !== $user->lastname) {
-                $user->lastname = htmlspecialchars(strip_tags($data['lastname']));
-                $updateProfileValues[] = "lastname = '{$user->lastname}'";
-            }
-            if ($data['username'] !== $user->username) {
-                $user->username = htmlspecialchars(strip_tags($data['username']));
-                $updateProfileValues[] = "username = '{$user->username}'";
+            if ($data['lastName'] !== $user->lastName) {
+                $user->lastName = htmlspecialchars(strip_tags($data['lastName']));
+                $updateProfileValues[] = "lastName = '{$user->lastName}'";
             }
             if ($data['role'] !== $user->role) {
                 $user->role = htmlspecialchars(strip_tags($data['role']));
@@ -339,11 +311,9 @@ class UserController
                 http_response_code(200);
                 echo json_encode(array(
                     "id" => intval($user->id),
-                    "name" => $user->display_name,
-                    "firstname" => $user->firstname,
-                    "lastname" => $user->lastname,
-                    "username" => $user->username,
-                    "bio" => $user->bio,
+                    "name" => $user->name,
+                    "firstName" => $user->firstName,
+                    "lastName" => $user->lastName,
                     "email" => $user->email,
                     "image" => $user->image
                 ));
@@ -419,8 +389,17 @@ class UserController
                             session_start();
                             $_SESSION['user'] = intval($user->id);
                             http_response_code(200);
-                            echo json_encode(array("valid" => true, "data" => $user));
-                            return $user;
+                            echo json_encode(array("valid" => true, "data" => array(
+                                "id" => intval($user->id),
+                                "name" => $user->name,
+                                "firstName" => $user->firstName,
+                                "lastName" => $user->lastName,
+                                "email" => $user->email,
+                                "image" => $user->image,
+                                "role" => $user->role,
+                            )
+                            ));
+                            return true;
                         } else {
                             http_response_code(401);
                             echo json_encode(array("message" => "Token expirado o no válido, Inicie sesión nuevamente"));

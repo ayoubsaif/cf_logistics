@@ -20,7 +20,7 @@ export default function App({
 }
 
 // get static props with page info from backend
-App.getInitialProps = async (req) => {
+App.getInitialProps = async () => {
   try {
     const siteConfig = await getSiteConfig();
     return {

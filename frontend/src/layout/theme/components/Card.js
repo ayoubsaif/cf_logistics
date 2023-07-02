@@ -13,17 +13,6 @@ const variants = {
       border: "1px",
       borderColor: colorMode === "dark" ? "white" : "black",
       transition: "all 0.2s",
-      _hover: {
-        transform: "translate(-.25rem, -.25rem)",
-        boxShadow:
-          colorMode === "dark"
-            ? ".25rem .25rem 0 white"
-            : ".25rem .25rem 0 black",
-      },
-      _active: {
-        transform: "none",
-        boxShadow: "none",
-      },
     },
   })),
 };

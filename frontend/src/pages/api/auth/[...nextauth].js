@@ -25,7 +25,7 @@ export const authOptions = {
           }
         );
         if (res && res.data?.accessToken) {
-          user.firstname = res.data?.firstname;
+          user.firstname = res.data?.firstName;
           user.name = res.data?.name;
           user.email = res.data?.email;
           user.image = res.data?.image;
@@ -56,7 +56,7 @@ export const authOptions = {
       );
       if (response.data.valid) {
         session.user = {
-          firstname: token.firstname,
+          firstname: token.firstName,
           name: token.name,
           email: token.email,
           picture: token.image,
@@ -69,7 +69,6 @@ export const authOptions = {
         // Token is invalid or expired, clear session
         session = null;
       }
-
       return session;
     },
   },

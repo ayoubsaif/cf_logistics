@@ -1,8 +1,16 @@
 import { extendTheme } from "@chakra-ui/react";
 import { cardTheme } from "@/layout/theme/components/Card";
 import { buttonTheme } from "@/layout/theme/components/Button";
+import { StyleFunctionProps } from '@chakra-ui/theme-tools';
 
 const theme = extendTheme({
+  styles: {
+    global: ({ colorMode }) => ({
+      body: {
+        bg: colorMode === "dark" ? "blackAlpha.500" : "gray.50",
+      },
+    }),
+  },
   fonts: {
     heading: "'MixcaseUnmixed', sans-serif",
     body: "'MixcaseUnmixed', sans-serif",
@@ -20,10 +28,28 @@ const theme = extendTheme({
       800: "#4c0f00",
       900: "#1f0200",
     },
+    gray: {
+      50: "#F5F5F5",
+      100: "#E0E0E0",
+      200: "#A3A3A3",
+      300: "#B8B8B8",
+      400: "#7A7A7A",
+      500: "#666666",
+      600: "#525252",
+      700: "#3D3D3D",
+      800: "#292929",
+      900: "#141414",
+    }
   },
   components: {
     Button: buttonTheme,
     Card: cardTheme,
+    Menu: {
+      baseStyle: {
+        bg: "gray.700",
+        rounded: "md",
+      },
+    },
     Input: {
       baseStyle: {
         rounded: "md",

@@ -7,18 +7,15 @@ class UserModel
     private $conn;
 
     public $id;
-    public $display_name;
-    public $firstname;
-    public $lastname;
-    public $username;
+    public $active;
+    public $name;
+    public $firstName;
+    public $lastName;
     public $email;
     public $password;
-    public $create_date;
-    public $create_uid;
+    public $createDate;
     public $image;
     public $role;
-    public $bio;
-    public $active;
 
     # External Auth Provider Identifiers
     public $google_id;
@@ -26,7 +23,7 @@ class UserModel
     public function __construct()
     {
         $this->conn = Connection::connectDB();
-        $this->display_name = $this->firstname . " " . $this->lastname;
+        $this->name = $this->firstName . " " . $this->lastName;
     }
 
     function create()
@@ -34,9 +31,8 @@ class UserModel
         try{
             $query = "INSERT INTO users
                     SET
-                        firstname=:firstname,
-                        lastname=:lastname,
-                        username=:username,
+                        firstName=:firstName,
+                        lastName=:lastName,
                         email=:email,
                         role=:role,
                         password=:password,
@@ -46,9 +42,8 @@ class UserModel
 
             $stmt = $this->conn->prepare($query);
 
-            $this->firstname = htmlspecialchars(strip_tags($this->firstname));
-            $this->lastname = htmlspecialchars(strip_tags($this->lastname));
-            $this->username = htmlspecialchars(strip_tags($this->username));
+            $this->firstName = htmlspecialchars(strip_tags($this->firstName));
+            $this->lastName = htmlspecialchars(strip_tags($this->lastName));
             $this->email = htmlspecialchars(strip_tags($this->email));
             $this->role = $this->role ? htmlspecialchars(strip_tags($this->role)) : 'student';
             $this->password = htmlspecialchars(strip_tags($this->password));
@@ -56,9 +51,8 @@ class UserModel
             $this->google_id = $this->google_id ? htmlspecialchars(strip_tags($this->google_id)) : null;
 
 
-            $stmt->bindParam(":firstname", $this->firstname);
-            $stmt->bindParam(":lastname", $this->lastname);
-            $stmt->bindParam(":username", $this->username);
+            $stmt->bindParam(":firstName", $this->firstName);
+            $stmt->bindParam(":lastName", $this->lastName);
             $stmt->bindParam(":email", $this->email);
             $stmt->bindParam(":role", $this->role);
             $password_hash = password_hash($this->password, PASSWORD_BCRYPT);
@@ -94,10 +88,9 @@ class UserModel
             if ($num > 0) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $this->id = intval($row['id']);
-                $this->firstname = $row['firstname'];
-                $this->lastname = $row['lastname'];
-                $this->display_name = $this->firstname . " " . $this->lastname;
-                $this->username = $row['username'];
+                $this->firstName = $row['firstName'];
+                $this->lastName = $row['lastName'];
+                $this->name = $this->firstName . " " . $this->lastName;
                 $this->password = $row['password'];
                 $this->image = $row['image'];
                 $this->role = $row['role'];
@@ -130,14 +123,12 @@ class UserModel
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $this->id = $row['id'];
                 $this->active = $row['active'] == 1? true : false;
-                $this->firstname = $row['firstname'];
-                $this->lastname = $row['lastname'];
-                $this->display_name = $this->firstname . " " . $this->lastname;
-                $this->username = $row['username'];
+                $this->firstName = $row['firstName'];
+                $this->lastName = $row['lastName'];
+                $this->name = $this->firstName . " " . $this->lastName;
                 $this->email = $row['email'];
                 $this->image = $row['image'];
                 $this->role = $row['role'];
-                $this->bio = $row['bio'];
                 return true;
             }
             return false;
@@ -158,7 +149,7 @@ class UserModel
             $stmt = $this->conn->prepare($query);
             
             $stmt->bindParam(":id", $this->id);
-            $this->display_name = $this->firstname . " " . $this->lastname;
+            $this->name = $this->firstName . " " . $this->lastName;
 
             if ($stmt->execute()) {
                 $this->getOne($this->id);
@@ -234,10 +225,9 @@ class UserModel
                     $user_item = array(
                         "id" => $row['id'],
                         "active" => $row['active'] == 1? true : false,
-                        "name" => $row['firstname'] . " " . $row['lastname'],
-                        "firstname" => $row['firstname'],
-                        "lastname" => $row['lastname'],
-                        "username" => $row['username'],
+                        "name" => $row['firstName'] . " " . $row['lastName'],
+                        "firstName" => $row['firstName'],
+                        "lastName" => $row['lastName'],
                         "email" => $row['email'],
                         "image" => $row['image'],
                         "role" => $row['role'],

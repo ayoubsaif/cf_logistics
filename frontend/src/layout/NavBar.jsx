@@ -1,38 +1,42 @@
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
+import Image from "next/image";
 import {
   Box,
   Flex,
   IconButton,
   Button,
-  Collapse,
   Link,
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
   Center,
   Spacer,
-  ButtonGroup,
-  Slide 
+  Slide,
+  Avatar,
+  Text,
 } from "@chakra-ui/react";
 
-import { BsList as MenuIcon, BsXLg as CloseIcon } from "react-icons/bs";
+import {
+  RiEqualLine as MenuIcon,
+  RiCloseLine as CloseIcon,
+} from "react-icons/ri";
 import { useSession, signIn, signOut } from "next-auth/react";
 
-import MobileNav from "./navbar/MobileNav";
-import { DesktopNav } from "./navbar/DesktopNav";
 import ProfileMenu from "./navbar/ProfileMenu";
 import useScrollListener from "@/hooks/useScrollListener";
+import SideBarDrawer from "./navbar/SideBarDrawer";
 
 export default function NavBar({ siteConfig, menuItems }) {
-  const { isOpen, onToggle } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { data: session } = useSession();
-
+  console.log(menuItems);
   const scroll = useScrollListener();
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    if (scroll.lastY === scroll.y) { // this fixes the trembling
+    if (scroll.lastY === scroll.y) {
+      // this fixes the trembling
       return;
     }
     if (scroll.y > 50 && scroll.y - scroll.lastY > 0) {
@@ -42,16 +46,20 @@ export default function NavBar({ siteConfig, menuItems }) {
   }, [scroll.y, scroll.lastY]);
 
   return (
-    <Slide direction='top' in={visible} style={{ zIndex: 10 }}>
-      <Box w="full">
+    <Slide direction="top" in={visible} style={{ zIndex: 10 }}>
+      <Box
+        w="full"
+        bg={useColorModeValue("hsla(0,0%,100%,.8)", "rgba(0,0,0,.8)")}
+        backdropFilter={"saturate(180%) blur(5px)"}
+        borderBottom={1}
+        borderColor={"border.color"}
+      >
         <Flex
-          bg={useColorModeValue("white", "gray.800")}
-          color={useColorModeValue("gray.600", "white")}
           minH={"60px"}
           py={{ base: 2 }}
           px={{ base: 4 }}
           borderBottom={1}
-          borderStyle={"solid"}
+          borderColor="border.color"
           align={"center"}
         >
           <Flex
@@ -59,17 +67,24 @@ export default function NavBar({ siteConfig, menuItems }) {
             justify={{ base: "center", md: "start" }}
             alignItems={"center"}
           >
-            <Flex display={{ base: "flex", md: "none" }}>
+            <Flex>
               <IconButton
-                onClick={onToggle}
+                onClick={onOpen}
                 color={useColorModeValue("black", "white")}
-                icon={isOpen ? <CloseIcon w={5} h={5} /> : <MenuIcon w={5} h={5} />}
+                size="lg"
                 variant="transparent"
-                aria-label={"Toggle Navigation"}
+                aria-label="Toggle Navigation"
+                icon={
+                  isOpen ? (
+                    <CloseIcon width={32} height={32} />
+                  ) : (
+                    <MenuIcon width={32} height={32} />
+                  )
+                }
               />
             </Flex>
 
-            <Spacer display={{ base: "block", md: "none" }} />
+            <Spacer display={{ base: "flex", md: "none" }} />
 
             <Center>
               <Link
@@ -77,58 +92,50 @@ export default function NavBar({ siteConfig, menuItems }) {
                 fontFamily={"heading"}
                 color={useColorModeValue("gray.800", "white")}
                 as={NextLink}
-                href={"/"}
+                href="/"
               >
-                {siteConfig?.title}
+                <Image
+                  src={useBreakpointValue({
+                    base: useColorModeValue(
+                      "/img/logo-s.svg",
+                      "/img/logo-s-dark.svg"
+                    ),
+                    md: useColorModeValue(
+                      "/img/logo-xl.svg",
+                      "/img/logo-xl-dark.svg"
+                    ),
+                  })}
+                  alt="Logo"
+                  width={useBreakpointValue({ base: 50, md: 150 })} // Adjust the width value as per your requirement
+                  height={50} // Adjust the height value as per your requirement
+                />
               </Link>
             </Center>
 
             <Spacer />
 
-            <Flex display={{ base: "none", md: "flex" }}>
-              <Center>
-                <DesktopNav menuItems={menuItems} />
-              </Center>
-            </Flex>
-
-            <Spacer display={{ base: "none", md: "flex" }} />
-
             {session?.user ? (
               <ProfileMenu session={session} signOut={signOut} />
             ) : (
-              <ButtonGroup gap="2">
-                <Button
-                  as={"a"}
-                  fontSize={"sm"}
-                  fontWeight={400}
-                  variant={"link"}
-                  onClick={() => signIn()}
-                >
-                  Iniciar sesión
-                </Button>
-                <Button
-                  as={"a"}
-                  display={{ base: "none", md: "inline-flex" }}
-                  fontSize={"sm"}
-                  fontWeight={600}
-                  color={"white"}
-                  bg={"pink.400"}
-                  href={"/auth/register"}
-                  _hover={{
-                    bg: "pink.300",
-                  }}
-                >
-                  Registrarse
-                </Button>
-              </ButtonGroup>
+              <Button
+                fontSize={"sm"}
+                fontWeight={400}
+                variant="transparent"
+                onClick={() => signIn()}
+              >
+                <Flex direction={"row"} align={"center"}>
+                  <Avatar size={"sm"} />
+                  <Text ml={2} display={{ base: "none", md: "flex" }}>
+                    Iniciar sesión
+                  </Text>
+                </Flex>
+              </Button>
             )}
           </Flex>
         </Flex>
 
-        <Collapse in={isOpen} animateOpacity>
-          <MobileNav menuItems={menuItems} />
-        </Collapse>
+        <SideBarDrawer siteConfig={siteConfig} menuItems={menuItems} onClose={onClose} isOpen={isOpen} />
       </Box>
-    </Slide >
+    </Slide>
   );
 }
