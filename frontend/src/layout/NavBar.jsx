@@ -27,16 +27,14 @@ import ProfileMenu from "./navbar/ProfileMenu";
 import useScrollListener from "@/hooks/useScrollListener";
 import SideBarDrawer from "./navbar/SideBarDrawer";
 
-export default function NavBar({ siteConfig, menuItems }) {
+export default function NavBar({ siteConfig }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { data: session } = useSession();
-  console.log(menuItems);
   const scroll = useScrollListener();
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     if (scroll.lastY === scroll.y) {
-      // this fixes the trembling
       return;
     }
     if (scroll.y > 50 && scroll.y - scroll.lastY > 0) {
@@ -68,20 +66,22 @@ export default function NavBar({ siteConfig, menuItems }) {
             alignItems={"center"}
           >
             <Flex>
-              <IconButton
-                onClick={onOpen}
-                color={useColorModeValue("black", "white")}
-                size="lg"
-                variant="transparent"
-                aria-label="Toggle Navigation"
-                icon={
-                  isOpen ? (
-                    <CloseIcon width={32} height={32} />
-                  ) : (
-                    <MenuIcon width={32} height={32} />
-                  )
-                }
-              />
+              {session?.user && (
+                <IconButton
+                  onClick={onOpen}
+                  color={useColorModeValue("black", "white")}
+                  size="lg"
+                  variant="transparent"
+                  aria-label="Toggle Navigation"
+                  icon={
+                    isOpen ? (
+                      <CloseIcon width={32} height={32} />
+                    ) : (
+                      <MenuIcon width={32} height={32} />
+                    )
+                  }
+                />
+              )}
             </Flex>
 
             <Spacer display={{ base: "flex", md: "none" }} />
@@ -134,7 +134,11 @@ export default function NavBar({ siteConfig, menuItems }) {
           </Flex>
         </Flex>
 
-        <SideBarDrawer siteConfig={siteConfig} menuItems={menuItems} onClose={onClose} isOpen={isOpen} />
+        <SideBarDrawer
+          siteConfig={siteConfig}
+          onClose={onClose}
+          isOpen={isOpen}
+        />
       </Box>
     </Slide>
   );

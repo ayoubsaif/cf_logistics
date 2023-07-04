@@ -18,7 +18,6 @@ import Dashboard from "@/components/home/dashboard";
 import Layout from "@/layout/Layout";
 
 import { useSession } from "next-auth/react";
-import { getMenuItems } from "@/services/menuItems";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -26,7 +25,6 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 export default function HomePage(props) {
   const { data: session } = useSession();
   const { user } = session || {};
-  const { menuItems } = props;
   return (
     <>
       <NextSeo
@@ -48,7 +46,7 @@ export default function HomePage(props) {
           site_name: process.env.NEXT_PUBLIC_SITE_NAME || "",
         }}
       />
-      <Layout menuItems={menuItems}>
+      <Layout {...props}>
         {user && user?.firstname ? (
           <Box py={10}>
             <Heading>Hola {user?.firstname},</Heading>
@@ -151,22 +149,4 @@ function DottedBox() {
       </svg>
     </Box>
   );
-}
-
-export async function getServerSideProps({ req, res }) {
-  const session = await getServerSession(req, res, authOptions);
-  if (session) {
-    const menuItems = await getMenuItems(session?.user?.accessToken);
-    return {
-      props: {
-        menuItems,
-      },
-    };
-  } else {
-    return {
-      props: {
-        menuItems: [],
-      },
-    };
-  }
 }

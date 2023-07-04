@@ -4,7 +4,7 @@ import { Container, Grid, GridItem } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 
-export default function Layout({ children, siteConfig, menuItems }) {
+export default function Layout({ children, siteConfig }) {
   return (
     <Grid
       templateAreas={`
@@ -16,7 +16,7 @@ export default function Layout({ children, siteConfig, menuItems }) {
       templateRows="auto 1fr auto"
     >
       <GridItem area={"header"}>
-        <NavBar siteConfig={siteConfig} menuItems={menuItems} />
+        <NavBar siteConfig={siteConfig} />
       </GridItem>
 
       <GridItem area={"main"} pt={16}>
