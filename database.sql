@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-07-2023 a las 23:52:32
+-- Tiempo de generación: 04-07-2023 a las 23:39:28
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `cr_logistics_dev`
 --
+CREATE DATABASE IF NOT EXISTS `cr_logistics_dev` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `cr_logistics_dev`;
 
 -- --------------------------------------------------------
 
@@ -33,8 +35,16 @@ CREATE TABLE `accounts` (
   `status` tinyint(4) NOT NULL,
   `companyName` varchar(255) DEFAULT NULL,
   `companyLegalName` varchar(255) DEFAULT NULL,
-  `companyTaxNo` varchar(20) DEFAULT NULL
+  `companyVatNo` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `accounts`
+--
+
+INSERT INTO `accounts` (`id`, `name`, `status`, `companyName`, `companyLegalName`, `companyVatNo`) VALUES
+(1, 'Trendico', 1, 'Tréndico Group SL', 'Trendico Group S.L.', 'B99021644'),
+(2, 'Oxigeno', 1, 'Oxigeno Iberspor SL', 'Oxigeno Iberspor SL', 'B99350621');
 
 -- --------------------------------------------------------
 
@@ -46,6 +56,14 @@ CREATE TABLE `accountsusersrel` (
   `userId` int(11) NOT NULL,
   `accountId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `accountsusersrel`
+--
+
+INSERT INTO `accountsusersrel` (`userId`, `accountId`) VALUES
+(1, 1),
+(1, 2);
 
 -- --------------------------------------------------------
 
@@ -74,30 +92,6 @@ CREATE TABLE `addresses` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `menu_items`
---
-
-CREATE TABLE `menu_items` (
-  `id` int(11) NOT NULL,
-  `order` int(11) DEFAULT NULL,
-  `label` varchar(255) DEFAULT NULL,
-  `subLabel` varchar(255) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
-  `parent_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Volcado de datos para la tabla `menu_items`
---
-
-INSERT INTO `menu_items` (`id`, `order`, `label`, `subLabel`, `url`, `parent_id`) VALUES
-(1, 1, 'Pedidos', 'Pedidos', '', NULL),
-(2, 1, 'Abiertos', NULL, '/orders/open', 1),
-(3, 2, 'Información', 'Información', '/information', NULL);
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `site_config`
 --
 
@@ -112,6 +106,20 @@ CREATE TABLE `site_config` (
 
 INSERT INTO `site_config` (`variable`, `value`) VALUES
 ('title', 'Cras Forum Logistics');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `stores`
+--
+
+CREATE TABLE `stores` (
+  `id` int(11) NOT NULL,
+  `storeId` bigint(13) NOT NULL,
+  `accountId` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `commercialName` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -164,18 +172,18 @@ ALTER TABLE `addresses`
   ADD KEY `Address User` (`accountId`);
 
 --
--- Indices de la tabla `menu_items`
---
-ALTER TABLE `menu_items`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `parent_id` (`parent_id`);
-
---
 -- Indices de la tabla `site_config`
 --
 ALTER TABLE `site_config`
   ADD PRIMARY KEY (`variable`) USING BTREE,
   ADD UNIQUE KEY `variable.unique` (`variable`) USING BTREE COMMENT 'Unique variable name';
+
+--
+-- Indices de la tabla `stores`
+--
+ALTER TABLE `stores`
+  ADD PRIMARY KEY (`id`,`storeId`),
+  ADD KEY `Account ID` (`accountId`);
 
 --
 -- Indices de la tabla `users`
@@ -194,19 +202,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `addresses`
 --
 ALTER TABLE `addresses`
   MODIFY `id` int(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `menu_items`
---
-ALTER TABLE `menu_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
@@ -226,10 +228,10 @@ ALTER TABLE `accountsusersrel`
   ADD CONSTRAINT `User` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
 
 --
--- Filtros para la tabla `menu_items`
+-- Filtros para la tabla `stores`
 --
-ALTER TABLE `menu_items`
-  ADD CONSTRAINT `menu_items_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `menu_items` (`id`);
+ALTER TABLE `stores`
+  ADD CONSTRAINT `Account ID` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
