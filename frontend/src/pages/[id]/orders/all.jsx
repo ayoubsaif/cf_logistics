@@ -1,7 +1,6 @@
 import { Box, Container, Heading, SimpleGrid } from "@chakra-ui/react";
 import OrderCard from "@/components/orders/OrderCard";
 import Layout from "@/layout/Layout";
-import { getMenuItems } from "@/services/menuItems";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -27,7 +26,7 @@ const OrdersPage = ({ siteConfig, menuItems }) => {
         </Heading>
         <SimpleGrid columns={1} gap={4} w="full">
           {orders.map((order) => (
-            <OrderCard key={order.orderNumber} order={order}  w="full"/>
+            <OrderCard key={order.orderNumber} order={order} w="full" />
           ))}
         </SimpleGrid>
       </Container>
@@ -40,16 +39,14 @@ export default OrdersPage;
 export async function getServerSideProps({ req, res }) {
   const session = await getServerSession(req, res, authOptions);
   if (session) {
-    const menuItems = await getMenuItems(session?.user?.accessToken);
     return {
-      props: {
-        menuItems,
-      },
+      props: {},
     };
   } else {
     return {
-      props: {
-        menuItems: [],
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
       },
     };
   }
