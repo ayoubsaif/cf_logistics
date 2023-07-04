@@ -149,7 +149,7 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
       <DrawerContent>
         <DrawerHeader borderBottomWidth="1px">
           {siteConfig?.title}
-          <Text fontSize='xl'>Shop name</Text>
+          <Text fontSize='medium' fontWeight="light">Shop name</Text>
         </DrawerHeader>
         <DrawerBody p={0}>
           <Flex justifyContent="space-between" flexDir="column" height="100%">

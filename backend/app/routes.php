@@ -5,14 +5,8 @@ $router->options('/api/siteconfig', 'SiteConfigController@getSuccessResponse');
 $router->get('/api/siteconfig', 'SiteConfigController@get');
 $router->post('/api/siteconfig', 'SiteConfigController@update');
 
-# Menu
-$router->options('/api/menu', 'MenuController@getSuccessResponse');
-$router->get('/api/menu', 'MenuController@get');
-$router->put('/api/menu', 'MenuController@update');
-
 # Auth
 $router->post('/auth/login', 'UserController@login');
-
 $router->options('/auth/register', 'UserController@getSuccessResponse');
 $router->post('/auth/register', 'UserController@register');
 
@@ -33,3 +27,10 @@ $router->options('/api/user/:id', 'UserController@getSuccessResponse');
 $router->get('/api/user/:id', 'UserController@getOne');
 $router->post('/api/user/:id', 'UserController@updateOne');
 $router->delete('/api/user/:id', 'UserController@deleteOne');
+
+# Account
+$router->options('/api/accounts', 'AccountController@getSuccessResponse');
+$router->get('/api/accounts', 'AccountController@getManyByCurrentUser');
+
+$router->options('/api/account/:id', 'AccountController@getSuccessResponse');
+$router->get('/api/account/:id', 'AccountController@getOne');
