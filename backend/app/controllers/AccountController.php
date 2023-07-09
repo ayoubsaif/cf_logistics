@@ -22,7 +22,7 @@ class AccountController
                 return;
             } else {
                 http_response_code(500);
-                echo json_encode(array("message" => "Account Not found"));
+                echo json_encode(array("message" => "Cuenta no encontrada"));
                 return;
             }
         } catch (Exception $e) {
@@ -48,7 +48,7 @@ class AccountController
                 return;
             } else {
                 http_response_code(500);
-                echo json_encode(array("message" => "Account Not found"));
+                echo json_encode(array("message" => "Cuenta no encontrada"));
                 return;
             }
         } catch (Exception $e) {
@@ -57,7 +57,7 @@ class AccountController
         }
     }
 
-    function create()
+    function createOne()
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
@@ -73,17 +73,35 @@ class AccountController
             }
             $account = new AccountModel();
             $account->name = $data['name'];
-            $account->status = $data['status'];
+            $account->status = $data['status'] == 'true' ? 1 : 0;
             $account->companyName = $data['companyName'];
             $account->companyLegalName = $data['companyLegalName'];
-            $account->companyVatNumber = $data['companyVatNumber'];
-            $account->createAccount($account->name, $account->status, $account->companyName, $account->companyLegalName, $account->companyVatNumber);
-            http_response_code(200);
-            echo json_encode(array("message" => "Account created successfully"));
-            return;
+            $account->companyVat = $data['companyVat'];
+
+            # check if account already exist by companyVat
+            $accountExist = $account->checkIfExists($account->companyVat);
+            if ($accountExist) {
+                http_response_code(500);
+                echo json_encode(array("message" => "Cuenta con CIF {$account->companyVat} ya existe"));
+                return;
+            }
+
+            $accountCreated = $account->createAccount();
+            if ($accountCreated) {
+                http_response_code(200);
+                echo json_encode(array(
+                    "message" => "Account created successfully",
+                    "account" => $accountCreated
+                ));
+                return;
+            } else {
+                http_response_code(500);
+                echo json_encode(array("message" => "Cuenta no creada"));
+                return;
+            }
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 
@@ -106,14 +124,14 @@ class AccountController
             $account->status = $data['status'];
             $account->companyName = $data['companyName'];
             $account->companyLegalName = $data['companyLegalName'];
-            $account->companyVatNumber = $data['companyVatNumber'];
-            $account->updateAccount($id, $account->name, $account->status, $account->companyName, $account->companyLegalName, $account->companyVatNumber);
+            $account->companyVat = $data['companyVat'];
+            $account->updateAccount($id);
             http_response_code(200);
-            echo json_encode(array("message" => "Account updated successfully"));
+            echo json_encode(array("message" => "Cuenta actualizada con éxito"));
             return;
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 
@@ -129,11 +147,11 @@ class AccountController
             $account = new AccountModel();
             $account->deleteAccount($id);
             http_response_code(200);
-            echo json_encode(array("message" => "Account deleted successfully"));
+            echo json_encode(array("message" => "Cuenta eliminada con éxito"));
             return;
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 
@@ -154,20 +172,19 @@ class AccountController
                 return;
             } else {
                 http_response_code(500);
-                echo json_encode(array("message" => "Account Not found"));
+                echo json_encode(array("message" => "Cuenta no encontrada"));
                 return;
             }
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 
     function getSuccessResponse()
     {
         http_response_code(200);
-        echo json_encode(array("message" => "Success"));
+        echo json_encode(array("message" => "Éxito"));
         return;
     }
-
 }

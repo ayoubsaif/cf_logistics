@@ -8,11 +8,12 @@ class AccountModel
     private $conn;
 
     private $id;
+    public $uuid;
     public $name;
     public $status;
     public $companyName;
     public $companyLegalName;
-    public $companyVatNumber;
+    public $companyVat;
 
     public function __construct()
     {
@@ -35,27 +36,36 @@ class AccountModel
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function createAccount($name, $status, $companyName, $companyLegalName, $companyVatNumber)
+    public function createAccount()
     {
-        $query = "INSERT INTO accounts (name, status, companyName, companyLegalName, companyVatNumber) VALUES (:name, :status, :companyName, :companyLegalName, :companyVatNumber)";
+        $query = "INSERT INTO accounts (accountId, name, status, companyName, companyLegalName, companyVat) VALUES (uuid(), :name, :status, :companyName, :companyLegalName, :companyVat)";
         $statement = $this->conn->prepare($query);
-        $statement->bindParam(':name', $name);
-        $statement->bindParam(':status', $status);
-        $statement->bindParam(':companyName', $companyName);
-        $statement->bindParam(':companyLegalName', $companyLegalName);
-        $statement->bindParam(':companyVatNumber', $companyVatNumber);
-        return $statement->execute();
+        $statement->bindParam(':name', $this->name);
+        $statement->bindParam(':status', $this->status);
+        $statement->bindParam(':companyName', $this->companyName);
+        $statement->bindParam(':companyLegalName', $this->companyLegalName);
+        $statement->bindParam(':companyVat', $this->companyVat);
+        // return data of the account created
+        if ($statement->execute()) {
+            $query = "SELECT * FROM accounts WHERE id = {$this->conn->lastInsertId()}";
+            $statement = $this->conn->prepare($query);
+            $statement->execute();
+            $accountCreated = $statement->fetch(PDO::FETCH_ASSOC);
+            return $accountCreated;
+        }else{
+            return false;
+        }
     }
 
-    public function updateAccount($id, $name, $status, $companyName, $companyLegalName, $companyVatNumber)
+    public function updateAccount($id)
     {
-        $query = "UPDATE accounts SET name = :name, status = :status, companyName = :companyName, companyLegalName = :companyLegalName, companyVatNumber = :companyVatNumber WHERE id = :id";
+        $query = "UPDATE accounts SET name = :name, status = :status, companyName = :companyName, companyLegalName = :companyLegalName, companyVat = :companyVat WHERE id = :id";
         $statement = $this->conn->prepare($query);
-        $statement->bindParam(':name', $name);
-        $statement->bindParam(':status', $status);
-        $statement->bindParam(':companyName', $companyName);
-        $statement->bindParam(':companyLegalName', $companyLegalName);
-        $statement->bindParam(':companyVatNumber', $companyVatNumber);
+        $statement->bindParam(':name', $this->name);
+        $statement->bindParam(':status', $this->status);
+        $statement->bindParam(':companyName', $this->companyName);
+        $statement->bindParam(':companyLegalName', $this->companyLegalName);
+        $statement->bindParam(':companyVat', $this->companyVat);
         $statement->bindParam(':id', $id);
         return $statement->execute();
     }
@@ -70,10 +80,20 @@ class AccountModel
 
     public function getAccountsByUserId($userId)
     {
-        $query = "SELECT * FROM accounts WHERE id IN (SELECT accountId FROM accountsusersrel WHERE userId = :userId)";
+        $query = "SELECT * FROM accounts WHERE id IN (SELECT accountId FROM accounts_users_rel WHERE userId = :userId)";
         $statement = $this->conn->prepare($query);
         $statement->bindParam(':userId', $userId);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function checkIfExists($companyVat)
+    {
+        $query = "SELECT 1 FROM accounts WHERE companyVat = :companyVat LIMIT 1";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':companyVat', $companyVat);
+        $statement->execute();
+        return $statement->fetch(PDO::FETCH_ASSOC);
+    }
+
 }
