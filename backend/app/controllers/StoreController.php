@@ -22,12 +22,12 @@ class StoreController
                 return;
             } else {
                 http_response_code(500);
-                echo json_encode(array("message" => "Store Not found"));
+                echo json_encode(array("message" => "No se han encontrado tiendas"));
                 return;
             }
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 
@@ -48,16 +48,16 @@ class StoreController
                 return;
             } else {
                 http_response_code(500);
-                echo json_encode(array("message" => "Store Not found"));
+                echo json_encode(array("message" => "Tienda no encontrada"));
                 return;
             }
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 
-    function create()
+    function createOne()
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
@@ -66,6 +66,7 @@ class StoreController
             if (!$UserPermmited) {
                 return;
             }
+
             $data = json_decode(file_get_contents("php://input"));
             $store = new StoreModel();
             $store->accountId = $data->accountId;
@@ -76,23 +77,22 @@ class StoreController
             $store->state = $data->state;
             $store->country = $data->country;
             $store->postalCode = $data->postalCode;
-            $store->phoneNumber = $data->phoneNumber;
-            $store->email = $data->email;
+            $store->contactPhone = $data->contactPhone;
+            $store->contactEmail = $data->contactEmail;
             $store->status = $data->status;
 
-            if ($store->createStore($store->accountId, $store->name, $store->commercialName, $store->address, $store->city, $store->state, $store->country, $store->postalCode, $store->phoneNumber, $store->email, $store->status)) {
+            if ($store->createStore()) {
                 http_response_code(200);
-                echo json_encode(array("message" => "Store was created."));
+                echo json_encode(array("message" => "Se creó la tienda."));
                 return;
             } else {
                 http_response_code(503);
-                echo json_encode(array("message" => "Unable to create store."));
+                echo json_encode(array("message" => "No se puede crear la tienda."));
                 return;
             }
-
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "Unauthorized"));
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 
@@ -115,11 +115,11 @@ class StoreController
             $store->state = $data->state;
             $store->country = $data->country;
             $store->postalCode = $data->postalCode;
-            $store->phoneNumber = $data->phoneNumber;
-            $store->email = $data->email;
+            $store->contactPhone = $data->contactPhone;
+            $store->contactEmail = $data->contactEmail;
             $store->status = $data->status;
 
-            if ($store->updateStore($id, $store->accountId, $store->name, $store->commercialName, $store->address, $store->city, $store->state, $store->country, $store->postalCode, $store->phoneNumber, $store->email, $store->status)) {
+            if ($store->updateStore($id, $store->accountId, $store->name, $store->commercialName, $store->address, $store->city, $store->state, $store->country, $store->postalCode, $store->contactPhone, $store->contactEmail, $store->status)) {
                 http_response_code(200);
                 echo json_encode(array("message" => "Store was updated."));
                 return;
@@ -128,7 +128,6 @@ class StoreController
                 echo json_encode(array("message" => "Unable to update store."));
                 return;
             }
-
         } catch (Exception $e) {
             http_response_code(401);
             echo json_encode(array("message" => "Unauthorized"));
@@ -159,5 +158,4 @@ class StoreController
             echo json_encode(array("message" => "Unauthorized"));
         }
     }
-
 }
