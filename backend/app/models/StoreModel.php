@@ -3,10 +3,13 @@
 require_once 'app/config/database.php';
 require_once 'app/middleware/PermissionMiddleware.php';
 
+require_once 'app/models/AddressModel.php';
+
 class StoreModel
 {
     private $conn;
 
+    private $id;
     public $storeId;
     public $accountId;
     public $name;
@@ -16,9 +19,11 @@ class StoreModel
     public $state;
     public $country;
     public $postalCode;
-    public $phoneNumber;
-    public $email;
     public $status;
+
+    public $contactName;
+    public $contactEmail;
+    public $contactPhone;
 
     public function __construct()
     {
@@ -41,39 +46,39 @@ class StoreModel
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function createStore($accountId, $name, $commercialName, $address, $city, $state, $country, $postalCode, $phoneNumber, $email, $status)
+    public function createStore()
     {
-        $query = "INSERT INTO stores (accountId, name, commercialName, address, city, state, country, postalCode, phoneNumber, email, status) VALUES (:accountId, :name, :commercialName, :address, :city, :state, :country, :postalCode, :phoneNumber, :email, :status)";
+        $query = "INSERT INTO stores (accountId, name, commercialName, address, city, state, country, postalCode, contactPhone, contactEmail, status) VALUES (:accountId, :name, :commercialName, :address, :city, :state, :country, :postalCode, :contactPhone, :contactEmail, :status)";
         $statement = $this->conn->prepare($query);
-        $statement->bindParam(':accountId', $accountId);
-        $statement->bindParam(':name', $name);
-        $statement->bindParam(':commercialName', $commercialName);
-        $statement->bindParam(':address', $address);
-        $statement->bindParam(':city', $city);
-        $statement->bindParam(':state', $state);
-        $statement->bindParam(':country', $country);
-        $statement->bindParam(':postalCode', $postalCode);
-        $statement->bindParam(':phoneNumber', $phoneNumber);
-        $statement->bindParam(':email', $email);
-        $statement->bindParam(':status', $status);
+        $statement->bindParam(':accountId', $this->accountId);
+        $statement->bindParam(':name', $this->name);
+        $statement->bindParam(':commercialName', $this->commercialName);
+        $statement->bindParam(':address', $this->address);
+        $statement->bindParam(':city', $this->city);
+        $statement->bindParam(':state', $this->state);
+        $statement->bindParam(':country', $this->country);
+        $statement->bindParam(':postalCode', $this->postalCode);
+        $statement->bindParam(':contactPhone', $this->contactPhone);
+        $statement->bindParam(':contactEmail', $this->contactEmail);
+        $statement->bindParam(':status', $this->status);
         return $statement->execute();
     }
 
-    public function updateStore($id, $accountId, $name, $commercialName, $address, $city, $state, $country, $postalCode, $phoneNumber, $email, $status)
+    public function updateStore($id)
     {
-        $query = "UPDATE stores SET accountId = :accountId, name = :name, commercialName = :commercialName, address = :address, city = :city, state = :state, country = :country, postalCode = :postalCode, phoneNumber = :phoneNumber, email = :email, status = :status WHERE id = :id";
+        $query = "UPDATE stores SET accountId = :accountId, name = :name, commercialName = :commercialName, address = :address, city = :city, state = :state, country = :country, postalCode = :postalCode, contactPhone = :contactPhone, contactEmail = :contactEmail, status = :status WHERE id = :id";
         $statement = $this->conn->prepare($query);
-        $statement->bindParam(':accountId', $accountId);
-        $statement->bindParam(':name', $name);
-        $statement->bindParam(':commercialName', $commercialName);
-        $statement->bindParam(':address', $address);
-        $statement->bindParam(':city', $city);
-        $statement->bindParam(':state', $state);
-        $statement->bindParam(':country', $country);
-        $statement->bindParam(':postalCode', $postalCode);
-        $statement->bindParam(':phoneNumber', $phoneNumber);
-        $statement->bindParam(':email', $email);
-        $statement->bindParam(':status', $status);
+        $statement->bindParam(':accountId', $this->accountId);
+        $statement->bindParam(':name', $this->name);
+        $statement->bindParam(':commercialName', $this->commercialName);
+        $statement->bindParam(':address', $this->address);
+        $statement->bindParam(':city', $this->city);
+        $statement->bindParam(':state', $this->state);
+        $statement->bindParam(':country', $this->country);
+        $statement->bindParam(':postalCode', $this->postalCode);
+        $statement->bindParam(':contactPhone', $this->contactPhone);
+        $statement->bindParam(':contactEmail', $this->contactEmail);
+        $statement->bindParam(':status', $this->status);
         $statement->bindParam(':id', $id);
         return $statement->execute();
     }
