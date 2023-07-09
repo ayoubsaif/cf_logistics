@@ -34,3 +34,18 @@ $router->get('/api/accounts', 'AccountController@getManyByCurrentUser');
 
 $router->options('/api/account/:id', 'AccountController@getSuccessResponse');
 $router->get('/api/account/:id', 'AccountController@getOne');
+
+$router->options('/api/account', 'AccountController@getSuccessResponse');
+$router->post('/api/account', 'AccountController@createOne');
+
+# Store
+$router->options('/api/stores', 'StoreController@getSuccessResponse');
+$router->get('/api/stores', 'StoreController@getMany');
+
+$router->options('/api/store', 'StoreController@getSuccessResponse');
+$router->post('/api/store', 'StoreController@createOne');
+
+$router->options('/api/store/:id', 'StoreController@getSuccessResponse');
+$router->get('/api/store/:id', 'StoreController@getOne');
+$router->put('/api/store/:id', 'StoreController@updateOne');
+$router->delete('/api/store/:id', 'StoreController@deleteOne');
