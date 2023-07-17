@@ -77,10 +77,9 @@ class AccountController
             $account->companyName = $data['companyName'];
             $account->companyLegalName = $data['companyLegalName'];
             $account->companyVat = $data['companyVat'];
-
+            
             # check if account already exist by companyVat
-            $accountExist = $account->checkIfExists($account->companyVat);
-            if ($accountExist) {
+            if ($account->checkIfExists($account->companyVat)) {
                 http_response_code(500);
                 echo json_encode(array("message" => "Cuenta con CIF {$account->companyVat} ya existe"));
                 return;
