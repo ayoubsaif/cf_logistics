@@ -12,6 +12,7 @@ class MediaModel
     public $filename;
     public $filepath;
     public $filetype;
+    public $base64;
 
     public function __construct()
     {
@@ -35,12 +36,14 @@ class MediaModel
         $this->filename = htmlspecialchars(strip_tags($this->filename));
         $this->filepath = htmlspecialchars(strip_tags($this->filepath));
         $this->filetype = htmlspecialchars(strip_tags($this->filetype));
+        $this->base64 = strip_tags($this->base64);
 
         $stmt->bindParam(":model", $this->model);
         $stmt->bindParam(":model_id", $this->model_id);
         $stmt->bindParam(":filename", $this->filename);
         $stmt->bindParam(":filepath", $this->filepath);
         $stmt->bindParam(":filetype", $this->filetype);
+        $stmt->bindParam(":base64", $this->base64);
         
         if ($stmt->execute()) {
             return true;
