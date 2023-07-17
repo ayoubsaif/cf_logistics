@@ -24,6 +24,7 @@ SetEnv APP_ENV development
 SetEnv DB_HOST localhost
 SetEnv DB_USER cf_logistics_devuser
 SetEnv DB_PASS 9*I5qYgCc[8z/pZ9
-SetEnv DB_NAME cr_logistics_dev
+SetEnv DB_NAME cf_logistics
+SetEnv DB_PREFIX cf_
 SetEnv JWT_KEY 6f6c6c6568616d5f6b6579
 SetEnv HOST http://localhost/
