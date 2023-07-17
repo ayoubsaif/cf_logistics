@@ -46,7 +46,7 @@ class DeliveryCarrierController
             }
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "No autorizado"));
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
         }
     }
 }

@@ -2,7 +2,7 @@
 
 require_once 'app/models/DeliveryCarrierModel.php';
 
-$ERROR_CODES = array(
+const ERROR_CODES = array(
     '65' => 'El envío ya está dado de alta',
     '66' => 'El envío ya está dado de baja',
     '67' => 'El envío no está pre-registrado',
@@ -11,18 +11,16 @@ $ERROR_CODES = array(
     '284' => 'Error en la validación de su certificado de acceso.'
 );
 
-$CORREOS_SOAP_ACTIONS = array('PreregistroEnvioMultibulto', 'PreregistroEnvioMultibultoMultibulto');
-
-$CORREOS_URLS = array(
+const CORREOS_URLS = array(
     'test' => 'https://preregistroenviospre.correos.es/preregistroenvios',
     'production' => 'https://preregistroenvios.correos.es/preregistroenvios'
 );
 
 class CorreosModel extends DeliveryCarrierModel
 {
-    private $correos_username;
-    private $correos_password;
-    private $correos_labeller_code;
+    protected $correos_username;
+    protected $correos_password;
+    protected $correos_labeller_code;
 
     public function __construct()
     {
@@ -41,10 +39,55 @@ class CorreosModel extends DeliveryCarrierModel
 
     public function correos_send_shipping($pickings)
     {
-        $xmlObj = $this->mountXmlObject();
+        $soapOptions = [
+            'soap_version' => 'SOAP_1_1',
+            'trace' => true, // Enable request/response tracing
+            'exceptions' => true, // Enable exceptions on SOAP errors
+            'connection_timeout' => 120, // Timeout in seconds
+        ];
+    
+        $soapEndpoint = $this->enviroment == 'prod' ? CORREOS_URLS['prod'] : CORREOS_URLS['test'];
+    
+        $credentials = $this->correos_username . ':' . $this->correos_password;
+        $credentials = base64_encode($credentials);
+    
+        $data = $this->mountXmlObject()->asXML();
 
-        return $xmlObj->asXML();
+        $headers = [
+            'Content-type: text/xml;charset=utf-8',
+            'Content-Length: ' . strlen($data),
+            'Authorization: Basic ' . $credentials,
+            'SOAPAction: ' . 'PreregistroEnvioMultibulto',
+        ];
+    
+        $soapClient = new SoapClient($soapEndpoint, $soapOptions);
+    
+        $soapClient->__setSoapHeaders(new SoapHeader('http://www.correos.es/iris6/services/preregistroetiquetas', 'HeaderName', $headers));
+    
+        $response = $soapClient->__doRequest($data, $soapEndpoint, 'PreregistroEnvioMultibulto', 'SOAP_1_1');
+        var_dump($soapClient);
+
+        return $response;
     }
+
+    public function setOne($id)
+    {
+        $query = "SELECT * FROM delivery_carriers WHERE id = :id";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':id', $id);
+        $statement->execute();
+        $deliveryCarrier = $statement->fetch(PDO::FETCH_ASSOC);
+        $this->id = $deliveryCarrier['id'];
+        $this->name = $deliveryCarrier['name'];
+        $this->status = $deliveryCarrier['status'];
+        $this->accountId = (new AccountModel())->getAccountById($deliveryCarrier['accountId']);
+        $this->enviroment = $deliveryCarrier['enviroment'];
+        $this->deliveryType = $this->getCarrierModel($deliveryCarrier['deliveryType']);
+        $this->correos_username = $deliveryCarrier['correos_username'];
+        $this->correos_password = $deliveryCarrier['correos_password'];
+        $this->correos_labeller_code = $deliveryCarrier['correos_labeller_code'];
+    }
+    
     private function mountXmlObject()
     {
         $xmlObject = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cor="http://www.correos.es/comun/wsb_correos_preregistro"> </soapenv:Envelope>');

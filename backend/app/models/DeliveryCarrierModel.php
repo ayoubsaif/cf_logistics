@@ -7,7 +7,7 @@ require_once 'app/models/AccountModel.php';
 class DeliveryCarrierModel
 {
 
-    private $conn;
+    protected $conn;
     private $accountConn;
 
     public $id;
