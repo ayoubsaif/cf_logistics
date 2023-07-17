@@ -38,8 +38,14 @@ class AccountModel
 
     public function createAccount()
     {
-        $query = "INSERT INTO accounts (accountId, name, status, companyName, companyLegalName, companyVat) VALUES (uuid(), :name, :status, :companyName, :companyLegalName, :companyVat)";
+        if(!$this->createAccountDB()){
+            return false;
+        }
+
+        $query = "INSERT INTO accounts (accountId, name, status, companyName, companyLegalName, companyVat) 
+                    VALUES (:uuid, :name, :status, :companyName, :companyLegalName, :companyVat)";
         $statement = $this->conn->prepare($query);
+        $statement->bindParam(':uuid', $this->uuid);
         $statement->bindParam(':name', $this->name);
         $statement->bindParam(':status', $this->status);
         $statement->bindParam(':companyName', $this->companyName);
@@ -96,4 +102,28 @@ class AccountModel
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
+    private function createAccountDB()
+    {
+        $this->uuid = uniqid();
+        $query = "SELECT 1 FROM information_schema.schemata WHERE schema_name = :schemaName LIMIT 1";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':schemaName', $this->uuid);
+        $statement->execute();
+        if($statement->fetch(PDO::FETCH_ASSOC)){
+            return false;
+        }
+        # create database
+        try{
+            $db_name = (getenv('DB_PREFIX') ? getenv('DB_PREFIX') : 'cfl_') . $this->uuid;
+            echo $db_name;
+            $query = "CREATE DATABASE {$db_name}";
+            $statement = $this->conn->prepare($query);
+            if ($statement->execute()) {
+                return true;
+            }
+            return false;
+        }catch(Exception $e){
+            return true;
+        }
+    }
 }
