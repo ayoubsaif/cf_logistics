@@ -1,56 +1,56 @@
 <?php
 
-require_once 'app/models/database.php';
+require_once 'app/config/database.php';
+require_once 'app/modules/correos/models/CorreosModel.php';
+require_once 'app/models/AccountModel.php';
 
 class DeliveryCarrierModel
 {
+
     private $conn;
+    private $accountConn;
+
+    public $id;
+    public $name;
+    public $status;
+    public $accountId;
+    public $enviroment;
+    public $deliveryType;
 
     public function __construct()
     {
         $this->conn = Connection::connectDB();
     }
     
-    public function getAllDeliveryCarriers()
+    private static $carrierModels = array(
+        'correos' => CorreosModel::class,
+    );
+
+    public static function getCarrierModel($carrier)
     {
-        $query = "SELECT * FROM delivery_carriers";
-        $statement = $this->conn->query($query);
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        if (isset(self::$carrierModels[$carrier])) {
+            $modelClass = self::$carrierModels[$carrier];
+            return new $modelClass();
+        }
+        return null;
     }
 
-    public function getDeliveryCarrierById($id)
+    public function sendShipping($picking){
+
+    }
+
+    public function setOne($id)
     {
         $query = "SELECT * FROM delivery_carriers WHERE id = :id";
         $statement = $this->conn->prepare($query);
         $statement->bindParam(':id', $id);
         $statement->execute();
-        return $statement->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function createDeliveryCarrier($name, $apiEndpoint)
-    {
-        $query = "INSERT INTO delivery_carriers (name, api_endpoint) VALUES (:name, :apiEndpoint)";
-        $statement = $this->conn->prepare($query);
-        $statement->bindParam(':name', $name);
-        $statement->bindParam(':apiEndpoint', $apiEndpoint);
-        return $statement->execute();
-    }
-
-    public function updateDeliveryCarrier($id, $name, $apiEndpoint)
-    {
-        $query = "UPDATE delivery_carriers SET name = :name, api_endpoint = :apiEndpoint WHERE id = :id";
-        $statement = $this->conn->prepare($query);
-        $statement->bindParam(':name', $name);
-        $statement->bindParam(':apiEndpoint', $apiEndpoint);
-        $statement->bindParam(':id', $id);
-        return $statement->execute();
-    }
-
-    public function deleteDeliveryCarrier($id)
-    {
-        $query = "DELETE FROM delivery_carriers WHERE id = :id";
-        $statement = $this->conn->prepare($query);
-        $statement->bindParam(':id', $id);
-        return $statement->execute();
+        $deliveryCarrier = $statement->fetch(PDO::FETCH_ASSOC);
+        $this->id = $deliveryCarrier['id'];
+        $this->name = $deliveryCarrier['name'];
+        $this->status = $deliveryCarrier['status'];
+        $this->accountId = (new AccountModel())->getAccountById($deliveryCarrier['accountId']);
+        $this->enviroment = $deliveryCarrier['enviroment'];
+        $this->deliveryType = $this->getCarrierModel($deliveryCarrier['deliveryType']);
     }
 }
