@@ -49,3 +49,7 @@ $router->options('/api/store/:id', 'StoreController@getSuccessResponse');
 $router->get('/api/store/:id', 'StoreController@getOne');
 $router->put('/api/store/:id', 'StoreController@updateOne');
 $router->delete('/api/store/:id', 'StoreController@deleteOne');
+
+# Delivery > Create Shipping
+$router->options('/api/delivery', 'DeliveryCarrierController@getSuccessResponse');
+$router->post('/api/delivery', 'DeliveryCarrierController@sendShipping');
