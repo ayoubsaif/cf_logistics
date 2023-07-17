@@ -15,12 +15,17 @@
 
         }
 
-        static public function connectDB(){
+        static public function connectDB($acountId = null){
+            if ($acountId == null) {
+                $DB_NAME = getenv('DB_NAME');
+            }else{
+                $DB_NAME = getenv('DB_PREFIX') . $acountId;
+            }
 
             try{
                     $authDB = self::authDB();
                     $connection = new PDO(
-                        "mysql:host=".$authDB["host"].";dbname=".$authDB["database"], 
+                        "mysql:host=".$authDB["host"].";dbname=".$DB_NAME, 
                         $authDB["username"], 
                         $authDB["password"]);
                     $connection -> exec("set names utf8");
