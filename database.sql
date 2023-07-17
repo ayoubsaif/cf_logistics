@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-07-2023 a las 00:03:23
+-- Tiempo de generación: 17-07-2023 a las 06:32:06
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -18,10 +18,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `cr_logistics_dev`
+-- Base de datos: `cf_logistics`
 --
-CREATE DATABASE IF NOT EXISTS `cr_logistics_dev` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `cr_logistics_dev`;
+CREATE DATABASE IF NOT EXISTS `cf_logistics` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `cf_logistics`;
 
 -- --------------------------------------------------------
 
@@ -47,7 +47,7 @@ CREATE TABLE `accounts` (
 INSERT INTO `accounts` (`id`, `accountId`, `name`, `status`, `companyName`, `companyLegalName`, `companyVat`) VALUES
 (1, '', 'Trendico', 1, 'Tréndico Group SL', 'Trendico Group S.L.', 'B99021644'),
 (2, '', 'Oxigeno', 1, 'Oxigeno Iberspor SL', 'Oxigeno Iberspor SL', 'B99350621'),
-(657, '3e98a348-1db0-11ee-8349-bf4d446d586f', 'crasforum', 1, 'Cras Forum', 'GESTION DIGITAL LABS 23 SL', 'B02668911');
+(666, '64b267fcd4f08', 'crasforum', 1, 'Cras Forum', 'GESTION DIGITAL LABS 23 SL', 'B02668911');
 
 -- --------------------------------------------------------
 
@@ -93,6 +93,32 @@ CREATE TABLE `addresses` (
   `contactEmail` varchar(255) DEFAULT NULL,
   `accountId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `delivery_carriers`
+--
+
+DROP TABLE IF EXISTS `delivery_carriers`;
+CREATE TABLE `delivery_carriers` (
+  `id` int(11) NOT NULL,
+  `name` varchar(150) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `accountId` int(11) DEFAULT NULL,
+  `enviroment` enum('test','production') DEFAULT 'test',
+  `deliveryType` varchar(100) DEFAULT NULL,
+  `correos_username` varchar(255) DEFAULT NULL,
+  `correos_password` varchar(255) DEFAULT NULL,
+  `correos_labeller_code` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `delivery_carriers`
+--
+
+INSERT INTO `delivery_carriers` (`id`, `name`, `status`, `accountId`, `enviroment`, `deliveryType`, `correos_username`, `correos_password`, `correos_labeller_code`) VALUES
+(1, 'Correos Default', 'active', 666, 'production', 'correos', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -181,7 +207,8 @@ INSERT INTO `users` (`id`, `email`, `password`, `firstName`, `lastName`, `role`,
 -- Indices de la tabla `accounts`
 --
 ALTER TABLE `accounts`
-  ADD PRIMARY KEY (`id`,`accountId`) USING BTREE;
+  ADD PRIMARY KEY (`id`,`accountId`) USING BTREE,
+  ADD KEY `id` (`id`);
 
 --
 -- Indices de la tabla `accounts_users_rel`
@@ -196,6 +223,13 @@ ALTER TABLE `accounts_users_rel`
 ALTER TABLE `addresses`
   ADD PRIMARY KEY (`id`,`accountId`) USING BTREE,
   ADD KEY `Address User` (`accountId`);
+
+--
+-- Indices de la tabla `delivery_carriers`
+--
+ALTER TABLE `delivery_carriers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `AccountID` (`accountId`);
 
 --
 -- Indices de la tabla `site_config`
@@ -228,7 +262,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=658;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=667;
 
 --
 -- AUTO_INCREMENT de la tabla `addresses`
@@ -252,6 +286,12 @@ ALTER TABLE `users`
 ALTER TABLE `accounts_users_rel`
   ADD CONSTRAINT `Account` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`),
   ADD CONSTRAINT `User` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
+
+--
+-- Filtros para la tabla `delivery_carriers`
+--
+ALTER TABLE `delivery_carriers`
+  ADD CONSTRAINT `AccountID` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`);
 
 --
 -- Filtros para la tabla `stores`
