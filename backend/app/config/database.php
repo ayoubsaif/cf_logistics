@@ -32,7 +32,9 @@
                     return $connection;
             }
             catch(PDOException $e){
-                    die("Error: ".$e->getMessage());
+                http_response_code(401);
+                echo json_encode(array("message" => "Cuenta no autorizada"));
+                die();
             }
         }
 

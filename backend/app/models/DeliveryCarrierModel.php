@@ -26,11 +26,11 @@ class DeliveryCarrierModel
         'correos' => CorreosModel::class,
     );
 
-    public static function getCarrierModel($carrier)
+    public static function getCarrierModel($carrier, $carrierId)
     {
         if (isset(self::$carrierModels[$carrier])) {
             $modelClass = self::$carrierModels[$carrier];
-            return new $modelClass();
+            return new $modelClass($carrierId);
         }
         return null;
     }
@@ -51,6 +51,6 @@ class DeliveryCarrierModel
         $this->status = $deliveryCarrier['status'];
         $this->accountId = (new AccountModel())->getAccountById($deliveryCarrier['accountId']);
         $this->enviroment = $deliveryCarrier['enviroment'];
-        $this->deliveryType = $this->getCarrierModel($deliveryCarrier['deliveryType']);
+        $this->deliveryType = $this->getCarrierModel($deliveryCarrier['deliveryType'], $this->id);
     }
 }

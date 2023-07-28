@@ -1,5 +1,6 @@
 <?php
 
+require_once 'app/config/database.php';
 require_once 'app/models/DeliveryCarrierModel.php';
 
 const ERROR_CODES = array(
@@ -22,22 +23,24 @@ class CorreosModel extends DeliveryCarrierModel
     protected $correos_password;
     protected $correos_labeller_code;
 
-    public function __construct()
+    public function __construct($id)
     {
+        $this->conn = Connection::connectDB();
+        $this->setOne($id);
         $this->deliveryType = 'correos';
     }
 
-    public function sendShipping($picking)
+    public function sendShipping($orderData)
     {
         if ($this->deliveryType === 'correos') {
-            return $this->correos_send_shipping($picking);
+            return $this->correos_send_shipping($orderData);
         } else {
             // Handle unsupported deliveryType or call parent method
-            return parent::sendShipping($picking);
+            return parent::sendShipping($orderData);
         }
     }
 
-    public function correos_send_shipping($pickings)
+    public function correos_send_shipping($orderData)
     {
         $soapOptions = [
             'soap_version' => 'SOAP_1_1',
@@ -51,8 +54,8 @@ class CorreosModel extends DeliveryCarrierModel
         $credentials = $this->correos_username . ':' . $this->correos_password;
         $credentials = base64_encode($credentials);
     
-        $data = $this->mountXmlObject()->asXML();
-
+        $data = $this->mountXmlObject($orderData)->asXML();
+        echo $data;
         $headers = [
             'Content-type: text/xml;charset=utf-8',
             'Content-Length: ' . strlen($data),
@@ -82,13 +85,12 @@ class CorreosModel extends DeliveryCarrierModel
         $this->status = $deliveryCarrier['status'];
         $this->accountId = (new AccountModel())->getAccountById($deliveryCarrier['accountId']);
         $this->enviroment = $deliveryCarrier['enviroment'];
-        $this->deliveryType = $this->getCarrierModel($deliveryCarrier['deliveryType']);
-        $this->correos_username = $deliveryCarrier['correos_username'];
-        $this->correos_password = $deliveryCarrier['correos_password'];
-        $this->correos_labeller_code = $deliveryCarrier['correos_labeller_code'];
+        $this->correos_username = $deliveryCarrier['username'];
+        $this->correos_password = $deliveryCarrier['password'];
+        $this->correos_labeller_code = $deliveryCarrier['labellerCode'];
     }
     
-    private function mountXmlObject()
+    private function mountXmlObject($orderData)
     {
         $xmlObject = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cor="http://www.correos.es/comun/wsb_correos_preregistro"> </soapenv:Envelope>');
     
@@ -145,7 +147,7 @@ class CorreosModel extends DeliveryCarrierModel
         $envio->addChild('Email', '', 'cor');
         $envio->addChild('NumeroSMS', '', 'cor');
     
-        $preregistroEnvioMultibulto->addChild('PesoTotal', 'PesoTotal', 'cor');
+        $preregistroEnvioMultibulto->addChild('PesoTotal', '2', 'cor');
         $preregistroEnvioMultibulto->addChild('CodProducto', 'CodProducto', 'cor');
         $preregistroEnvioMultibulto->addChild('TipoFranqueo', 'FP', 'cor');
         $preregistroEnvioMultibulto->addChild('ModalidadEntrega', 'ST', 'cor');

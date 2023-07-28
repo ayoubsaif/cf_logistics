@@ -79,6 +79,7 @@ const providers = [
       name: "Credentials",
       credentials: {},
       async authorize(credentials, req) {
+        console.log(`${process.env.NEXT_PUBLIC_API}/auth/login`);
         const res = await axios.post(
           `${process.env.NEXT_PUBLIC_API}/auth/login`,
           {
