@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-07-2023 a las 06:32:06
+-- Tiempo de generación: 31-07-2023 a las 13:05:58
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -108,17 +108,17 @@ CREATE TABLE `delivery_carriers` (
   `accountId` int(11) DEFAULT NULL,
   `enviroment` enum('test','production') DEFAULT 'test',
   `deliveryType` varchar(100) DEFAULT NULL,
-  `correos_username` varchar(255) DEFAULT NULL,
-  `correos_password` varchar(255) DEFAULT NULL,
-  `correos_labeller_code` varchar(255) DEFAULT NULL
+  `username` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `labellerCode` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `delivery_carriers`
 --
 
-INSERT INTO `delivery_carriers` (`id`, `name`, `status`, `accountId`, `enviroment`, `deliveryType`, `correos_username`, `correos_password`, `correos_labeller_code`) VALUES
-(1, 'Correos Default', 'active', 666, 'production', 'correos', NULL, NULL, NULL);
+INSERT INTO `delivery_carriers` (`id`, `name`, `status`, `accountId`, `enviroment`, `deliveryType`, `username`, `password`, `labellerCode`) VALUES
+(1, 'Correos Default', 'active', 666, 'test', 'correos', 'W81313323856C', 'N),7fKr0', '856C');
 
 -- --------------------------------------------------------
 
