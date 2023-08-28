@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.NEXT_APP_API_HOST || "http://localhost";
+const API_URL = process.env.NEXT_APP_API_HOST;
 
 export async function getMenuItems(accessToken) {
   try {

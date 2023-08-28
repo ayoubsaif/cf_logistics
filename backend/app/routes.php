@@ -38,6 +38,11 @@ $router->get('/api/account/:id', 'AccountController@getOne');
 $router->options('/api/account', 'AccountController@getSuccessResponse');
 $router->post('/api/account', 'AccountController@createOne');
 
+# Account > Relate
+$router->options('/api/account/relate', 'AccountController@getSuccessResponse');
+$router->post('/api/account/relate', 'AccountController@relateUser');
+$router->delete('/api/account/relate', 'AccountController@deleteUserRelation');
+
 # Store
 $router->options('/api/stores', 'StoreController@getSuccessResponse');
 $router->get('/api/stores', 'StoreController@getMany');
@@ -56,4 +61,4 @@ $router->post('/api/delivery', 'DeliveryCarrierController@sendShipping');
 
 # Orders > Get Many
 $router->options('/api/orders', 'OrderController@getSuccessResponse');
-$router->get('/api/orders', 'OrderController@getMany');
+$router->get('/api/orders/:storeId', 'OrderController@getMany');

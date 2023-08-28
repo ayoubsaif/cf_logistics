@@ -3,19 +3,29 @@ import { cardTheme } from "@/layout/theme/components/Card";
 import { buttonTheme } from "@/layout/theme/components/Button";
 import { StyleFunctionProps } from '@chakra-ui/theme-tools';
 
+import semanticTokens  from "./tokens";
+
 const theme = extendTheme({
+  semanticTokens: {
+    ...semanticTokens,
+  
+  },
   styles: {
     global: ({ colorMode }) => ({
       body: {
-        bg: colorMode === "dark" ? "blackAlpha.500" : "gray.50",
+        bg: colorMode === "dark" ? "gray.900" : "gray.50",
       },
     }),
   },
   fonts: {
-    heading: "'MixcaseUnmixed', sans-serif",
-    body: "'MixcaseUnmixed', sans-serif",
+    heading: "MixcaseUnmixed, sans-serif",
+    body: "HelveticaNow, sans-serif",
   },
   colors: {
+    blackButton: {
+      bg: 'black',
+      text: 'white',
+    },
     brand: {
       50: "#ffe9e0",
       100: "#ffc3b3",
@@ -84,6 +94,12 @@ const theme = extendTheme({
         },
       },
     },
+    Tab: {
+      _focusVisible: {
+        outline: "0",
+        outlineOffset: "0",
+      },
+    }
   },
 });
 

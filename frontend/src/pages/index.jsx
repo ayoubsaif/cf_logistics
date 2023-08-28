@@ -19,10 +19,7 @@ import Layout from "@/layout/Layout";
 
 import { useSession } from "next-auth/react";
 
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-
-export default function HomePage(props) {
+export default function Home(props) {
   const { data: session } = useSession();
   const { user } = session || {};
   return (
@@ -46,7 +43,7 @@ export default function HomePage(props) {
           site_name: process.env.NEXT_PUBLIC_SITE_NAME || "",
         }}
       />
-      <Layout {...props}>
+      <Layout {...props} siteConfig={props?.siteConfig}>
         {user && user?.firstname ? (
           <Box py={10}>
             <Heading>Hola {user?.firstname},</Heading>

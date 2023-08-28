@@ -2,6 +2,7 @@
 
 require_once 'app/config/database.php';
 require_once 'app/models/DeliveryCarrierModel.php';
+require_once 'app/models/StoreModel.php';
 
 const ERROR_CODES = array(
     '65' => 'El envío ya está dado de alta',
@@ -10,11 +11,6 @@ const ERROR_CODES = array(
     '68' => 'El código de estádo del envío no es correcto',
     '198' => 'Cliente y contrato no pertenecen al usuario que solicita la operación.',
     '284' => 'Error en la validación de su certificado de acceso.'
-);
-
-const CORREOS_URLS = array(
-    'test' => 'https://preregistroenviospre.correos.es/preregistroenvios',
-    'production' => 'https://preregistroenvios.correos.es/preregistroenvios'
 );
 
 class CorreosModel extends DeliveryCarrierModel
@@ -40,38 +36,172 @@ class CorreosModel extends DeliveryCarrierModel
         }
     }
 
-    public function correos_send_shipping($orderData)
+    public function correos_send_shipping($orderData) {
+        $package_info = $this->_correos_prepare_create_shipping($orderData);
+        
+        try
+        {
+            $response = $this->correos_send($package_info);
+            $xml = new SimpleXMLElement($response);
+            $ns = $xml->getNamespaces(true);
+            $soapenv = $xml->children($ns['soapenv']);
+            $response = $soapenv->Body->children()->RespuestaPreregistroEnvio;
+        }
+        catch (Exception $e)
+        {
+            throw new Exception('Correos error: ' . $e->getMessage());
+        }
+
+        $xml->registerXPathNamespace('ns', 'http://schemas.xmlsoap.org/soap/envelope/');
+        $root = $xml->xpath('//ns:Envelope/ns:Body')[0];
+
+        $errors = $root->xpath('.//faultstring|//DescError');
+        if (!empty($errors)) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[] = (string) $error;
+            }
+            throw new Exception('Correos error: ' . implode(', ', $errorMessages));
+        }
+        $carrierTrackingRef = (string) $response->Bulto->CodEnvio;
+        $attachmentData = (string) $response->Bulto->Etiqueta->Etiqueta_pdf->Fichero;
+
+        $attachmentName = (string) $response->Bulto->Etiqueta->Etiqueta_pdf->NombreF;
+        $attachmentFilename = 'correos_' . $carrierTrackingRef;
+        
+        //$attachmentData = base64_decode($attachmentData);
+        
+        return array(
+            'tracking_number' => $carrierTrackingRef,
+            'file' => array(
+                'file_name' => $attachmentName,
+                'data' => $attachmentData
+            )
+        );
+    }
+    
+    public function _correos_prepare_create_shipping($orderData)
     {
-        $soapOptions = [
-            'soap_version' => 'SOAP_1_1',
-            'trace' => true, // Enable request/response tracing
-            'exceptions' => true, // Enable exceptions on SOAP errors
-            'connection_timeout' => 120, // Timeout in seconds
-        ];
-    
-        $soapEndpoint = $this->enviroment == 'prod' ? CORREOS_URLS['prod'] : CORREOS_URLS['test'];
-    
-        $credentials = $this->correos_username . ':' . $this->correos_password;
+            $phone = $orderData['contactPhone'] ?? $orderData['contactMobile'] ?? '000';
+            $pickingDate = date('d-m-Y H:i:s');
+            $partnerAddress = implode(' ', array_filter([$orderData['street'], $orderData['streetComplement']]));
+            
+            $Store = new StoreModel();
+            $Store->setOne($orderData['storeId']);
+
+            if ($Store->storeId === null) {
+                echo 'Store not found: '.$orderData['storeId'];
+                return false;
+            }
+
+            $Account = new AccountModel();
+            $Account->setOne($Store->accountId);
+
+            if ($Account->uuid === null) {
+                echo "Account not found: ".$Store->accountId;
+                return false;
+            }
+
+            $xml = <<<XML
+                <soapenv:Envelope
+                    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                    xmlns="http://www.correos.es/iris6/services/preregistroetiquetas">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                        <PreregistroEnvio>
+                            <FechaOperacion>{$pickingDate}</FechaOperacion>
+                            <CodEtiquetador>{$this->correos_labeller_code}</CodEtiquetador>
+                            <Care>000000</Care>
+                            <ModDevEtiqueta>2</ModDevEtiqueta>
+                            <Remitente>
+                                <Identificacion>
+                                    <Nombre>{$Store->name}</Nombre>
+                                    <Nif>{$Account->companyVat}</Nif>
+                                </Identificacion>
+                                <DatosDireccion>
+                                    <Direccion>{$Store->street}</Direccion>
+                                    <Numero>{$Store->streetComplement}</Numero>
+                                    <Localidad>{$Store->city}</Localidad>
+                                    <Provincia>{$Store->state}</Provincia>
+                                </DatosDireccion>
+                                <CP>{$Store->postalCode}</CP>
+                                <Telefonocontacto>{$Store->contactPhone}</Telefonocontacto>
+                                <Email>{$Store->contactEmail}</Email>
+                            </Remitente>
+                            <Destinatario>
+                                <Identificacion>
+                                    <Nombre>{$orderData['customerName']}</Nombre>
+                                </Identificacion>
+                                <DatosDireccion>
+                                    <Direccion>{$partnerAddress}</Direccion>
+                                    <Localidad>{$orderData['city']}</Localidad>
+                                </DatosDireccion>
+                                <CP>{$orderData['postalCode']}</CP>
+                                <Telefonocontacto>{$phone}</Telefonocontacto>
+                                <Email>{$orderData['contactEmail']}</Email>
+                            </Destinatario>
+                            <Envio>
+                                <CodProducto>S0132</CodProducto>
+                                <ReferenciaCliente>{$orderData['orderNumber']}</ReferenciaCliente>
+                                <Observaciones1>{$orderData['orderNumber']}</Observaciones1>
+                                <TipoFranqueo>FP</TipoFranqueo>
+                                <ModalidadEntrega>ST</ModalidadEntrega>
+                                <Pesos>
+                                <Peso>
+                                    <TipoPeso>R</TipoPeso>
+                                    <Valor>1000</Valor>
+                                </Peso>
+                                </Pesos>
+                                <Largo>100</Largo>
+                                <Alto>10</Alto>
+                                <Ancho>10</Ancho>
+                            </Envio>
+                        </PreregistroEnvio>
+                    </soapenv:Body>
+                </soapenv:Envelope>
+        XML;
+        
+        return $this->correos_normalize_text($xml);
+    }
+
+    public function correos_normalize_text($text) {
+        $text = str_replace('&', '&amp;', $text);
+        return $text ? preg_replace('/[^(\x20-\x7F)]*/', '', $text) : null;
+    }    
+
+    public function correos_send($data) {
+        if ($this->enviroment === 'production') {
+            $url = 'https://preregistroenvios.correos.es/preregistroenvios';
+            $credentials = $this->correos_username . ':' . $this->correos_password;
+        } else {
+            $url = 'https://preregistroenviospre.correos.es/preregistroenvios';
+            $credentials = $this->correos_username . ':' . $this->correos_password;
+        }
+        
         $credentials = base64_encode($credentials);
-    
-        $data = $this->mountXmlObject($orderData)->asXML();
-        echo $data;
         $headers = [
             'Content-type: text/xml;charset=utf-8',
             'Content-Length: ' . strlen($data),
             'Authorization: Basic ' . $credentials,
-            'SOAPAction: ' . 'PreregistroEnvioMultibulto',
+            'SOAPAction: PreRegistro',
         ];
-    
-        $soapClient = new SoapClient($soapEndpoint, $soapOptions);
-    
-        $soapClient->__setSoapHeaders(new SoapHeader('http://www.correos.es/iris6/services/preregistroetiquetas', 'HeaderName', $headers));
-    
-        $response = $soapClient->__doRequest($data, $soapEndpoint, 'PreregistroEnvioMultibulto', 'SOAP_1_1');
-        var_dump($soapClient);
-
+        
+        $options = [
+            CURLOPT_URL => $url,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $data,
+            CURLOPT_RETURNTRANSFER => true,
+        ];
+        
+        $curl = curl_init();
+        curl_setopt_array($curl, $options);
+        $response = curl_exec($curl);
+        curl_close($curl);
+        
         return $response;
     }
+    
 
     public function setOne($id)
     {
@@ -88,71 +218,6 @@ class CorreosModel extends DeliveryCarrierModel
         $this->correos_username = $deliveryCarrier['username'];
         $this->correos_password = $deliveryCarrier['password'];
         $this->correos_labeller_code = $deliveryCarrier['labellerCode'];
-    }
-    
-    private function mountXmlObject($orderData)
-    {
-        $xmlObject = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cor="http://www.correos.es/comun/wsb_correos_preregistro"> </soapenv:Envelope>');
-    
-        $body = $xmlObject->addChild('soapenv:Body');
-        $preregistroEnvioMultibulto = $body->addChild('PreregistroEnvioMultibulto', '', 'cor');
-    
-        $preregistroEnvioMultibulto->addChild('FechaOperacion', date('Y-m-d'), 'cor');
-        $preregistroEnvioMultibulto->addChild('CodEtiquetador', $this->correos_labeller_code, 'cor');
-        $preregistroEnvioMultibulto->addChild('Care', '000000', 'cor');
-        $preregistroEnvioMultibulto->addChild('TotalBultos', '1', 'cor');
-        $preregistroEnvioMultibulto->addChild('ModDevEtiqueta', '2', 'cor');
-        $preregistroEnvioMultibulto->addChild('NotificacionBulto', 'N', 'cor');
-    
-        $remitente = $preregistroEnvioMultibulto->addChild('Remitente', '', 'cor');
-        $identificacionRemitente = $remitente->addChild('Identificacion', '', 'cor');
-        $identificacionRemitente->addChild('Nombre', 'Nombre', 'cor');
-        $identificacionRemitente->addChild('Nif', 'Nif', 'cor');
-        $identificacionRemitente->addChild('Empresa', 'Empresa', 'cor');
-    
-        $datosDireccionRemitente = $remitente->addChild('DatosDireccion', '', 'cor');
-        $datosDireccionRemitente->addChild('Direccion', 'Direccion', 'cor');
-        $datosDireccionRemitente->addChild('Localidad', 'Localidad', 'cor');
-        $datosDireccionRemitente->addChild('Provincia', 'Provincia', 'cor');
-    
-        $remitente->addChild('CP', 'CP', 'cor');
-        $remitente->addChild('Telefonocontacto', 'Telefonocontacto', 'cor');
-        $remitente->addChild('Emailcontacto', 'Emailcontacto', 'cor');
-    
-        $destinatario = $preregistroEnvioMultibulto->addChild('Destinatario', '', 'cor');
-        $identificacionDestinatario = $destinatario->addChild('Identificacion', '', 'cor');
-        $identificacionDestinatario->addChild('Nombre', 'Nombre', 'cor');
-        $identificacionDestinatario->addChild('Nif', 'Nif', 'cor');
-        $identificacionDestinatario->addChild('Empresa', 'Empresa', 'cor');
-    
-        $datosDireccionDestinatario = $destinatario->addChild('DatosDireccion', '', 'cor');
-        $datosDireccionDestinatario->addChild('Direccion', 'Direccion', 'cor');
-        $datosDireccionDestinatario->addChild('Localidad', 'Localidad', 'cor');
-        $datosDireccionDestinatario->addChild('Provincia', 'Provincia', 'cor');
-    
-        $destinatario->addChild('CP', 'CP', 'cor');
-        $destinatario->addChild('Telefonocontacto', 'Telefonocontacto', 'cor');
-        $destinatario->addChild('Emailcontacto', 'Email', 'cor');
-    
-        $envio = $preregistroEnvioMultibulto->addChild('Envio', '', 'cor');
-        $envio->addChild('NumBulto', '1', 'cor');
-        $envio->addChild('ReferenciaCliente', 'ReferenciaCliente', 'cor');
-        $envio->addChild('Largo', 'Largo', 'cor');
-        $envio->addChild('Alto', 'Alto', 'cor');
-        $envio->addChild('Ancho', 'Ancho', 'cor');
-        $envio->addChild('Observaciones1', 'Observaciones1', 'cor');
-        $envio->addChild('Observaciones2', 'Observaciones2', 'cor');
-        $envio->addChild('TipoModificacion', '1', 'cor');
-        $envio->addChild('PersonaContacto', '', 'cor');
-        $envio->addChild('Email', '', 'cor');
-        $envio->addChild('NumeroSMS', '', 'cor');
-    
-        $preregistroEnvioMultibulto->addChild('PesoTotal', '2', 'cor');
-        $preregistroEnvioMultibulto->addChild('CodProducto', 'CodProducto', 'cor');
-        $preregistroEnvioMultibulto->addChild('TipoFranqueo', 'FP', 'cor');
-        $preregistroEnvioMultibulto->addChild('ModalidadEntrega', 'ST', 'cor');
-    
-        return $xmlObject;
     }
     
 }

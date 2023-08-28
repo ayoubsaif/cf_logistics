@@ -1,32 +1,45 @@
-import { Card, CardBody, Flex, Text } from "@chakra-ui/react";
+import { Box, Container, SimpleGrid } from '@chakra-ui/react'
+import { Stat } from './Stat'
 
-const CardComponent = ({ title, value }) => {
+const stats = [
+  {
+    label: 'Pedidos hoy',
+    value: '120',
+  },
+  {
+    label: 'Pedidos este mes',
+    value: '45000',
+  },
+  {
+    label: 'Medía cancelaciones',
+    value: '12.87%',
+  },
+]
+
+export default function Dashboard() {
   return (
-    <Card variant="outline" w={250}>
-      <CardBody>
-        <Text fontSize="xl" fontWeight="bold" mb={2}>
-          {value}
-        </Text>
-        <Text fontSize="sm" color="gray.500">
-          {title}
-        </Text>
-      </CardBody>
-    </Card>
-  );
-};
-
-const Dashboard = () => {
-  const ordersPending = 5; // Replace with actual data
-  const ordersCompletedToday = 10; // Replace with actual data
-  const totalOrdersLast7Days = 25; // Replace with actual data
-
-  return (
-    <Flex gap={10} py={10}>
-      <CardComponent title="Orders Pending" value={ordersPending} />
-      <CardComponent title="Orders Completed Today" value={ordersCompletedToday} />
-      <CardComponent title="Total Orders Last 7 Days" value={totalOrdersLast7Days} />
-    </Flex>
-  );
-};
-
-export default Dashboard;
+    <Box
+      as="section"
+      py={{
+        base: '4',
+        md: '8',
+      }}
+    >
+      <Container>
+        <SimpleGrid
+          columns={{
+            base: 1,
+            md: 3,
+          }}
+          gap={{
+            base: '5',
+            md: '6',
+          }}
+        >
+          {stats.map(({ label, value }) => (
+            <Stat key={label} label={label} value={value} />
+          ))}
+        </SimpleGrid>
+      </Container>
+    </Box>)
+}

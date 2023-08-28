@@ -21,11 +21,12 @@ class DeliveryCarrierController
             $headers = apache_request_headers();
             $accountId = $headers['AccountId'];
 
-            $data = $_POST;
+            $data = json_decode(file_get_contents("php://input"), true);
 
             $deliveryCarrier = new DeliveryCarrierModel();
             $deliveryCarrier->setOne($data['deliveryCarrierId']);
-            $picking = 'Crasforum';
+            $orderData = $data;
+
             if ($deliveryCarrier->accountId['accountId'] != $accountId) {
                 http_response_code(401);
                 echo json_encode(array(
@@ -34,10 +35,10 @@ class DeliveryCarrierController
                 ));
                 return;
             }
-            $deliveryCarrierResponse = $deliveryCarrier->deliveryType->sendShipping($picking);
+            $deliveryCarrierResponse = $deliveryCarrier->deliveryType->sendShipping($orderData);
             if ($deliveryCarrierResponse) {
                 http_response_code(200);
-                echo $deliveryCarrierResponse;
+                echo json_encode($deliveryCarrierResponse);
                 return;
             } else {
                 http_response_code(500);

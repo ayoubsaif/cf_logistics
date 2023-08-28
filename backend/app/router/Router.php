@@ -55,7 +55,9 @@ class Router
                 if (preg_match($pattern, $requestUri, $matches)) {
                     array_shift($matches);
                     $params = array_values($matches);
-
+                    $params = array_filter($params, function ($key) {
+                         return $key % 2 == 0;
+                    }, ARRAY_FILTER_USE_KEY);
                     $this->callController($controller, $params);
                     return;
                 }

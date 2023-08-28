@@ -15,7 +15,7 @@ class OrderController
         $this->orderModel = new OrderModel($accountId);
     }
 
-    function getMany()
+    function getMany($storeId)
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
@@ -24,19 +24,20 @@ class OrderController
             if (!$UserPermmited) {
                 return;
             }
-            $orderArray = $this->orderModel->getMany();
+            $status = $_GET['status'] ?? null;
+            $orderArray = $this->orderModel->getMany($storeId, $status);
             if ($orderArray) {
                 http_response_code(200);
                 echo json_encode(array("data" => $orderArray));
                 return;
             } else {
-                http_response_code(500);
+                http_response_code(404);
                 echo json_encode(array("message" => "No se han encontrado pedidos"));
                 return;
             }
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "No autorizado"));
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
         }
     }
 

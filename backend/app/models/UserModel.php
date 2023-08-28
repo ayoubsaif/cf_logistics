@@ -18,7 +18,7 @@ class UserModel
     public $role;
 
     # External Auth Provider Identifiers
-    public $google_id;
+    public $googleId;
 
     public function __construct()
     {
@@ -37,7 +37,7 @@ class UserModel
                         role=:role,
                         password=:password,
                         image=:image,
-                        google_id=:google_id"
+                        googleId=:googleId"
                         ;
 
             $stmt = $this->conn->prepare($query);
@@ -48,7 +48,7 @@ class UserModel
             $this->role = $this->role ? htmlspecialchars(strip_tags($this->role)) : 'student';
             $this->password = htmlspecialchars(strip_tags($this->password));
             $this->image = $this->image ? htmlspecialchars(strip_tags($this->image)) : null;
-            $this->google_id = $this->google_id ? htmlspecialchars(strip_tags($this->google_id)) : null;
+            $this->googleId = $this->googleId ? htmlspecialchars(strip_tags($this->googleId)) : null;
 
 
             $stmt->bindParam(":firstName", $this->firstName);
@@ -58,7 +58,7 @@ class UserModel
             $password_hash = password_hash($this->password, PASSWORD_BCRYPT);
             $stmt->bindParam(":password", $password_hash);
             $stmt->bindParam(":image", $this->image);
-            $stmt->bindParam(":google_id", $this->google_id);
+            $stmt->bindParam(":googleId", $this->googleId);
 
             if ($stmt->execute()) {
                 return true;
@@ -166,13 +166,13 @@ class UserModel
         try{
             $query = "UPDATE users
                         SET
-                            google_id = :google_id
+                            googleId = :googleId
                         WHERE
-                            id = :id AND google_id != :google_id";
+                            id = :id AND googleId != :googleId";
             $stmt = $this->conn->prepare($query);
             
-            $this->google_id = htmlspecialchars(strip_tags($this->google_id));
-            $stmt->bindParam(":google_id", $this->google_id);
+            $this->googleId = htmlspecialchars(strip_tags($this->googleId));
+            $stmt->bindParam(":googleId", $this->googleId);
             $stmt->bindParam(":id", $this->id);
 
             if ($stmt->execute()) {
@@ -231,7 +231,7 @@ class UserModel
                         "email" => $row['email'],
                         "image" => $row['image'],
                         "role" => $row['role'],
-                        "create_date" => $row['create_date']
+                        "createDate" => $row['createDate']
                     );
                     array_push($users_arr, $user_item);
                 }

@@ -18,14 +18,14 @@ class UserController
             $data = json_decode(file_get_contents("php://input"));
 
             $user = new UserModel();
-            $user->firstName = $data->firstName;
-            $user->lastName = $data->lastName;
+            $user->firstName = $data->firstname;
+            $user->lastName = $data->lastname;
             $user->email = $data->email;
             $user->password = $data->password;
 
             if ($user->emailExists()) {
                 http_response_code(400);
-                echo json_encode(array("message" => "El correo electrónico ya existe"));
+                echo json_encode(array("message" => "Correo electrónico existente"));
                 return;
             }
 

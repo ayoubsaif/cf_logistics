@@ -16,31 +16,20 @@ import {
   AccordionIcon,
   Divider,
   Icon,
-  Flex
+  Flex,
+  Heading
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 
-import { 
-  RiSettings2Line as SettingsIcon,
+import {
   RiStoreLine as StoreIcon,
   RiMailLine as ContactIcon,
-  RiTruckLine as TruckIcon,
 } from "react-icons/ri";
 
 const menuItems = [
   {
-    label: "Transportistas",
-    url: "/carriers",
-    icon: TruckIcon,
-  },
-  {
-    label: "Ajustes",
-    url: "/settings",
-    icon: SettingsIcon,
-  },
-  {
     label: "Contacto",
-    url: "/contact",
+    url: "mailto:contacto@crasforum.com",
     icon: ContactIcon,
   },
 ];
@@ -62,10 +51,10 @@ const stores = [
 
 const Shops = () => {
   return (
-      <Accordion allowToggle>
+    <Accordion allowToggle>
       <AccordionItem border="none">
         <AccordionButton p={4} pl={6}>
-          <Icon as={StoreIcon} mr={2} boxSize={5}/>
+          <Icon as={StoreIcon} mr={2} boxSize={5} />
           <Box flex="1" textAlign="left" alignItems="center" fontWeight="bold">
             Cambia de tienda
           </Box>
@@ -81,7 +70,7 @@ const Shops = () => {
                 p={4}
                 pl={8}
               >
-                {store.name}
+                {store?.name}
               </MenuItem>
             ))}
           </Menu>
@@ -134,7 +123,7 @@ const MenuItemButton = ({ label, children, url, icon }) => {
         </Accordion>
       ) : (
         <MenuItem p={4} pl={6} as={NextLink} href={url ?? "#"} fontWeight="bold">
-          {icon && <Icon as={...icon} mr={2} boxSize={5}/>}
+          {icon && <Icon as={...icon} mr={2} boxSize={5} />}
           {label}
         </MenuItem>
       )}
@@ -147,9 +136,11 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
     <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
       <DrawerOverlay />
       <DrawerContent>
-        <DrawerHeader borderBottomWidth="1px">
+        <DrawerHeader borderBottomWidth="1px" as={Heading} size="md">
           {siteConfig?.title}
-          <Text fontSize='medium' fontWeight="light">Shop name</Text>
+          {siteConfig?.store &&
+            <Text fontSize='medium' fontWeight="light">{siteConfig?.store?.name}</Text>
+          }
         </DrawerHeader>
         <DrawerBody p={0}>
           <Flex justifyContent="space-between" flexDir="column" height="100%">

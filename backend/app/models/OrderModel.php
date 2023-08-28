@@ -28,9 +28,20 @@ class OrderModel
         $this->conn = Connection::connectDB($accountId);
     }
 
-    public function getMany()
+    public function getMany($storeId, $status)
     {
-        $query = "SELECT * FROM orders";
+        $where = "WHERE storeId = {$storeId}";
+        if (!empty($status)) {
+            $where = $where . " AND orderStatus = '{$status}'";
+        }
+        $query = "SELECT * FROM orders {$where}";
+        $statement = $this->conn->query($query);
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getManyOpen($storeId)
+    {
+        $query = "SELECT * FROM orders WHERE storeId = {$storeId} AND orderStatus = 'open'";
         $statement = $this->conn->query($query);
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }

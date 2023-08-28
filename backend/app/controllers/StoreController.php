@@ -18,7 +18,7 @@ class StoreController
             $storeArray = $store->getAllStores();
             if ($storeArray) {
                 http_response_code(200);
-                echo json_encode($storeArray);
+                echo json_encode(array("items"=> $storeArray));
                 return;
             } else {
                 http_response_code(500);
@@ -72,18 +72,18 @@ class StoreController
             $store->accountId = $data->accountId;
             $store->name = $data->name;
             $store->commercialName = $data->commercialName;
-            $store->address = $data->address;
+            $store->street = $data->address;
             $store->city = $data->city;
             $store->state = $data->state;
             $store->country = $data->country;
             $store->postalCode = $data->postalCode;
             $store->contactPhone = $data->contactPhone;
             $store->contactEmail = $data->contactEmail;
-            $store->status = $data->status;
+            $store->state = $data->state;
 
             if ($store->createStore()) {
                 http_response_code(200);
-                echo json_encode(array("message" => "Se creó la tienda."));
+                echo json_encode(array("message" => "Se creó la tienda correctamente."));
                 return;
             } else {
                 http_response_code(503);
@@ -110,16 +110,16 @@ class StoreController
             $store->accountId = $data->accountId;
             $store->name = $data->name;
             $store->commercialName = $data->commercialName;
-            $store->address = $data->address;
+            $store->street = $data->street;
             $store->city = $data->city;
             $store->state = $data->state;
             $store->country = $data->country;
             $store->postalCode = $data->postalCode;
             $store->contactPhone = $data->contactPhone;
             $store->contactEmail = $data->contactEmail;
-            $store->status = $data->status;
+            $store->state = $data->status;
 
-            if ($store->updateStore($id, $store->accountId, $store->name, $store->commercialName, $store->address, $store->city, $store->state, $store->country, $store->postalCode, $store->contactPhone, $store->contactEmail, $store->status)) {
+            if ($store->updateStore($id)) {
                 http_response_code(200);
                 echo json_encode(array("message" => "Store was updated."));
                 return;

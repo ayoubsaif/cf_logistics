@@ -126,4 +126,52 @@ class AccountModel
             return true;
         }
     }
+
+    public function setOne($id)
+    {
+        $query = "SELECT * FROM accounts WHERE id = :id";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':id', $id);
+        $statement->execute();
+        $account = $statement->fetch(PDO::FETCH_ASSOC);
+        $this->id = $account['id'];
+        $this->uuid = $account['accountId'];
+        $this->name = $account['name'];
+        $this->status = $account['status'];
+        $this->companyName = $account['companyName'];
+        $this->companyLegalName = $account['companyLegalName'];
+        $this->companyVat = $account['companyVat'];
+    }
+
+    public function assignUser($userId)
+    {
+        if ($this->checkIfUserExists($userId)) {
+            return false;
+        }
+        $query = "INSERT INTO accounts_users_rel (accountId, userId) VALUES (:accountId, :userId)";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':accountId', $this->id);
+        $statement->bindParam(':userId', $userId);
+        return $statement->execute();
+    }
+
+    public function checkIfUserExists($userId)
+    {
+        $query = "SELECT 1 FROM accounts_users_rel WHERE accountId = :accountId AND userId = :userId LIMIT 1";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':accountId', $this->id);
+        $statement->bindParam(':userId', $userId);
+        $statement->execute();
+        return $statement->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteUserRelation($userId)
+    {
+        $query = "DELETE FROM accounts_users_rel WHERE accountId = :accountId AND userId = :userId";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':accountId', $this->id);
+        $statement->bindParam(':userId', $userId);
+        return $statement->execute();
+    }
+    
 }

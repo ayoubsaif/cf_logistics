@@ -9,7 +9,7 @@ class AccountController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -35,7 +35,7 @@ class AccountController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -61,7 +61,7 @@ class AccountController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -108,7 +108,7 @@ class AccountController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -138,7 +138,7 @@ class AccountController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -158,7 +158,7 @@ class AccountController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager', 'user');
+            $allowed = array('admin', 'client');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -185,5 +185,79 @@ class AccountController
         http_response_code(200);
         echo json_encode(array("message" => "Éxito"));
         return;
+    }
+
+    function relateUser()
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+            $data = json_decode(file_get_contents('php://input'), true);
+            $account = new AccountModel();
+            $account->setOne($data['accountId']);
+            if ($account->uuid) {
+                if ($account->assignUser($data['userId']))
+                {
+                    http_response_code(200);
+                    echo json_encode(array("message" => "Usuario relacionado con éxito"));
+                    return;
+                }else
+                {
+                    http_response_code(400);
+                    echo json_encode(array("message" => "Usuario ya tiene permiso en esta cuenta"));
+                    return;
+                }
+            }else
+            {
+                http_response_code(401);
+                echo json_encode(array("message" => "Cuenta no encontrada"));
+                return;
+            }
+            
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
+    }
+
+    function deleteUserRelation()
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+            $data = json_decode(file_get_contents('php://input'), true);
+            $account = new AccountModel();
+            $account->setOne($data['accountId']);
+            if ($account->uuid) {
+                if ($account->deleteUserRelation($data['userId']))
+                {
+                    http_response_code(200);
+                    echo json_encode(array("message" => "Usuario relacionado eliminado con éxito"));
+                    return;
+                }else
+                {
+                    http_response_code(400);
+                    echo json_encode(array("message" => "Usuario no tiene permiso en esta cuenta"));
+                    return;
+                }
+            }else
+            {
+                http_response_code(401);
+                echo json_encode(array("message" => "Cuenta no encontrada"));
+                return;
+            }
+            
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
     }
 }
