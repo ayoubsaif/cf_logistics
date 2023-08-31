@@ -17,11 +17,19 @@ import { signIn } from "next-auth/react";
 import Dashboard from "@/components/home/dashboard";
 import Layout from "@/layout/Layout";
 
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+
+
+import { getStores } from "@/services/stores";
 import { useSession } from "next-auth/react";
 
-export default function Home(props) {
+export default function Home({ siteConfig, stores, user }) {
   const { data: session } = useSession();
-  const { user } = session || {};
+  siteConfig = {
+    ...siteConfig,
+    stores,
+  };
   return (
     <>
       <NextSeo
@@ -43,7 +51,7 @@ export default function Home(props) {
           site_name: process.env.NEXT_PUBLIC_SITE_NAME || "",
         }}
       />
-      <Layout {...props} siteConfig={props?.siteConfig}>
+      <Layout siteConfig={siteConfig}>
         {user && user?.firstname ? (
           <Box py={10}>
             <Heading>Hola {user?.firstname},</Heading>
@@ -146,4 +154,23 @@ function DottedBox() {
       </svg>
     </Box>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+  if (session) {
+    const stores = await getStores(session?.user?.accessToken);
+    return {
+      props: {
+        stores: stores?.data,
+        user: session?.user,
+      },
+    };
+  } else {
+    return {
+      props: {
+        stores: null,
+      },
+    };
+  }
 }
