@@ -34,22 +34,8 @@ const menuItems = [
   },
 ];
 
-const stores = [
-  {
-    name: "Tienda 1",
-    store: "store1",
-  },
-  {
-    name: "Tienda 2",
-    store: "store2",
-  },
-  {
-    name: "Tienda 3",
-    store: "store3",
-  },
-];
-
-const Shops = () => {
+const Stores = (props) => {
+  const { stores } = props;
   return (
     <Accordion allowToggle>
       <AccordionItem border="none">
@@ -62,11 +48,11 @@ const Shops = () => {
         </AccordionButton>
         <AccordionPanel p={0}>
           <Menu>
-            {stores.map((store) => (
+            {stores?.items?.map((store) => (
               <MenuItem
                 key={store.store}
                 as={NextLink}
-                href={"/" + store.store + "/orders/open"}
+                href={"/" + store.storeId + "/orders/open"}
                 p={4}
                 pl={8}
               >
@@ -144,9 +130,11 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
         </DrawerHeader>
         <DrawerBody p={0}>
           <Flex justifyContent="space-between" flexDir="column" height="100%">
-            <Box overflow="hidden" height="100%" overflowX="hidden" overflowY="auto">
-              <Shops />
-            </Box>
+            {siteConfig?.stores &&
+              <Box overflow="hidden" height="100%" overflowX="hidden" overflowY="auto">
+                <Stores {...siteConfig}/>
+              </Box>
+            }
             <Divider />
             <Box>
               <MenuItems />
