@@ -16,6 +16,8 @@ import {
   RiStoreLine as StoreIcon,
 } from "react-icons/ri";
 
+import { getStores } from "@/services/stores";
+
 const orders = [
   {
     id: 2,
@@ -37,11 +39,12 @@ const orders = [
   }
 ];
 
-const OrdersPage = ({ siteConfig, menuItems, store }) => {
+const OrdersPage = ({ siteConfig, store, stores }) => {
   const router = useRouter();
   siteConfig = {
     ...siteConfig,
-    store
+    store,
+    stores
   }
   return (
     <>
@@ -50,7 +53,7 @@ const OrdersPage = ({ siteConfig, menuItems, store }) => {
         description="Pedidos abiertos"
         canonical={process.env.NEXT_PUBLIC_SITE_URL + router.pathname}
       />
-      <Layout title="Orders" siteConfig={siteConfig} menuItems={menuItems} page={0}>
+      <Layout title="Orders" siteConfig={siteConfig} page={0}>
         <Stack direction="row" mb={4} spacing={2}>
           <Icon as={StoreIcon} boxSize={5} />
           <Text fontSize="md">
@@ -76,11 +79,12 @@ export async function getServerSideProps(context) {
     id: 1,
     name: "Tienda 1",
   }
-
   if (session) {
+    const stores = await getStores(session?.user?.accessToken);
     return {
       props: {
         store,
+        stores: stores?.data,
       },
     };
   } else {
