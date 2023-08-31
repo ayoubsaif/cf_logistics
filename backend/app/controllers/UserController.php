@@ -73,7 +73,7 @@ class UserController
             $user->firstName = $data->firstName;
             $user->lastName = $data->lastName;
             $user->image = isset($data->image) ? $data->image : null;
-            $user->google_id = strval($data->google_id);
+            $user->googleId = strval($data->googleId);
             if (!$user->emailExists()) {
                 if ($user->create()) {
                     if ($user->emailExists()) {
