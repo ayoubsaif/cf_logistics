@@ -2,9 +2,13 @@ import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
-export function getStores() {
+export function getStores(accessToken) {
     try {
-        return axios.get(`${API_URL}/api/stores`);
+        return axios.get(`${API_URL}/api/stores`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
     }
     catch (error) {
         console.log(error);
