@@ -89,8 +89,6 @@ const OrderCard = ({ order }) => {
     }, 1500); // Reset copied status after 1.5 seconds
   };
 
-  const pdfUrl = order?.shipping?.urlLabel;
-
   return (
     <Box bgColor="bg.surface" p={3}
       borderWidth={1} borderRadius="md"
@@ -132,7 +130,7 @@ const OrderCard = ({ order }) => {
             </Flex>
 
             <Tooltip label={orderDate} bg="bg.muted" color="fg.muted" borderRadius="md">
-              <Text fontSize="sm">{formatedDate}</Text> 
+              <Text fontSize="sm">{formatedDate}</Text>
             </Tooltip>
           </Flex>
           <Spacer />
@@ -174,10 +172,14 @@ const OrderCard = ({ order }) => {
               </ButtonGroup>
             ) : (
               <ButtonGroup variant="outline" spacing="1" size={"sm"}>
-                <PrintPDFButton pdfUrl={pdfUrl} leftIcon={<TruckIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
-                <NextLink href={order?.shipping?.trackingUrl} target="_blank">
-                  <Button isExternal leftIcon={<TrackIcon size={18} target="_blank"/>}>Seguimiento</Button>
-                </NextLink>
+                {order?.shipping?.urlLabel &&
+                  <PrintPDFButton pdfUrl={order?.shipping?.urlLabel} leftIcon={<TruckIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
+                }
+                {order?.shipping?.trackingUrl &&
+                  <NextLink href={order?.shipping?.trackingUrl} target="_blank">
+                    <Button isExternal leftIcon={<TrackIcon size={18} target="_blank" />}>Seguimiento</Button>
+                  </NextLink>
+                }
               </ButtonGroup>
             )}
           </Box>
