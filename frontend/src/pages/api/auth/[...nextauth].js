@@ -9,11 +9,11 @@ export const authOptions = {
     async signIn({ user, account, profile }) {
       if (account.provider == "google" && profile.email_verified == true) {
         const data = {
-          firstname: profile?.given_name,
-          lastname: profile?.family_name,
+          firstName: profile?.given_name,
+          lastName: profile?.family_name,
           email: profile?.email,
           image: profile?.picture,
-          google_id: profile?.sub,
+          googleId: profile?.sub,
         };
         const res = await axios.post(
           `${process.env.NEXT_PUBLIC_API}/auth/google`,
@@ -29,7 +29,6 @@ export const authOptions = {
           user.name = res.data?.name;
           user.email = res.data?.email;
           user.image = res.data?.image;
-          user.username = res.data?.username;
           user.accessToken = res.data?.accessToken;
           user.role = res.data?.role;
           user.exp = res.data?.exp;
@@ -46,7 +45,7 @@ export const authOptions = {
     },
     async session({ session, token }) {
       // Verify token with backend
-      const response = await axios.get(
+      const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API}/auth/verify-token`,
         {
           headers: {
@@ -54,15 +53,14 @@ export const authOptions = {
           },
         }
       );
-      if (response.data.valid) {
+      if (res.data.valid) {
+        const user = res.data.data
         session.user = {
-          firstname: token.firstName,
-          name: token.name,
-          email: token.email,
-          picture: token.image,
-          image: token.image,
-          username: token.username,
-          role: token.role,
+          firstname: user.firstName,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          role: user.role,
           accessToken: token.accessToken,
         };
       } else {
