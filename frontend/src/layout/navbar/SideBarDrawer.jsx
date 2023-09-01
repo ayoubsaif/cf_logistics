@@ -17,7 +17,10 @@ import {
   Divider,
   Icon,
   Flex,
-  Heading
+  Heading,
+  Button,
+  useColorModeValue,
+  VisuallyHidden,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 
@@ -29,10 +32,13 @@ import {
 const menuItems = [
   {
     label: "Contacto",
-    url: "mailto:contacto@crasforum.com",
+    url: "mailto:info@crasforum.com",
     icon: ContactIcon,
   },
 ];
+
+import { useColorMode } from "@chakra-ui/color-mode";
+import ColorModeAccordion from "@/layout/theme/components/ColorModeAccordion";
 
 const Stores = (props) => {
   const { stores } = props;
@@ -117,7 +123,32 @@ const MenuItemButton = ({ label, children, url, icon }) => {
   );
 };
 
+const SocialButton = ({ label, children, ...attributes }) => {
+  return (
+    <Button
+      {...attributes}
+      bg={useColorModeValue("blackAlpha.100", "whiteAlpha.100")}
+      rounded={"full"}
+      w={8}
+      h={8}
+      cursor={"pointer"}
+      as={"a"}
+      display={"inline-flex"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      transition={"background 0.3s ease"}
+      _hover={{
+        bg: useColorModeValue("blackAlpha.200", "whiteAlpha.200"),
+      }}
+    >
+      <VisuallyHidden>{label}</VisuallyHidden>
+      {children}
+    </Button>
+  );
+};
+
 export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
+  const { colorMode, toggleColorMode } = useColorMode()
   return (
     <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
       <DrawerOverlay />
@@ -132,12 +163,15 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
           <Flex justifyContent="space-between" flexDir="column" height="100%">
             {siteConfig?.stores &&
               <Box overflow="hidden" height="100%" overflowX="hidden" overflowY="auto">
-                <Stores {...siteConfig}/>
+                <Stores {...siteConfig} />
               </Box>
             }
             <Divider />
             <Box>
               <MenuItems />
+            </Box>
+            <Box>
+              <ColorModeAccordion />
             </Box>
           </Flex>
         </DrawerBody>

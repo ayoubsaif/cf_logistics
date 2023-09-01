@@ -5,11 +5,17 @@ import { StyleFunctionProps } from '@chakra-ui/theme-tools';
 
 import semanticTokens  from "./tokens";
 
+// 2. Add your color mode config
+const config = {
+  initialColorMode: 'light',
+  useSystemColorMode: true,
+}
+
 const theme = extendTheme({
   semanticTokens: {
     ...semanticTokens,
-  
   },
+  config,
   styles: {
     global: ({ colorMode }) => ({
       body: {
