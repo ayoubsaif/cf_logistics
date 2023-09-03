@@ -1,7 +1,5 @@
 import {
-  Flex, Button, Container, Heading,
-  SimpleGrid, Spacer, Text, Icon, Stack,
-  Tabs, Tab, TabList
+  SimpleGrid, Text, Icon, Stack
 } from "@chakra-ui/react";
 import OrderCard from "@/components/orders/OrderCard";
 import Layout from "@/layout/Layout";
