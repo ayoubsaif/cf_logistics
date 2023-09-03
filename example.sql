@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-08-2023 a las 21:47:28
+-- Tiempo de generación: 03-09-2023 a las 23:54:34
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -57,8 +57,28 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `storeId`, `orderOrigin`, `orderNumber`, `orderDate`, `orderStatus`, `customerName`, `companyName`, `vat`, `street`, `streetComplement`, `postalCode`, `city`, `state`, `country`, `contactPhone`, `contactMobile`, `contactEmail`) VALUES
-(1, 1, 'Atleet', '2CJEJMVAM3', '2023-07-25 23:22:35', 'DONE', 'Marina Gorostiza Santa Cruz', NULL, NULL, 'Calle ormetxe 1 3c', NULL, '48992', 'Getxo', 'Vizcaya', 'España', '658741807', NULL, 'marina.gorostiza@gmail.com'),
-(2, 1, 'Zalando', '11401061982190', '2023-08-15 23:22:35', 'OPEN', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com');
+(1, 1, 'amazon', '2CJEJMVAM3', '2023-07-25 23:22:35', 'done', 'Marina Gorostiza Santa Cruz', NULL, NULL, 'Calle ormetxe 1 3c', NULL, '48992', 'Getxo', 'Vizcaya', 'España', '658741807', NULL, 'marina.gorostiza@gmail.com'),
+(2, 1, 'aliexpress', '11401061982190', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(3, 1, 'hipercalzado', '11401061982191', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '28200', 'Madrid', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(4, 1, 'zalando', '11401061982192', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(5, 1, 'miravia', '11401061982193', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '50002', 'Zaragoza', 'Zaragoza', 'España', '31604903895', NULL, 'email@email.com'),
+(6, 1, 'decathlon', '11401061982195', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(7, 1, 'miravia', '11401061982196', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(8, 1, 'zalando', '11401061982197', '2023-08-20 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(9, 1, 'miinto', '11401061982198', '2023-08-29 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Valencia', 'Valencia', 'España', '31604903895', NULL, 'email@email.com'),
+(10, 1, 'zalando', '11401061982199', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(11, 1, 'miravia', '11401061982180', '2023-08-17 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(12, 1, 'zalando', '11401061982181', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(13, 1, 'carrefour', '11401061982182', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(14, 1, 'zalando', '11401061982183', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(15, 1, 'colizey', '11401061982184', '2023-08-24 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(16, 1, 'zalando', '11401061982185', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(17, 1, 'spartoo', '11401061982186', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(18, 1, 'zalando', '11401061982187', '2023-08-31 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(19, 1, 'amazon', '11401061982188', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(20, 1, 'pccomponentes', '11401061982189', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(21, 1, 'hipercalzado', '11401061982170', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com'),
+(22, 1, 'elcorteingles', '11401061982171', '2023-08-15 23:22:35', 'done', 'Graciela Fdez Fdez', NULL, NULL, 'Calle López de La Torre 4 Bar La Torre', NULL, '33120', 'Pravia', 'Asturias', 'España', '31604903895', NULL, 'email@email.com');
 
 --
 -- Índices para tablas volcadas
@@ -79,7 +99,7 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT de la tabla `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Restricciones para tablas volcadas
@@ -89,7 +109,7 @@ ALTER TABLE `orders`
 -- Filtros para la tabla `orders`
 --
 ALTER TABLE `orders`
-  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`storeId`) REFERENCES `cf_logistics`.`stores` (`storeId`);
+  ADD CONSTRAINT `StoreID relation` FOREIGN KEY (`storeId`) REFERENCES `cf_logistics`.`stores` (`storeId`) ON DELETE NO ACTION ON UPDATE CASCADE;
 --
 -- Base de datos: `cf_logistics`
 --
@@ -245,7 +265,8 @@ CREATE TABLE `stores` (
 --
 
 INSERT INTO `stores` (`id`, `storeId`, `accountId`, `name`, `commercialName`, `contactName`, `street`, `streetComplement`, `postalCode`, `city`, `state`, `country`, `contactPhone`, `contactMobile`, `contactEmail`) VALUES
-(1, 1, 1, 'Foot on Mars Store Zaragoza', 'Foot on Mars Zaragoza', 'Victor', 'Paseo de Damas', '27', '50002', 'Zaragoza', 'Zaragoza', 'Spain', '876 61 01 37', NULL, 'zaragoza@footonmars.com');
+(1, 1, 1, 'Foot on Mars Store Zaragoza', 'Foot on Mars Zaragoza', 'Victor', 'Paseo de Damas', '27', '50002', 'Zaragoza', 'Zaragoza', 'Spain', '876 61 01 37', NULL, 'zaragoza@footonmars.com'),
+(2, 2, 1, 'Atleet Store Zaragoza', 'Atleet Zaragoza', 'Victor', 'Maria Zambrano', '31', '50018', 'Zaragoza', 'Zaragoza', 'Spain', '876 61 01 37', NULL, 'zaragoza@atleet.store');
 
 -- --------------------------------------------------------
 
@@ -272,7 +293,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `firstName`, `lastName`, `role`, `image`, `active`, `googleId`, `createDate`) VALUES
-(1, 'ayoubsaif@gmail.com', '$2y$10$XVBRuKaUqO2lHX5nX0063.UC9r8LwyoBth6PGcu973siHNz5VhDa6', 'Ayoub', 'Saif Manzahi', 'admin', NULL, 1, '', '2023-05-01 00:16:47'),
+(1, 'ayoubsaif@gmail.com', '$2y$10$XVBRuKaUqO2lHX5nX0063.UC9r8LwyoBth6PGcu973siHNz5VhDa6', 'Ayoub', 'Saif Manzahi', 'admin', 'https://lh3.googleusercontent.com/ogw/AGvuzYaIa_Nth4F5ARDU9j_N9m1zE5I-BkXlYzl9YEKc0g=s500-c-mo', 1, '', '2023-05-01 00:16:47'),
 (3, 'john223133@example.com', '$2y$10$AZzgi/IQV97kse5.MGe.Je6XyJETP2nD9.4kXD.9cR4oF6rRs3lKG', 'John', 'Doe', 'client', NULL, NULL, NULL, '2023-08-14 18:58:09');
 
 --
@@ -357,36 +378,13 @@ ALTER TABLE `delivery_carriers`
 -- AUTO_INCREMENT de la tabla `stores`
 --
 ALTER TABLE `stores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `accounts_users_rel`
---
-ALTER TABLE `accounts_users_rel`
-  ADD CONSTRAINT `Account` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`),
-  ADD CONSTRAINT `User` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
-
---
--- Filtros para la tabla `delivery_carriers`
---
-ALTER TABLE `delivery_carriers`
-  ADD CONSTRAINT `AccountID` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`);
-
---
--- Filtros para la tabla `stores`
---
-ALTER TABLE `stores`
-  ADD CONSTRAINT `Account ID` FOREIGN KEY (`accountId`) REFERENCES `accounts` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
