@@ -1,5 +1,6 @@
+import React, { useState, useEffect, useRef } from "react";
 import {
-  SimpleGrid, Text, Icon, Flex, InputGroup, InputLeftElement, Input, Spacer, Box
+  SimpleGrid, Text, Icon, Flex, InputGroup, InputLeftElement, Input, Spacer, Box, HStack, Spinner
 } from "@chakra-ui/react";
 import OrderCard from "@/components/orders/OrderCard";
 import Layout from "@/layout/Layout";
@@ -15,166 +16,71 @@ import {
   RiStoreLine as StoreIcon,
 } from "react-icons/ri";
 import { SearchIcon } from "@chakra-ui/icons";
-import { getStores } from "@/services/stores";
+import { getStores, getStore } from "@/services/stores";
+import { getAllOrders } from "@/services/orders";
 
-const orders = [
-  {
-    id: 2,
-    storeId: 1,
-    orderOrigin: "miinto",
-    orderNumber: "11401061982190",
-    orderDate: "2023-08-15 23:22:35",
-    orderStatus: "done",
-    customerName: "Graciela Fdez Fdez",
-    street: "Calle López de La Torre 4 Bar La Torre",
-    streetComplement: null,
-    postalCode: 33120,
-    city: "Pravia Pravia",
-    state: "Asturias",
-    country: "España",
-    contactPhone: "31604903895",
-    contactMobile: null,
-    contactEmail: "email@email.com",
-    shipping: {
-      shippingMethod: "Correos",
-      trackingNumber: "PQ856C0710027820144566Q",
-      trackingUrl: "https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking-number=PQ856C0710027820144566Q",
-      date: "2023-08-15 23:22:35",
-      urlLabel: "https://assets.trendico.es/pdf/correos_PQ856C071002782E_PQ856C0710027820144566Q.pdf",
-    }
-  },
-  {
-    id: 2,
-    storeId: 1,
-    orderOrigin: "zalando",
-    orderNumber: "11401061982191",
-    orderDate: "2023-08-15 23:22:35",
-    orderStatus: "done",
-    customerName: "Graciela Fdez Fdez",
-    street: "Calle López de La Torre 4 Bar La Torre",
-    streetComplement: null,
-    postalCode: 33120,
-    city: "Pravia Pravia",
-    state: "Asturias",
-    country: "España",
-    contactPhone: "31604903895",
-    contactMobile: null,
-    contactEmail: "email@email.com",
-    shipping: {
-      shippingMethod: "Correos",
-      trackingNumber: "PQ856C0710027820144566Q",
-      trackingUrl: "https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking-number=PQ856C0710027820144566Q",
-      date: "2023-08-15 23:22:35",
-      urlLabel: "https://assets.trendico.es/pdf/correos_PQ856C071002782E_PQ856C0710027820144566Q.pdf",
-    }
-  },
-  {
-    id: 2,
-    storeId: 1,
-    orderOrigin: "amazon",
-    orderNumber: "11401061982192",
-    orderDate: "2023-08-15 23:22:35",
-    orderStatus: "done",
-    customerName: "Graciela Fdez Fdez",
-    street: "Calle López de La Torre 4 Bar La Torre",
-    streetComplement: null,
-    postalCode: 33120,
-    city: "Pravia Pravia",
-    state: "Asturias",
-    country: "España",
-    contactPhone: "31604903895",
-    contactMobile: null,
-    contactEmail: "email@email.com",
-    shipping: {
-      shippingMethod: "Correos",
-      trackingNumber: "PQ856C0710027820144566Q",
-      trackingUrl: "https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking-number=PQ856C0710027820144566Q",
-      date: "2023-08-15 23:22:35",
-      urlLabel: "https://assets.trendico.es/pdf/correos_PQ856C071002782E_PQ856C0710027820144566Q.pdf",
-    }
-  },
-  {
-    id: 2,
-    storeId: 1,
-    orderOrigin: "miravia",
-    orderNumber: "11401061982193",
-    orderDate: "2023-08-15 23:22:35",
-    orderStatus: "done",
-    customerName: "Graciela Fdez Fdez",
-    street: "Calle López de La Torre 4 Bar La Torre",
-    streetComplement: null,
-    postalCode: 33120,
-    city: "Pravia Pravia",
-    state: "Asturias",
-    country: "España",
-    contactPhone: "31604903895",
-    contactMobile: null,
-    contactEmail: "email@email.com",
-    shipping: {
-      shippingMethod: "Correos",
-      trackingNumber: "PQ856C0710027820144566Q",
-      trackingUrl: "https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking-number=PQ856C0710027820144566Q",
-      date: "2023-08-15 23:22:35",
-      urlLabel: "https://assets.trendico.es/pdf/correos_PQ856C071002782E_PQ856C0710027820144566Q.pdf",
-    }
-  },
-  {
-    id: 2,
-    storeId: 1,
-    orderOrigin: "hipercalzado",
-    orderNumber: "11401061982194",
-    orderDate: "2023-08-18 17:36:35",
-    orderStatus: "done",
-    customerName: "Graciela Fdez Fdez",
-    street: "Calle López de La Torre 4 Bar La Torre",
-    streetComplement: null,
-    postalCode: 33120,
-    city: "Pravia Pravia",
-    state: "Asturias",
-    country: "España",
-    contactPhone: "31604903895",
-    contactEmail: "email@email.com",
-    shipping: {
-      shippingMethod: "Correos",
-      trackingNumber: "PQ856C0710027820144566Q",
-      trackingUrl: "",
-      date: "2023-08-15 23:22:35",
-      urlLabel: "https://assets.trendico.es/pdf/correos_PQ856C071002782E_PQ856C0710027820144566Q.pdf",
-    }
-  },
-  {
-    id: 2,
-    storeId: 1,
-    orderOrigin: "hipercalzado",
-    orderNumber: "11401061982195",
-    orderDate: "2023-08-20 14:00:00",
-    orderStatus: "done",
-    customerName: "Graciela Fdez Fdez",
-    street: "Calle López de La Torre 4 Bar La Torre",
-    streetComplement: null,
-    postalCode: 33120,
-    city: "Pravia Pravia",
-    state: "Asturias",
-    country: "España",
-    contactPhone: "31604903895",
-    contactEmail: "email@email.com",
-    shipping: {
-      shippingMethod: "Correos",
-      trackingNumber: "PQ856C0710027820144566Q",
-      trackingUrl: "https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking-number=PQ856C0710027820144566Q",
-      date: "2023-08-15 23:22:35",
-      urlLabel: null,
-    }
-  },
-];
-
-const OrdersPage = ({ siteConfig, store, stores }) => {
-  const router = useRouter();
+const OrdersPage = ({ siteConfig, store, stores, ordersItems, token }) => {
   siteConfig = {
     ...siteConfig,
     store,
     stores
   }
+  const [orders, setOrders] = useState(ordersItems);
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const lastOrderRef = useRef(null);
+
+  const loadMoreOrders = async () => {
+    try {
+      const newOrders = await getAllOrders(
+        '64b267fcd4f08',
+        store?.id,
+        token,
+        currentPage + 1 // Request the next page of orders
+      );
+      const newItems = newOrders?.data?.items;
+
+      if (newItems && newItems.length > 0) {
+        // Append the new orders to the existing list
+        setOrders((prevOrders) => [...prevOrders, ...newItems]);
+        setCurrentPage((prevPage) => prevPage + 1);
+      } else {
+        // No more items to load
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error fetching more orders:', error);
+    }
+  };
+
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1, // Trigger when 10% of the last order card is visible
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && hasMore) {
+        // add sleep time 3 seconds to simulate the loading
+        setTimeout(() => {
+          loadMoreOrders();
+        }, 1500);
+      }
+    }, options);
+
+    if (lastOrderRef.current) {
+      observer.observe(lastOrderRef.current);
+    }
+
+    return () => {
+      if (lastOrderRef.current) {
+        observer.unobserve(lastOrderRef.current);
+      }
+    };
+  }, [hasMore, loadMoreOrders]);
+
   return (
     <>
       <NextSeo
@@ -196,13 +102,25 @@ const OrdersPage = ({ siteConfig, store, stores }) => {
               <InputLeftElement pointerEvents='none'>
                 <SearchIcon color='gray.300' />
               </InputLeftElement>
-              <Input type='text' placeholder='Buscar pedido' focusBorderColor='brand.400'/>
+              <Input type='text' placeholder='Buscar pedido' focusBorderColor='brand.400' />
             </InputGroup>
           </Box>
         </Flex>
-        <SimpleGrid columns={1} gap={4} >
-          {orders.map((order) => (
-            <OrderCard key={order.orderNumber} order={order} w="full" />
+        <SimpleGrid columns={1} gap={4} alignContent="center">
+          {orders?.map((order, index) => (
+            <React.Fragment key={index}>
+              <OrderCard order={order} />
+              {index === orders.length - 1 && hasMore && (
+                <HStack spacing={4} py={4} m="0 auto">
+                  <Spinner
+                    ref={lastOrderRef}
+                    speed='0.65s'
+                    color='brand.500'
+                  />
+                  <Text>Cargando más pedidos...</Text>
+                </HStack>
+              )}
+            </React.Fragment>
           ))}
         </SimpleGrid>
       </Layout>
@@ -215,16 +133,16 @@ export default OrdersPage;
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
   const { storeId } = context.params;
-  const store = {
-    id: 1,
-    name: "Tienda 1",
-  }
+  const store = await getStore(session?.user?.accessToken, storeId);
+  const orders = await getAllOrders('64b267fcd4f08', storeId, session?.user?.accessToken);
   const stores = await getStores(session?.user?.accessToken);
   if (session) {
     return {
       props: {
-        store,
+        store: store?.data,
         stores: stores?.data,
+        ordersItems: orders?.data?.items,
+        token: session?.user?.accessToken,
       },
     };
   } else {
