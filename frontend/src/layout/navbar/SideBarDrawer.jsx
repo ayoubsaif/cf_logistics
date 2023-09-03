@@ -18,27 +18,20 @@ import {
   Icon,
   Flex,
   Heading,
+  ButtonGroup,
   Button,
-  useColorModeValue,
-  VisuallyHidden,
+  Spacer
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 
 import {
   RiStoreLine as StoreIcon,
   RiMailLine as ContactIcon,
+  RiSunLine as SunIcon,
+  RiMoonLine as MoonIcon
 } from "react-icons/ri";
 
-const menuItems = [
-  {
-    label: "Contacto",
-    url: "mailto:info@crasforum.com",
-    icon: ContactIcon,
-  },
-];
-
 import { useColorMode } from "@chakra-ui/color-mode";
-import ColorModeAccordion from "@/layout/theme/components/ColorModeAccordion";
 
 const Stores = (props) => {
   const { stores } = props;
@@ -72,83 +65,22 @@ const Stores = (props) => {
   );
 };
 
-const MenuItems = () => {
+const MenuItemButton = ({ children, icon, ...props }) => {
   return (
-    <Menu>
-      {menuItems?.map((navItem) => (
-        <>
-          <MenuItemButton key={navItem.label} {...navItem} />
-          <Divider />
-        </>
-      ))}
-    </Menu>
-  );
-};
-
-const MenuItemButton = ({ label, children, url, icon }) => {
-  return (
-    <>
-      {children ? (
-        <Accordion allowToggle>
-          <AccordionItem border="none">
-            <AccordionButton p={4} pl={6}>
-              <Box flex="1" textAlign="left">
-                {label}
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel p={0}>
-              {children.map((child) => (
-                <MenuItem
-                  key={child.label}
-                  as={NextLink}
-                  href={url ?? "#"}
-                  p={4}
-                  pl={8}
-                  fontWeight="bold"
-                >
-                  {child.label}
-                </MenuItem>
-              ))}
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
-      ) : (
-        <MenuItem p={4} pl={6} as={NextLink} href={url ?? "#"} fontWeight="bold">
-          {icon && <Icon as={...icon} mr={2} boxSize={5} />}
-          {label}
-        </MenuItem>
-      )}
-    </>
-  );
-};
-
-const SocialButton = ({ label, children, ...attributes }) => {
-  return (
-    <Button
-      {...attributes}
-      bg={useColorModeValue("blackAlpha.100", "whiteAlpha.100")}
-      rounded={"full"}
-      w={8}
-      h={8}
-      cursor={"pointer"}
-      as={"a"}
-      display={"inline-flex"}
-      alignItems={"center"}
-      justifyContent={"center"}
-      transition={"background 0.3s ease"}
-      _hover={{
-        bg: useColorModeValue("blackAlpha.200", "whiteAlpha.200"),
-      }}
-    >
-      <VisuallyHidden>{label}</VisuallyHidden>
+    <Button p={4} pl={6} {...props}>
+      {icon && <Icon as={...icon} mr={2} boxSize={5} />}
       {children}
     </Button>
   );
 };
 
 export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
-  const { colorMode, toggleColorMode } = useColorMode()
+  const { colorMode, toggleColorMode } = useColorMode();
+
+  const handleMode = () => {
+    toggleColorMode();
+  };
+
   return (
     <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
       <DrawerOverlay />
@@ -168,10 +100,22 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
             }
             <Divider />
             <Box>
-              <MenuItems />
-            </Box>
-            <Box>
-              <ColorModeAccordion />
+              <Flex>
+                <MenuItemButton
+                  as={NextLink}
+                  href="mailto:info@crasforum.com"
+                  icon={ContactIcon}
+                  variant="link"
+                >Contacto</MenuItemButton>
+                <Spacer />
+                <MenuItemButton onClick={handleMode}
+                  icon={colorMode == 'dark' ? SunIcon : MoonIcon}
+                  variant="link">
+                </MenuItemButton>
+              </Flex>
+              <Text fontSize='xs' p="1" color="gray.300" textAlign="center">
+                © {new Date().getFullYear()} {siteConfig?.title}
+              </Text>
             </Box>
           </Flex>
         </DrawerBody>
