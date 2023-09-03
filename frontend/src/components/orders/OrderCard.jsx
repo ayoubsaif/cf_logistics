@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   Box,
@@ -34,7 +34,8 @@ const PrintPDFButton = dynamic(() => import('@/components/button/printPDFButton'
 });
 import NextLink from 'next/link';
 
-const OrderCard = ({ order }) => {
+const OrderCard = React.forwardRef((props, ref) => {
+  const { order } = props;
   const {
     orderNumber,
     clientName,
@@ -43,9 +44,12 @@ const OrderCard = ({ order }) => {
     orderOrigin,
     customerName,
     orderStatus,
+    state,
+    postalCode
   } = order;
   const parsedDate = parseISO(orderDate);
   const formatedDate = format(parsedDate, "dd MMM yyyy", { locale: esLocale });
+  const formatedDateTime = format(parsedDate, "dd MMM yyyy HH:mm", { locale: esLocale });
   const marketplaceInfo = getMarketplaceData(orderOrigin);
 
   const [timePassed, setTimePassed] = useState("");
@@ -93,7 +97,7 @@ const OrderCard = ({ order }) => {
     <Box bgColor="bg.surface" p={3}
       borderWidth={1} borderRadius="md"
       boxShadow="sm"
-      borderColor={orderStatus == ORDER_STATUS.open ? 'brand.300' : null}>
+      borderColor={orderStatus == ORDER_STATUS.open ? 'brand.300' : null} ref={ref}>
       <Stack spacing={2}>
         <Flex spacing={2}>
           <Flex
@@ -116,7 +120,7 @@ const OrderCard = ({ order }) => {
               }
               <Box>
                 <Box as="span" mr={1}>{useBreakpointValue({ md: 'Pedido', base: '#' })}</Box>
-                <Tooltip hasArrow label='Copiar nº pedido' borderRadius="md">
+                <Tooltip hasArrow label='Copiar' borderRadius="md">
                   <Box as="span"
                     onClick={copyToClipboard}
                     _hover={{ cursor: "pointer" }}
@@ -129,7 +133,7 @@ const OrderCard = ({ order }) => {
               </Box>
             </Flex>
 
-            <Tooltip label={orderDate} bg="bg.muted" color="fg.muted" borderRadius="md">
+            <Tooltip label={formatedDateTime} borderRadius="md">
               <Text fontSize="sm">{formatedDate}</Text>
             </Tooltip>
           </Flex>
@@ -139,7 +143,6 @@ const OrderCard = ({ order }) => {
             {marketplaceInfo?.icon &&
               <Icon
                 as={...marketplaceInfo?.icon}
-                size="xs"
                 mr={1}
               />
             }
@@ -152,9 +155,9 @@ const OrderCard = ({ order }) => {
           justifyContent="space-between"
           flexDirection={{ base: "column", md: "row" }}
         >
-          <Box>
-            <Text>{clientName}</Text>
-            <Text>{customerName}</Text>
+          <Box color="fg.emphasized">
+            <Text fontSize='sm'>{customerName}</Text>
+            <Text fontSize='xs'>{state} {postalCode}</Text>
           </Box>
           <Box mt={2}>
             {orderStatus == ORDER_STATUS.open ? (
@@ -187,6 +190,6 @@ const OrderCard = ({ order }) => {
       </Stack>
     </Box>
   );
-};
+});
 
 export default OrderCard;
