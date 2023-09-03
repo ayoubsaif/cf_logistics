@@ -61,4 +61,5 @@ $router->post('/api/delivery', 'DeliveryCarrierController@sendShipping');
 
 # Orders > Get Many
 $router->options('/api/orders', 'OrderController@getSuccessResponse');
+$router->options('/api/orders/:storeId', 'OrderController@getSuccessResponse');
 $router->get('/api/orders/:storeId', 'OrderController@getMany');
