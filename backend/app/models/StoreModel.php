@@ -39,7 +39,7 @@ class StoreModel
 
     public function getStoreById($id)
     {
-        $query = "SELECT * FROM stores WHERE id = :id";
+        $query = "SELECT * FROM stores WHERE storeId = :id";
         $statement = $this->conn->prepare($query);
         $statement->bindParam(':id', $id);
         $statement->execute();
