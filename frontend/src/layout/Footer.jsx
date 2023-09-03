@@ -14,10 +14,8 @@ export default function Footer({ siteConfig }) {
         py={4}
         direction={{ base: "column", md: "row" }}
         spacing={4}
-        justify={{ base: "center", md: "space-between" }}
-        align={{ base: "center", md: "center" }}
       >
-        <Text>
+        <Text fontSize='xs' p="2" color="gray.300" >
           © {new Date().getFullYear()} {siteConfig?.title}
         </Text>
       </Container>
