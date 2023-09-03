@@ -1,5 +1,5 @@
 <?php
-    
+
 require_once 'app/config/database.php';
 
 class OrderModel
@@ -28,16 +28,20 @@ class OrderModel
         $this->conn = Connection::connectDB($accountId);
     }
 
-    public function getMany($storeId, $status)
+    public function getMany($storeId, $status, $page = 1, $limit = 20)
     {
         $where = "WHERE storeId = {$storeId}";
         if (!empty($status)) {
-            $where = $where . " AND orderStatus = '{$status}'";
+            $where .= " AND orderStatus = '{$status}'";
         }
-        $query = "SELECT * FROM orders {$where}";
+
+        $offset = ($page - 1) * $limit;
+        $query = "SELECT * FROM orders {$where} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}";
+
         $statement = $this->conn->query($query);
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     public function getManyOpen($storeId)
     {

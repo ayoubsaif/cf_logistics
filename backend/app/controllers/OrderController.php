@@ -24,15 +24,20 @@ class OrderController
             if (!$UserPermmited) {
                 return;
             }
+    
             $status = $_GET['status'] ?? null;
-            $orderArray = $this->orderModel->getMany($storeId, $status);
+            $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+            $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
+    
+            $orderArray = $this->orderModel->getMany($storeId, $status, $page, $limit);
+    
             if ($orderArray) {
                 http_response_code(200);
-                echo json_encode(array("data" => $orderArray));
+                echo json_encode(array("items" => $orderArray));
                 return;
             } else {
-                http_response_code(404);
-                echo json_encode(array("message" => "No se han encontrado pedidos"));
+                http_response_code(200);
+                echo json_encode(array("items" => []));
                 return;
             }
         } catch (Exception $e) {
