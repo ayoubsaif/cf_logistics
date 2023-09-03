@@ -15,3 +15,15 @@ export function getStores(accessToken) {
     }
 }
 
+export function getStore(accessToken, storeId) {
+    try {
+        return axios.get(`${API_URL}/api/store/${storeId}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
