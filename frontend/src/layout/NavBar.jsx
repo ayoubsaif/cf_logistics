@@ -92,6 +92,7 @@ export function NavBarChild({ siteConfig, page }) {
                 ),
               })}
               alt="Logo"
+              priority={true}
               width={useBreakpointValue({ base: 50, md: 150 })} // Adjust the width value as per your requirement
               height={50} // Adjust the height value as per your requirement
             />
