@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  SimpleGrid, Text, Icon, Flex, InputGroup, InputLeftElement, Input, Spacer, Box, HStack, Spinner
+  SimpleGrid, Text, Icon, Flex, InputGroup, InputLeftElement, Input, Spacer, Box, HStack, Spinner, Stack, Heading
 } from "@chakra-ui/react";
 import OrderCard from "@/components/orders/OrderCard";
 import Layout from "@/layout/Layout";
@@ -10,7 +10,6 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 import { useRouter } from "next/router";
 import { NextSeo } from "next-seo";
-import OrdersTabs from "@/layout/navbar/pageTab";
 
 import {
   RiStoreLine as StoreIcon,
@@ -18,18 +17,57 @@ import {
 import { SearchIcon } from "@chakra-ui/icons";
 import { getStores, getStore } from "@/services/stores";
 import { getAllOrders } from "@/services/orders";
+import OrderCardSkeleton from "@/components/orders/OrderCardSkeleton";
+import { is } from "date-fns/locale";
+import EmptyIlustration from "@/components/ilustrations/empty";
 
-const OrdersPage = ({ siteConfig, store, stores, ordersItems, token }) => {
+const OrdersPage = ({ siteConfig, store, stores, token }) => {
   siteConfig = {
     ...siteConfig,
     store,
     stores
   }
-  const [orders, setOrders] = useState(ordersItems);
+  const [orders, setOrders] = useState(false);
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const lastOrderRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        console.log('router.query.storeId:');
+        setIsLoading(true);
+        setOrders(false);
+        setTimeout(async () => {
+          const orders = await getAllOrders(
+            '64b267fcd4f08',
+            store?.storeId, // Use the updated storeId from the route
+            token,
+            currentPage
+          );
+          console.log('orders:', orders);
+          const items = orders?.data?.items;
+          if (items && items.length > 0) {
+            setOrders(items);
+          } else {
+            setHasMore(false);
+          }
+          setIsLoading(false);
+        }, 1500);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
+    };
+    // Listen for changes in the "query" object, which includes "storeId"
+    router.events.on("routeChangeComplete", fetchOrders);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      router.events.off("routeChangeComplete", fetchOrders);
+    };
+  }, []); // Add "router.query.storeId" to the dependency array
 
   const loadMoreOrders = async () => {
     try {
@@ -75,7 +113,7 @@ const OrdersPage = ({ siteConfig, store, stores, ordersItems, token }) => {
     }
 
     return () => {
-      if (lastOrderRef.current) {
+      if (lastOrderRef.current && !isLoading) {
         observer.unobserve(lastOrderRef.current);
       }
     };
@@ -84,7 +122,7 @@ const OrdersPage = ({ siteConfig, store, stores, ordersItems, token }) => {
   return (
     <>
       <NextSeo
-        title="Todos los pedidos"
+        title={`Todos los pedidos - ${store?.name}`}
         description="Todos los pedidos"
         canonical={process.env.NEXT_PUBLIC_SITE_URL + router.pathname}
       />
@@ -107,21 +145,36 @@ const OrdersPage = ({ siteConfig, store, stores, ordersItems, token }) => {
           </Box>
         </Flex>
         <SimpleGrid columns={1} gap={4} alignContent="center">
-          {orders?.map((order, index) => (
-            <React.Fragment key={index}>
-              <OrderCard order={order} />
-              {index === orders.length - 1 && hasMore && (
-                <HStack spacing={4} py={4} m="0 auto">
-                  <Spinner
-                    ref={lastOrderRef}
-                    speed='0.65s'
-                    color='brand.500'
-                  />
-                  <Text>Cargando más pedidos...</Text>
-                </HStack>
-              )}
-            </React.Fragment>
-          ))}
+          {isLoading ? (
+            /*genrate 5 times OrderCardSkeleton */
+            [...Array(10)].map((e, i) => <OrderCardSkeleton key={i} />)
+          ) :
+            orders ?
+              <React.Fragment>
+                {orders && orders?.map((order, index) => (
+                  <React.Fragment key={index}>
+                    <OrderCard order={order} />
+                    {index === orders.length - 1 && hasMore && (
+                      <HStack spacing={4} py={4} m="0 auto">
+                        <Spinner
+                          ref={lastOrderRef}
+                          speed='0.65s'
+                          color='brand.500'
+                        />
+                        <Text>Cargando más pedidos...</Text>
+                      </HStack>
+                    )}
+                  </React.Fragment>
+                ))}
+              </React.Fragment>
+              :
+              <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
+                <EmptyIlustration height={280} />
+                <Heading variant="md" textAlign="center">
+                  No se han encontrado pedidos
+                </Heading>
+              </Flex>
+          }
         </SimpleGrid>
       </Layout>
     </>
@@ -134,14 +187,12 @@ export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
   const { storeId } = context.params;
   const store = await getStore(session?.user?.accessToken, storeId);
-  const orders = await getAllOrders('64b267fcd4f08', storeId, session?.user?.accessToken);
   const stores = await getStores(session?.user?.accessToken);
   if (session) {
     return {
       props: {
         store: store?.data,
         stores: stores?.data,
-        ordersItems: orders?.data?.items,
         token: session?.user?.accessToken,
       },
     };
