@@ -57,7 +57,7 @@ export default function ProfileMenu({ session, signOut }) {
                 icon={<UsersIcon size={18} />}>
                 Usuarios
               </MenuItem>
-              <MenuItem as={NextLink} href={"/admin/users"} pl={5} 
+              <MenuItem as={NextLink} href={"/admin/accounts"} pl={5} 
                 icon={<AccountsIcon size={18} />}>
                 Cuentas
               </MenuItem>
@@ -67,7 +67,7 @@ export default function ProfileMenu({ session, signOut }) {
         )}
         <MenuGroup fontSize="md">
           <MenuItem
-            onClick={() => signOut()}
+            onClick={() => signOut({ callbackUrl: "/" })}
             pl={5}
             icon={<LogoutCircleIcon size={18} />}>
             Cerrar sesión
