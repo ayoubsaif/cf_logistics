@@ -33,6 +33,7 @@ const PrintPDFButton = dynamic(() => import('@/components/button/printPDFButton'
 
 });
 import NextLink from 'next/link';
+import { motion } from "framer-motion";
 
 const OrderCard = React.forwardRef((props, ref) => {
   const { order } = props;
@@ -93,7 +94,23 @@ const OrderCard = React.forwardRef((props, ref) => {
     }, 1500); // Reset copied status after 1.5 seconds
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.5,
+        staggerDirection: -1
+      }
+    }
+  }
+
   return (
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
     <Box bgColor="bg.surface" p={3}
       borderWidth={1} borderRadius="md"
       boxShadow="sm"
@@ -189,6 +206,7 @@ const OrderCard = React.forwardRef((props, ref) => {
         </Flex>
       </Stack>
     </Box>
+    </motion.div>
   );
 });
 
