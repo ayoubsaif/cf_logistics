@@ -29,10 +29,12 @@ import SideBarDrawer from "./navbar/SideBarDrawer";
 
 import OrderTabs from "@/layout/navbar/pageTab";
 import { AnimatePresence } from "framer-motion";
+import { LogoSmall, NavBarLogo } from "./Logo";
 
 export function NavBarChild({ siteConfig, page }) {
   const { data: session } = useSession();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Box
       w="full"
@@ -54,25 +56,13 @@ export function NavBarChild({ siteConfig, page }) {
           justify={{ base: "center", md: "start" }}
           alignItems={"center"}
         >
-          {session?.user && (
-            <>
-              <IconButton
-                onClick={onOpen}
-                color={useColorModeValue("black", "white")}
-                variant="transparent"
-                aria-label="Toggle Navigation"
-                icon={
-                  isOpen ? (
-                    <CloseIcon size={24} />
-                  ) : (
-                    <MenuIcon size={24} />
-                  )
-                }
-              />
-
-              <Spacer display={["flex", "none"]} />
-            </>
-          )}
+          <IconButton
+            onClick={onOpen}
+            color={useColorModeValue("black", "white")}
+            variant="transparent"
+            aria-label="Toggle Navigation"
+            icon={isOpen ? <CloseIcon size={24} /> : <MenuIcon size={24} />}
+          />
           <Link
             textAlign={useBreakpointValue({ base: "center", md: "left" })}
             fontFamily={"heading"}
@@ -80,22 +70,7 @@ export function NavBarChild({ siteConfig, page }) {
             as={NextLink}
             href="/"
           >
-            <Image
-              src={useBreakpointValue({
-                base: useColorModeValue(
-                  "/img/logo-s.svg",
-                  "/img/logo-s-dark.svg"
-                ),
-                md: useColorModeValue(
-                  "/img/logo-xl.svg",
-                  "/img/logo-xl-dark.svg"
-                ),
-              })}
-              alt="Logo"
-              priority={true}
-              width={useBreakpointValue({ base: 50, md: 150 })} // Adjust the width value as per your requirement
-              height={50} // Adjust the height value as per your requirement
-            />
+            <NavBarLogo height="50px" />
           </Link>
 
           <Spacer />
