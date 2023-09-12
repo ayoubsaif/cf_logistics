@@ -49,7 +49,7 @@ const Stores = (props) => {
           <Menu>
             {stores?.items?.map((store) => (
               <MenuItem
-                key={store.store}
+                key={store?.id}
                 as={NextLink}
                 href={"/" + store.storeId + "/orders/open"}
                 p={4}
