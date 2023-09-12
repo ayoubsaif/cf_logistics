@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  SimpleGrid, Text, Icon, Flex, InputGroup, InputLeftElement, Input, Spacer, Box, HStack, Spinner
+import { Text, Icon, Flex, InputGroup, InputLeftElement, Input, Spacer, Box, Heading
 } from "@chakra-ui/react";
 import OrderCard from "@/components/orders/OrderCard";
 import Layout from "@/layout/Layout";
@@ -18,6 +17,8 @@ import { SearchIcon } from "@chakra-ui/icons";
 import { getStores, getStore } from "@/services/stores";
 import { getAllOrders } from "@/services/orders";
 import OrdersList from "@/components/orders/OrdersList";
+import OrderCardSkeleton from "@/components/orders/OrderCardSkeleton";
+import TasksCompleteIlustration from "@/components/ilustrations/tasksComplete";
 
 const OrdersPage = ({ siteConfig, store, stores, token }) => {
   siteConfig = {
@@ -127,11 +128,11 @@ const OrdersPage = ({ siteConfig, store, stores, token }) => {
       />
       <Layout title="Orders" siteConfig={siteConfig} page={0}>
         <Flex gap={2} alignItems="center" mb={5} flexDirection={['column', 'row']}>
-          <Flex gap={2}>
-            <Icon as={StoreIcon} boxSize={5} />
-            <Text fontSize="md">
+          <Flex gap={2} alignContent="center" alignItems="center">
+            <Icon as={StoreIcon} boxSize={8} />
+            <Heading as='h4' size='md'>
               {store?.name}
-            </Text>
+            </Heading>
           </Flex>
           <Spacer />
           {orders &&
@@ -145,7 +146,25 @@ const OrdersPage = ({ siteConfig, store, stores, token }) => {
             </Box>
           }
         </Flex>
-        <OrdersList orders={orders} isLoading={isLoading} hasMore={hasMore} ref={lastOrderRef} />
+        {isLoading ? (
+          /*genrate 5 times OrderCardSkeleton */
+          [...Array(10)].map((e, i) => <OrderCardSkeleton key={i} />)
+        ) :
+          orders ?
+            <OrdersList orders={orders} isLoading={isLoading} hasMore={hasMore} ref={lastOrderRef} />
+            :
+            <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
+              <TasksCompleteIlustration height={280} />
+              <Box>
+                <Heading variant="md" textAlign="center">
+                ¡Todo listo!
+                </Heading>
+                <Text variant="md" textAlign="center">
+                No hay pedidos abiertos ahora mismo
+                </Text>
+              </Box>
+            </Flex>
+        }
       </Layout>
     </>
   );

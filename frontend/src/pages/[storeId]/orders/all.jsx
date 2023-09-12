@@ -20,6 +20,7 @@ import { getAllOrders } from "@/services/orders";
 import OrderCardSkeleton from "@/components/orders/OrderCardSkeleton";
 import { is } from "date-fns/locale";
 import EmptyIlustration from "@/components/ilustrations/empty";
+import OrdersList from "@/components/orders/OrdersList";
 
 const OrdersPage = ({ siteConfig, store, stores, token }) => {
   siteConfig = {
@@ -32,7 +33,7 @@ const OrdersPage = ({ siteConfig, store, stores, token }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const lastOrderRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -144,38 +145,20 @@ const OrdersPage = ({ siteConfig, store, stores, token }) => {
             </InputGroup>
           </Box>
         </Flex>
-        <SimpleGrid columns={1} gap={4} alignContent="center">
-          {isLoading ? (
-            /*genrate 5 times OrderCardSkeleton */
-            [...Array(10)].map((e, i) => <OrderCardSkeleton key={i} />)
-          ) :
-            orders ?
-              <React.Fragment>
-                {orders && orders?.map((order, index) => (
-                  <React.Fragment key={index}>
-                    <OrderCard order={order} />
-                    {index === orders.length - 1 && hasMore && (
-                      <HStack spacing={4} py={4} m="0 auto">
-                        <Spinner
-                          ref={lastOrderRef}
-                          speed='0.65s'
-                          color='brand.500'
-                        />
-                        <Text>Cargando más pedidos...</Text>
-                      </HStack>
-                    )}
-                  </React.Fragment>
-                ))}
-              </React.Fragment>
-              :
-              <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
-                <EmptyIlustration height={280} />
-                <Heading variant="md" textAlign="center">
-                  No se han encontrado pedidos
-                </Heading>
-              </Flex>
-          }
-        </SimpleGrid>
+        {isLoading ? (
+          /*genrate 5 times OrderCardSkeleton */
+          [...Array(10)].map((e, i) => <OrderCardSkeleton key={i} />)
+        ) :
+          orders ?
+            <OrdersList orders={orders} isLoading={isLoading} hasMore={hasMore} ref={lastOrderRef} />
+            :
+            <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
+              <EmptyIlustration height={280} />
+              <Heading variant="md" textAlign="center">
+                No se han encontrado pedidos
+              </Heading>
+            </Flex>
+        }
       </Layout>
     </>
   );
