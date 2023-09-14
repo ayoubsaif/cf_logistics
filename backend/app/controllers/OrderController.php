@@ -19,7 +19,7 @@ class OrderController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin', 'client');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -29,11 +29,11 @@ class OrderController
             $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
             $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
     
-            $orderArray = $this->orderModel->getMany($storeId, $status, $page, $limit);
+            $orders = $this->orderModel->getMany($storeId, $status, $page, $limit);
     
-            if ($orderArray) {
+            if ($orders) {
                 http_response_code(200);
-                echo json_encode(array("items" => $orderArray));
+                echo json_encode($orders);
                 return;
             } else {
                 http_response_code(200);

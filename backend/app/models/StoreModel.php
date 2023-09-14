@@ -48,7 +48,8 @@ class StoreModel
 
     public function createStore()
     {
-        $query = "INSERT INTO stores (accountId, name, commercialName, street, streetComplement, city, state, country, postalCode, contactPhone, contactEmail, status) VALUES (:accountId, :name, :commercialName, :street, :city, :state, :country, :postalCode, :contactPhone, :contactEmail, :status)";
+        $query = "INSERT INTO stores (accountId, storeId, name, commercialName, street, streetComplement, city, state, country, postalCode, contactPhone, contactEmail, status) 
+                             VALUES (:accountId, uuid(), :name, :commercialName, :street, :city, :state, :country, :postalCode, :contactPhone, :contactEmail, :status)";
         $statement = $this->conn->prepare($query);
         $statement->bindParam(':accountId', $this->accountId);
         $statement->bindParam(':name', $this->name);
@@ -61,6 +62,7 @@ class StoreModel
         $statement->bindParam(':postalCode', $this->postalCode);
         $statement->bindParam(':contactPhone', $this->contactPhone);
         $statement->bindParam(':contactEmail', $this->contactEmail);
+        echo $statement->queryString;
         return $statement->execute();
     }
 

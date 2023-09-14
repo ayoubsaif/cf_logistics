@@ -9,7 +9,7 @@ class StoreController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -35,7 +35,7 @@ class StoreController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -61,7 +61,7 @@ class StoreController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -72,7 +72,7 @@ class StoreController
             $store->accountId = $data->accountId;
             $store->name = $data->name;
             $store->commercialName = $data->commercialName;
-            $store->street = $data->address;
+            $store->street = $data->street;
             $store->city = $data->city;
             $store->state = $data->state;
             $store->country = $data->country;
@@ -92,7 +92,7 @@ class StoreController
             }
         } catch (Exception $e) {
             http_response_code(401);
-            echo json_encode(array("message" => "No autorizado"));
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
         }
     }
 
@@ -100,7 +100,7 @@ class StoreController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -138,7 +138,7 @@ class StoreController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;

@@ -111,86 +111,88 @@ const OrderCard = React.forwardRef((props, ref) => {
       initial="hidden"
       animate="show"
     >
-    <Box bgColor="bg.surface" p={3}
-      borderWidth={1} borderRadius="md"
-      boxShadow="sm"
-      borderColor={orderStatus == ORDER_STATUS.open ? 'brand.300' : null} ref={ref}>
-      <Stack spacing={2}>
-        <Flex spacing={2}>
-          <Flex
-            flexDirection={["column", "row"]}
-            alignItems={["left", "center"]}
-            gap="2"
-          >
-            <Flex gap="2">
-              {orderStatus == ORDER_STATUS.open &&
-                <Tag
-                  variant="solid"
-                  borderRadius="full"
-                  w={55}
-                  colorScheme={badgeColor}
-                >
-                  <TagLabel textAlign="center" margin="0 auto">
-                    {timePassed}
-                  </TagLabel>
-                </Tag>
-              }
-              <Box>
-                <Box as="span" mr={1}>{useBreakpointValue({ md: 'Pedido', base: '#' })}</Box>
-                <Tooltip hasArrow label='Copiar' borderRadius="md">
-                  <Box as="span"
-                    onClick={copyToClipboard}
-                    _hover={{ cursor: "pointer" }}
-                    transition="all .1s ease-in"
-                    color={isCopied ? "green.400" : "brand"}
+      <Box bgColor="bg.surface" p={3}
+        borderWidth={1} borderRadius="md"
+        boxShadow="sm"
+        borderColor={orderStatus == ORDER_STATUS.open ? 'brand.300' : null} ref={ref}>
+        <Stack spacing={2}>
+          <Flex spacing={2}>
+            <Flex
+              flexDirection={["column", "row"]}
+              alignItems={["left", "center"]}
+              gap="2"
+            >
+              <Flex gap="2">
+                {orderStatus == ORDER_STATUS.open &&
+                  <Tag
+                    variant="solid"
+                    borderRadius="full"
+                    w={55}
+                    colorScheme={badgeColor}
                   >
-                    {isCopied ? 'Copiado' : orderNumber}
-                  </Box>
-                </Tooltip>
-              </Box>
-            </Flex>
+                    <TagLabel textAlign="center" margin="0 auto">
+                      {timePassed}
+                    </TagLabel>
+                  </Tag>
+                }
+                <Box>
+                  <Box as="span" mr={1}>{useBreakpointValue({ md: 'Pedido', base: '#' })}</Box>
+                  <Tooltip hasArrow label='Copiar' borderRadius="md">
+                    <Box as="span"
+                      onClick={copyToClipboard}
+                      _hover={{ cursor: "pointer" }}
+                      transition="all .1s ease-in"
+                      color={isCopied ? "green.400" : "brand"}
+                    >
+                      {isCopied ? 'Copiado' : orderNumber}
+                    </Box>
+                  </Tooltip>
+                </Box>
+              </Flex>
 
-            <Tooltip label={formatedDateTime} borderRadius="md">
-              <Text fontSize="sm">{formatedDate}</Text>
-            </Tooltip>
+              <Tooltip label={formatedDateTime} borderRadius="md">
+                <Text fontSize="sm">{formatedDate}</Text>
+              </Tooltip>
+            </Flex>
+            <Spacer />
+            <Tag colorScheme={marketplaceInfo?.color ? marketplaceInfo.color : "brand"} height="fit-content"
+              borderRadius="full">
+              {marketplaceInfo?.icon &&
+                <Icon
+                  as={...marketplaceInfo?.icon}
+                  mr={1}
+                />
+              }
+              <TagLabel>
+                {marketplaceInfo?.label}
+              </TagLabel>
+            </Tag>
           </Flex>
-          <Spacer />
-          <Tag colorScheme={marketplaceInfo?.color ? marketplaceInfo.color : "brand"} height="fit-content"
-            borderRadius="full">
-            {marketplaceInfo?.icon &&
-              <Icon
-                as={...marketplaceInfo?.icon}
-                mr={1}
-              />
-            }
-            <TagLabel>
-              {marketplaceInfo?.label}
-            </TagLabel>
-          </Tag>
-        </Flex>
-        <Flex
-          justifyContent="space-between"
-          flexDirection={{ base: "column", md: "row" }}
-        >
-          <Box color="fg.emphasized">
-            <Text fontSize='sm'>{customerName}</Text>
-            <Text fontSize='xs'>{state} {postalCode}</Text>
-          </Box>
-          <Box mt={2}>
+          <Flex
+            justifyContent="space-between"
+            flexDirection={{ base: "column", md: "row" }}
+          >
+            <Box color="fg.emphasized">
+              <Text fontSize='sm'>{customerName}</Text>
+              <Text fontSize='xs'>{state} {postalCode}</Text>
+            </Box>
             {orderStatus == ORDER_STATUS.open ? (
-              <ButtonGroup
-                variant="outline"
-                isAttached
-                spacing="2"
-                size={"sm"}
-                width={{ base: "full", md: "auto" }}
-              >
-                <Button colorScheme="green" leftIcon={<CheckIcon size={18} />}
-                  width={{ base: "full", md: "auto" }}>Confirmar</Button>
-                <Button colorScheme="brand" leftIcon={<CloseIcon size={18} />}
-                  width={{ base: "full", md: "auto" }}>Cancelar</Button>
-              </ButtonGroup>
-            ) : (
+              <Box mt={2}>
+                <ButtonGroup
+                  variant="outline"
+                  isAttached
+                  spacing="2"
+                  size={"sm"}
+                  width={{ base: "full", md: "auto" }}
+                >
+                  <Button colorScheme="green" leftIcon={<CheckIcon size={18} />}
+                    width={{ base: "full", md: "auto" }}>Confirmar</Button>
+                  <Button colorScheme="brand" leftIcon={<CloseIcon size={18} />}
+                    width={{ base: "full", md: "auto" }}>Cancelar</Button>
+                </ButtonGroup>
+              </Box>
+            ) : order?.shipping?.urlLabel || order?.shipping?.trackingUrl &&
+            <Box mt={2}>
               <ButtonGroup variant="outline" spacing="1" size={"sm"}>
                 {order?.shipping?.urlLabel &&
                   <PrintPDFButton pdfUrl={order?.shipping?.urlLabel} leftIcon={<TruckIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
@@ -201,11 +203,11 @@ const OrderCard = React.forwardRef((props, ref) => {
                   </NextLink>
                 }
               </ButtonGroup>
-            )}
-          </Box>
-        </Flex>
-      </Stack>
-    </Box>
+            </Box>
+            }
+          </Flex>
+        </Stack>
+      </Box>
     </motion.div>
   );
 });

@@ -39,14 +39,37 @@ class OrderModel
         $query = "SELECT * FROM orders {$where} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}";
 
         $statement = $this->conn->query($query);
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        return array(
+            "items"=>$statement->fetchAll(PDO::FETCH_ASSOC),
+            "total"=>$this->getTotal($storeId, $status),
+            "limit"=>$limit,
+        );
     }
 
-
-    public function getManyOpen($storeId)
+    public function getOne($id)
     {
-        $query = "SELECT * FROM orders WHERE storeId = {$storeId} AND orderStatus = 'open'";
+        $query = "SELECT * FROM orders WHERE id = {$id}";
         $statement = $this->conn->query($query);
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $statement->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function updateOne($id, $orderStatus)
+    {
+        $query = "UPDATE orders SET orderStatus = '{$orderStatus}' WHERE id = {$id}";
+        $statement = $this->conn->query($query);
+        return $statement->rowCount();
+    }
+
+    private function getTotal($storeId, $status)
+    {
+        $where = "WHERE storeId = {$storeId}";
+        if (!empty($status)) {
+            $where .= " AND orderStatus = '{$status}'";
+        }
+
+        $query = "SELECT COUNT(*) as total FROM orders {$where}";
+        $statement = $this->conn->query($query);
+        return $statement->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+
 }

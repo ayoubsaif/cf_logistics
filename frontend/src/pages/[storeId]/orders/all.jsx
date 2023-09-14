@@ -145,19 +145,15 @@ const OrdersPage = ({ siteConfig, store, stores, token }) => {
             </InputGroup>
           </Box>
         </Flex>
-        {isLoading ? (
-          /*genrate 5 times OrderCardSkeleton */
-          [...Array(10)].map((e, i) => <OrderCardSkeleton key={i} />)
-        ) :
-          orders ?
-            <OrdersList orders={orders} isLoading={isLoading} hasMore={hasMore} ref={lastOrderRef} />
-            :
-            <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
-              <EmptyIlustration height={280} />
-              <Heading variant="md" textAlign="center">
-                No se han encontrado pedidos
-              </Heading>
-            </Flex>
+        {orders || isLoading ?
+          <OrdersList orders={orders} isLoading={isLoading} hasMore={hasMore} ref={lastOrderRef} />
+          :
+          <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
+            <EmptyIlustration height={280} />
+            <Heading variant="md" textAlign="center">
+              No se han encontrado pedidos
+            </Heading>
+          </Flex>
         }
       </Layout>
     </>
