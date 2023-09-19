@@ -27,56 +27,70 @@ const OrdersPage = ({ siteConfig, store, stores, token }) => {
     store,
     stores
   }
+  const [orders, setOrders] = useState(false);
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasNextPage, setHasMore] = useState(true);
   const lastOrderRef = useRef(null);
-  const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Create a query function to fetch a page of orders
-  const fetchPageOfOrders = async ({ pageParam }) => {
-    try {
-      const response = await getAllOrders('64b267fcd4f08', store?.id, token, pageParam);
-      const { items, totals, limit } = response?.data || {};
-  
-      // You can also set up pagination information for later use
-      return items || [];
-    } catch (error) {
-      throw error;
-    }
-  };
-  
-
-  // Use React Query's useInfiniteQuery for infinite scrolling
-  const Query = useInfiniteQuery(
-    'orders', // Query key
-    ({ signal, pageParam: page = 1 }) => fetchPageOfOrders({ page, limit, signal }), // Fetch function
-    {
-      refetchOnWindowFocus: true,
-      retry: 2,
-      getNextPageParam: (lastPage, pages) => {
-        if (Math.ceil(lastPage.totals / limit) > pages.length) {
-          return page + 1; // Return the next page number
-        }
-        return undefined;
-      },
-    }
-  );
-  console.log('Query:', Query);
-  const { data, hasNextPage, fetchNextPage, isLoading, error } = Query;
-  const orders = data?.pages.flat() || [];
   useEffect(() => {
-    // Listen for changes in the "query" object, which includes "storeId"
-    const fetchOrdersOnRouteChange = () => {
-      Query.refetch(); // Fetch more data on route change
+    const fetchOrders = async () => {
+      try {
+        console.log('router.query.storeId:');
+        setIsLoading(true);
+        setOrders(false);
+        setTimeout(async () => {
+          const orders = await getAllOrders(
+            '64b267fcd4f08',
+            store?.storeId, // Use the updated storeId from the route
+            token,
+            currentPage
+          );
+          console.log('orders:', orders);
+          const items = orders?.data?.items;
+          if (items && items.length > 0) {
+            setOrders(items);
+          } else {
+            setHasMore(false);
+          }
+          setIsLoading(false);
+        }, 1500);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
     };
-
-    router.events.on('routeChangeComplete', fetchOrdersOnRouteChange);
+    // Listen for changes in the "query" object, which includes "storeId"
+    router.events.on("routeChangeComplete", fetchOrders);
 
     // Cleanup the event listener when the component unmounts
     return () => {
-      router.events.off('routeChangeComplete', fetchOrdersOnRouteChange);
+      router.events.off("routeChangeComplete", fetchOrders);
     };
-  }, []);
+  }, []); // Add "router.query.storeId" to the dependency array
+
+  const loadMoreOrders = async () => {
+    try {
+      const newOrders = await getAllOrders(
+        '64b267fcd4f08',
+        store?.id,
+        token,
+        currentPage + 1 // Request the next page of orders
+      );
+      const newItems = newOrders?.data?.items;
+
+      if (newItems && newItems.length > 0) {
+        // Append the new orders to the existing list
+        setOrders((prevOrders) => [...prevOrders, ...newItems]);
+        setCurrentPage((prevPage) => prevPage + 1);
+      } else {
+        // No more items to load
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error fetching more orders:', error);
+    }
+  };
 
   useEffect(() => {
     const options = {
@@ -87,10 +101,9 @@ const OrdersPage = ({ siteConfig, store, stores, token }) => {
 
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && hasNextPage) {
-        // Add sleep time of 3 seconds to simulate loading
+        // add sleep time 3 seconds to simulate the loading
         setTimeout(() => {
-          setPage((prevPage) => prevPage + 1);
-          fetchNextPage(); // Enable and fetch more data
+          loadMoreOrders();
         }, 1500);
       }
     }, options);
@@ -104,7 +117,7 @@ const OrdersPage = ({ siteConfig, store, stores, token }) => {
         observer.unobserve(lastOrderRef.current);
       }
     };
-  }, [hasNextPage, fetchNextPage]);
+  }, [hasNextPage, loadMoreOrders]);
 
   return (
     <>
