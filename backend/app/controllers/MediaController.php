@@ -110,6 +110,40 @@ class MediaController
         }
     }
 
+    public function uploadLabelPDF($file, $model_name, $model_id)
+    {
+        $this->mediaModel->filename = uniqid() . '_' . $file["name"];
+        $this->mediaModel->model = $model_name;
+        $this->mediaModel->model_id = $model_id;
+
+        $target_dir = "uploads/".$model_name;
+        $this->mediaModel->filepath = $target_dir . '/' . $this->mediaModel->filename;
+        $this->mediaModel->filetype = strtolower(pathinfo($this->mediaModel->filepath, PATHINFO_EXTENSION));
+
+        if ($file["size"] > 500000) {
+            http_response_code(503);
+            echo json_encode(array("message" => "Sorry, your file is too large."));
+            return;
+        }
+
+        if ($this->mediaModel->filetype != "pdf") {
+            http_response_code(503);
+            echo json_encode(array("message" => "Sorry, only PDF files are allowed."));
+            return;
+        }
+
+        if (!move_uploaded_file($file["tmp_name"], $this->mediaModel->filepath)) {
+            http_response_code(503);
+            echo json_encode(array("message" => "Sorry, there was an error uploading your file."));
+            return;
+        }
+        
+        if ($this->mediaModel->uploadMedia()) {
+            $this->fileUrl = getenv("HOST") . $this->mediaModel->filepath;
+            return true;
+        }
+    }
+
     public function getAllMedia()
     {
         return $this->mediaModel->getAllMedia();
