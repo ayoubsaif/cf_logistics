@@ -40,9 +40,9 @@ class OrderModel
 
         $statement = $this->conn->query($query);
         return array(
+            "currentPage"=>$page,
+            "totalPages"=>ceil($this->getTotal($storeId, $status) / $limit),
             "items"=>$statement->fetchAll(PDO::FETCH_ASSOC),
-            "total"=>$this->getTotal($storeId, $status),
-            "limit"=>$limit,
         );
     }
 
