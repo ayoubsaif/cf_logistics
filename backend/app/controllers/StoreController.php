@@ -9,7 +9,7 @@ class StoreController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin');
+            $allowed = array('admin', 'client');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
@@ -35,7 +35,7 @@ class StoreController
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin');
+            $allowed = array('admin', 'client');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;
