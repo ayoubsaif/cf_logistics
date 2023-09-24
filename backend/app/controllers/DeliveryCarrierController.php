@@ -8,6 +8,15 @@ require_once 'app/modules/correos/models/CorreosModel.php';
 
 class DeliveryCarrierController
 {
+    private $deliveryCarrierModel;
+
+    public function __construct()
+    {
+        # Get Account ID from headers
+        $headers = apache_request_headers();
+        $accountId = $headers['AccountId'];
+        $this->deliveryCarrierModel = new DeliveryCarrierModel($accountId);
+    }
 
     function sendShipping()
     {
@@ -23,11 +32,41 @@ class DeliveryCarrierController
 
             $data = json_decode(file_get_contents("php://input"), true);
 
-            $deliveryCarrier = new DeliveryCarrierModel();
-            $deliveryCarrier->setOne($data['deliveryCarrierId']);
+            $this->deliveryCarrierModel->setOne($data['deliveryCarrierId']);
             $orderData = $data;
 
-            if ($deliveryCarrier->accountId['accountId'] != $accountId) {
+            $response = $this->deliveryCarrierModel->deliveryType->sendShipping($orderData);
+            if ($response) {
+                http_response_code(200);
+                echo json_encode($response);
+                return;
+            } else {
+                http_response_code(500);
+                echo json_encode(array("message" => "Transportista no encontrado o no disponible"));
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
+    }
+
+    function createShipping($order)
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'manager');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+            $headers = apache_request_headers();
+            $accountId = $headers['AccountId'];
+
+            $this->deliveryCarrierModel->setOne($UserPermmited['deliveryCarrierId']);
+            $orderData = $order;
+
+            if ($this->deliveryCarrierModel->accountId['accountId'] != $accountId) {
                 http_response_code(401);
                 echo json_encode(array(
                     "message" => "Cuenta no autorizada para este transportista",
@@ -35,7 +74,7 @@ class DeliveryCarrierController
                 ));
                 return;
             }
-            $deliveryCarrierResponse = $deliveryCarrier->deliveryType->sendShipping($orderData);
+            $deliveryCarrierResponse = $this->deliveryCarrierModel->deliveryType->sendShipping($orderData);
             if ($deliveryCarrierResponse) {
                 http_response_code(200);
                 echo json_encode($deliveryCarrierResponse);
@@ -43,6 +82,33 @@ class DeliveryCarrierController
             } else {
                 http_response_code(500);
                 echo json_encode(array("message" => "Transportista no encontrado o no disponible"));
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
+    }
+
+    function getMany()
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'manager');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+
+            $deliveryCarriers = $this->deliveryCarrierModel->getMany();
+
+            if ($deliveryCarriers) {
+                http_response_code(200);
+                echo json_encode($deliveryCarriers);
+                return;
+            } else {
+                http_response_code(200);
+                echo json_encode(array("items" => []));
                 return;
             }
         } catch (Exception $e) {
