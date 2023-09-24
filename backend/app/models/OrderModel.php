@@ -28,11 +28,14 @@ class OrderModel
         $this->conn = Connection::connectDB($accountId);
     }
 
-    public function getMany($storeId, $status, $page = 1, $limit = 20)
+    public function getMany($storeId, $status, $filter = '', $page = 1, $limit = 20)
     {
         $where = "WHERE storeId = {$storeId}";
         if (!empty($status)) {
             $where .= " AND orderStatus = '{$status}'";
+        }
+        if (!empty($filter)) {
+            $where .= " AND (orderNumber LIKE '%{$filter}%' OR customerName LIKE '%{$filter}%')";
         }
 
         $offset = ($page - 1) * $limit;
@@ -41,7 +44,7 @@ class OrderModel
         $statement = $this->conn->query($query);
         return array(
             "currentPage"=>$page,
-            "totalPages"=>ceil($this->getTotal($storeId, $status) / $limit),
+            "totalPages"=>ceil($this->getTotal($where) / $limit),
             "items"=>$statement->fetchAll(PDO::FETCH_ASSOC),
         );
     }
@@ -60,16 +63,17 @@ class OrderModel
         return $statement->rowCount();
     }
 
-    private function getTotal($storeId, $status)
+    private function getTotal($where)
     {
-        $where = "WHERE storeId = {$storeId}";
-        if (!empty($status)) {
-            $where .= " AND orderStatus = '{$status}'";
-        }
-
         $query = "SELECT COUNT(*) as total FROM orders {$where}";
         $statement = $this->conn->query($query);
         return $statement->fetch(PDO::FETCH_ASSOC)['total'];
     }
 
+    public function confirmOrder($orderId)
+    {
+        $query = "UPDATE orders SET orderStatus = 'confirmed' WHERE id = {$orderId}";
+        $statement = $this->conn->query($query);
+        return $statement->rowCount();
+    }
 }

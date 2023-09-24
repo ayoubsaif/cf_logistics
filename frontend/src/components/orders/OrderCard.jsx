@@ -12,7 +12,8 @@ import {
   TagLabel,
   Icon,
   useBreakpointValue,
-  Tooltip
+  Tooltip,
+  Highlight
 } from "@chakra-ui/react";
 import { format, parseISO, formatDistanceToNow } from "date-fns";
 import esLocale from "date-fns/locale/es";
@@ -35,8 +36,7 @@ const PrintPDFButton = dynamic(() => import('@/components/button/printPDFButton'
 import NextLink from 'next/link';
 import { motion } from "framer-motion";
 
-const OrderCard = React.forwardRef((props, ref) => {
-  const { order } = props;
+const OrderCard = React.forwardRef(({ order, filter }, ref) => {
   const {
     orderNumber,
     clientName,
@@ -91,7 +91,7 @@ const OrderCard = React.forwardRef((props, ref) => {
     setIsCopied(true);
     setTimeout(() => {
       setIsCopied(false);
-    }, 1500); // Reset copied status after 1.5 seconds
+    }, 2000); // Reset copied status after 1.5 seconds
   };
 
   const container = {
@@ -137,15 +137,18 @@ const OrderCard = React.forwardRef((props, ref) => {
                 }
                 <Box>
                   <Box as="span" mr={1}>{useBreakpointValue({ md: 'Pedido', base: '#' })}</Box>
-                  <Tooltip hasArrow label='Copiar' borderRadius="md">
-                    <Box as="span"
-                      onClick={copyToClipboard}
+                  <Tooltip hasArrow closeOnClick={false}
+                    label={isCopied ? '✓ Copiado' : 'Copiar'}
+                    borderRadius="md"
+                    bg={isCopied ? 'bg.success' : null}>
+                    <Text onClick={copyToClipboard} fontSize="sm" fontWeight="bold" color="brand" display="inline-block" mr={1}
                       _hover={{ cursor: "pointer" }}
-                      transition="all .1s ease-in"
-                      color={isCopied ? "green.400" : "brand"}
-                    >
-                      {isCopied ? 'Copiado' : orderNumber}
-                    </Box>
+                      transition="all .1s ease-in">
+                      <Highlight as="span" query={filter} styles={{ px: 1, bg: 'yellow.200', bgOpacity: '0.2' }}
+                        color={isCopied ? "green.400" : "brand"}>
+                        {orderNumber}
+                      </Highlight>
+                    </Text>
                   </Tooltip>
                 </Box>
               </Flex>
@@ -173,7 +176,13 @@ const OrderCard = React.forwardRef((props, ref) => {
             flexDirection={{ base: "column", md: "row" }}
           >
             <Box color="fg.emphasized">
-              <Text fontSize='sm'>{customerName}</Text>
+              <Highlight
+                query={filter}
+                styles={{ px: 0.5, bg: 'yellow.200', bgOpacity: '0.2' }}
+                fontSize="xs"
+              >
+                {customerName}
+              </Highlight>
               <Text fontSize='xs'>{state} {postalCode}</Text>
             </Box>
             {orderStatus == ORDER_STATUS.open ? (

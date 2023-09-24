@@ -3,7 +3,7 @@ import { SimpleGrid, HStack, Spinner, Text, Flex, Heading, Divider } from "@chak
 import OrdersList from "@/components/orders/OrdersList";
 import EmptyIlustration from "@/components/ilustrations/empty";
 
-const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders }) => {
+const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders, filter }) => {
   const lastOrderRef = useRef(null);
 
   useEffect(() => {
@@ -35,12 +35,20 @@ const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders }) =
 
   return (
     <SimpleGrid columns={1} gap={2} alignContent="center">
-      {data?.pages && data?.pages?.length > 0 ? (
+      {data?.pages && data?.pages[0]?.data?.items &&
         <>
           {data.pages.map((page, pageIndex) => (
-            <OrdersList key={pageIndex} orders={page.data.items} isLoading={isLoading} hasMore={hasNextPage} />
+            page.data.items.length > 0 ? (
+              <OrdersList key={pageIndex} orders={page.data.items} isLoading={isLoading} hasMore={hasNextPage} filter={filter} />
+            ) : (
+              <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
+                <EmptyIlustration height={280} />
+                <Heading variant="md" textAlign="center">
+                  No se han encontrado pedidos
+                </Heading>
+              </Flex>
+            )
           ))}
-
           {hasNextPage && (
             <HStack spacing={4} py={4} m="0 auto" ref={lastOrderRef}>
               <Spinner speed="0.65s" color="brand.500" />
@@ -48,14 +56,7 @@ const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders }) =
             </HStack>
           )}
         </>
-      ) : (
-        <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
-          <EmptyIlustration height={280} />
-          <Heading variant="md" textAlign="center">
-            No se han encontrado pedidos
-          </Heading>
-        </Flex>
-      )}
+      }
     </SimpleGrid>
   );
 };
