@@ -20,7 +20,8 @@ import {
   Heading,
   ButtonGroup,
   Button,
-  Spacer
+  Spacer,
+  VStack
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 
@@ -28,7 +29,8 @@ import {
   RiStoreLine as StoreIcon,
   RiMailLine as ContactIcon,
   RiSunLine as SunIcon,
-  RiMoonLine as MoonIcon
+  RiMoonLine as MoonIcon,
+  RiTruckLine as TruckIcon
 } from "react-icons/ri";
 
 import { useColorMode } from "@chakra-ui/color-mode";
@@ -67,7 +69,7 @@ const Stores = (props) => {
 
 const MenuItemButton = ({ children, icon, ...props }) => {
   return (
-    <Button p={4} pl={6} {...props}>
+    <Button p={4} pl={6} display='flex' justifyContent='flex-start' {...props} >
       {icon && <Icon as={...icon} mr={2} boxSize={5} />}
       {children}
     </Button>
@@ -99,7 +101,15 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
               </Box>
             }
             <Divider />
-            <Box>
+            <VStack align='strech' gap='0'>
+              <MenuItemButton
+                as={NextLink}
+                href="/carriers"
+                icon={TruckIcon}
+                variant="ghost"
+                w='full'
+              >Transportistas</MenuItemButton>
+              <Divider /> 
               <Flex>
                 <MenuItemButton
                   as={NextLink}
@@ -116,7 +126,7 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
               <Text fontSize='xs' p="1" color="gray.300" textAlign="center">
                 © {new Date().getFullYear()} {siteConfig?.title}
               </Text>
-            </Box>
+            </VStack>
           </Flex>
         </DrawerBody>
       </DrawerContent>
