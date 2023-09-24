@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         }
 
         // Extract parameters from the URL
-        const { storeId, page } = req.query;
+        const { storeId, page, filter } = req.query;
 
         // Construct the backend API URL with or without the 'page' query parameter
         let backendApiUrl = `http://localhost:80/api/orders/${storeId}`;
@@ -18,6 +18,9 @@ export default async function handler(req, res) {
         // If 'page' parameter is provided, include it in the URL
         if (page) {
             backendApiUrl += `?page=${page}`;
+        }
+        if (filter) {
+            backendApiUrl += `&filter=${filter}`;
         }
 
         // Your logic to make the request to the backend API
