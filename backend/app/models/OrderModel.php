@@ -70,10 +70,34 @@ class OrderModel
         return $statement->fetch(PDO::FETCH_ASSOC)['total'];
     }
 
-    public function confirmOrder($orderId)
+    public function confirmOrder($orderId, $shipment)
     {
-        $query = "UPDATE orders SET orderStatus = 'confirmed' WHERE id = {$orderId}";
-        $statement = $this->conn->query($query);
+        // Update state to done, and add shipment number, and base64 label into shippmentLabel
+        
         return $statement->rowCount();
+    }
+
+    public function setOne($OrderId)
+    {
+        $query = "SELECT * FROM orders WHERE id = {$OrderId}";
+        $statement = $this->conn->query($query);
+        $order = $statement->fetch(PDO::FETCH_ASSOC);
+
+        $this->id = $order['id'];
+        $this->orderNumber = $order['orderNumber'];
+        $this->orderDate = $order['orderDate'];
+        $this->orderStatus = $order['orderStatus'];
+        $this->customerName = $order['customerName'];
+        $this->companyName = $order['companyName'];
+        $this->vat = $order['vat'];
+        $this->street = $order['street'];
+        $this->streetComplement = $order['streetComplement'];
+        $this->postalCode = $order['postalCode'];
+        $this->city = $order['city'];
+        $this->state = $order['state'];
+        $this->country = $order['country'];
+        $this->contactPhone = $order['contactPhone'];
+        $this->contactMobile = $order['contactMobile'];
+        $this->contactEmail = $order['contactEmail'];
     }
 }

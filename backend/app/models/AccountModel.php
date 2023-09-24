@@ -14,6 +14,7 @@ class AccountModel
     public $companyName;
     public $companyLegalName;
     public $companyVat;
+    public $defaultCarrierId;
 
     public function __construct()
     {

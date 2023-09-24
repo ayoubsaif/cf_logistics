@@ -60,6 +60,36 @@ class DeliveryCarrierController
             if (!$UserPermmited) {
                 return;
             }
+
+            $this->deliveryCarrierModel->setOne($UserPermmited['deliveryCarrierId']);
+            $orderData = $order;
+
+            $deliveryCarrierResponse = $this->deliveryCarrierModel->deliveryType->sendShipping($orderData);
+            if ($deliveryCarrierResponse) {
+                http_response_code(200);
+                echo json_encode($deliveryCarrierResponse);
+                return;
+            } else {
+                http_response_code(500);
+                echo json_encode(array("message" => "Transportista no encontrado o no disponible"));
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
+    }
+
+
+    function createOrderShipping($order)
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'manager');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
             $headers = apache_request_headers();
             $accountId = $headers['AccountId'];
 
@@ -76,9 +106,7 @@ class DeliveryCarrierController
             }
             $deliveryCarrierResponse = $this->deliveryCarrierModel->deliveryType->sendShipping($orderData);
             if ($deliveryCarrierResponse) {
-                http_response_code(200);
-                echo json_encode($deliveryCarrierResponse);
-                return;
+                return $deliveryCarrierResponse;
             } else {
                 http_response_code(500);
                 echo json_encode(array("message" => "Transportista no encontrado o no disponible"));

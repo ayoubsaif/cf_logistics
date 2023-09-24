@@ -52,7 +52,7 @@ class OrderController
         }
     }
 
-    function confirmOrder()
+    function confirmOrder($OrderId)
     {
         try {
             $PermissionMiddleware = new PermissionMiddleware();
@@ -61,11 +61,51 @@ class OrderController
             if (!$UserPermmited) {
                 return;
             }
-    
-            $data = json_decode(file_get_contents("php://input"));
-            $orderId = $data->orderId;
-            $this->orderModel->confirmOrder($orderId);
-            $this->getSuccessResponse();
+
+            // Get Order
+            $order = $this->orderModel->setOne($OrderId);
+            // Create Shipping
+            $shipping = $this->createShipping($order);
+
+            $orderConfirm = $this->orderModel->confirmOrder($order['id'], $shipping);
+
+            if ($orderConfirm) {
+                http_response_code(200);
+                echo json_encode(array("message" => "Pedido confirmado"));
+                return;
+            } else {
+                http_response_code(400);
+                echo json_encode(array("message" => "No se pudo confirmar la orden"));
+                return;
+            }
+
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
+    }
+
+    function createShipping($order)
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'client');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+
+            $DeliveryCarrier = new DeliveryCarrierController();
+            $shipping = $DeliveryCarrier->createOrderShipping($order);
+
+            if ($shipping) {
+                return $shipping;
+            } else {
+                http_response_code(400);
+                echo json_encode(array("message" => "No se pudo crear el envio"));
+                return;
+            }
+
         } catch (Exception $e) {
             http_response_code(401);
             echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));

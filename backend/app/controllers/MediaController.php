@@ -37,7 +37,7 @@ class MediaController
                 // Save the file details in the database
                 $this->mediaModel->uploadMedia($uniqueFileName, $destination, $fileExtension);
 
-                return 'File uploaded successfully!';
+                return 'El archivo ha subido correctamente!';
             } else {
                 return 'Invalid file type or size exceeds the limit.';
             }

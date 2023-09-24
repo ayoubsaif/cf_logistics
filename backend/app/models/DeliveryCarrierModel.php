@@ -49,7 +49,6 @@ class DeliveryCarrierModel
         $this->id = $deliveryCarrier['id'];
         $this->name = $deliveryCarrier['name'];
         $this->status = $deliveryCarrier['status'];
-        $this->accountId = (new AccountModel())->getAccountById($deliveryCarrier['accountId']);
         $this->enviroment = $deliveryCarrier['enviroment'];
         $this->deliveryType = $this->getCarrierModel($deliveryCarrier['deliveryType'], $this->id);
         $this->default = $deliveryCarrier['default'];
