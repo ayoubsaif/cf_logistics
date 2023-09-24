@@ -10,17 +10,24 @@ export default async function handler(req, res) {
         }
 
         // Extract parameters from the URL
-        const { storeId, page, filter } = req.query;
+        const { storeId, status, page, filter } = req.query;
 
         // Construct the backend API URL with or without the 'page' query parameter
         let backendApiUrl = `http://localhost:80/api/orders/${storeId}`;
 
-        // If 'page' parameter is provided, include it in the URL
+        // build query params status, page and filter if they exist
+        let queryParams = [];
+        if (status) {
+            queryParams.push(`status=${status}`);
+        }
         if (page) {
-            backendApiUrl += `?page=${page}`;
+            queryParams.push(`page=${page}`);
         }
         if (filter) {
-            backendApiUrl += `&filter=${filter}`;
+            queryParams.push(`filter=${filter}`);
+        }
+        if (queryParams.length > 0) {
+            backendApiUrl += `?${queryParams.join('&')}`;
         }
 
         // Your logic to make the request to the backend API
@@ -31,7 +38,7 @@ export default async function handler(req, res) {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${session?.user?.accessToken}`,
-                'AccountId': '64b267fcd4f08'
+                'AccountId': req.headers.accountid
                 // Forward other headers if needed
             },
             body: req.method === 'POST' ? JSON.stringify(req.body) : undefined, // Forward request body for POST requests

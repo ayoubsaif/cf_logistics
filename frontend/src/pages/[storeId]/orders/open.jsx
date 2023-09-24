@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useInfiniteQuery } from 'react-query'; // Import React Query
+import React, { useState, useEffect } from "react";
 import {
-  Text, Icon, Flex, InputGroup, InputLeftElement, Input, Spacer, Box, Heading
+  Text, Icon, Flex, InputGroup, InputLeftElement, InputRightElement, Input, Spacer, Box, Button, filter
 } from "@chakra-ui/react";
 import Layout from "@/layout/Layout";
 
@@ -14,119 +13,63 @@ import { NextSeo } from "next-seo";
 import {
   RiStoreLine as StoreIcon,
 } from "react-icons/ri";
-import { SearchIcon } from "@chakra-ui/icons";
+import { SearchIcon, CloseIcon } from "@chakra-ui/icons";
 import { getStores, getStore } from "@/services/stores";
-import { getAllOrders } from "@/services/orders";
-import OrdersList from "@/components/orders/OrdersList";
-import TasksCompleteIlustration from "@/components/ilustrations/tasksComplete";
-import { set } from "date-fns";
+import { getOpenOrders } from "@/services/orders";
+import { useInfiniteQuery } from 'react-query';
+import OrdersListContainer from "@/components/orders/OrdersListContainer";
 
-const OrdersPage = ({ siteConfig, store, stores, token }) => {
+const OrdersPage = ({ siteConfig, orders, store, stores, token }) => {
   siteConfig = {
     ...siteConfig,
     store,
     stores
   }
-  const [orders, setOrders] = useState(false);
+  // Step 1: Add a state variable to store the filter text
+  const [filterText, setFilterText] = useState('');
+  const [filterIsLoading, setFilterIsLoading] = useState(false);
+  const filterInput = React.useRef(null);
   const router = useRouter();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasNextPage, setHasMore] = useState(true);
-  const lastOrderRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
+    queryKey: ['OpenOrders', filterText],
+    queryFn: ({ pageParam = 1 }) => getOpenOrders('64b267fcd4f08', store?.storeId, token, pageParam, filterText),
+    initialData: orders,
+    getNextPageParam: (lastPage) => {
+      const nextPage = lastPage?.data?.currentPage + 1;
+      return nextPage <= lastPage?.data?.totalPages ? nextPage : undefined;
+    },
+  });
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        console.log('router.query.storeId:');
-        setIsLoading(true);
-        setOrders(false);
-        setTimeout(async () => {
-          const orders = await getAllOrders(
-            '64b267fcd4f08',
-            store?.storeId, // Use the updated storeId from the route
-            token,
-            currentPage
-          );
-          console.log('orders:', orders);
-          const items = orders?.data?.items;
-          if (items && items.length > 0) {
-            setOrders(items);
-          } else {
-            setHasMore(false);
-          }
-          setIsLoading(false);
-        }, 1500);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      }
-    };
-    // Listen for changes in the "query" object, which includes "storeId"
-    router.events.on("routeChangeComplete", fetchOrders);
+  const loadMoreOrders = () => {
+    fetchNextPage();
+  };
 
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      router.events.off("routeChangeComplete", fetchOrders);
-    };
-  }, []); // Add "router.query.storeId" to the dependency array
+  const handleFilter = (event) => {
+    setTimeout(() => {
+      setFilterIsLoading(true);
+      setFilterText(event.target.value);
+      setFilterIsLoading(false);
+    }, 2000);
+  };
 
-  const loadMoreOrders = async () => {
-    try {
-      const newOrders = await getAllOrders(
-        '64b267fcd4f08',
-        store?.id,
-        token,
-        currentPage + 1 // Request the next page of orders
-      );
-      const newItems = newOrders?.data?.items;
-
-      if (newItems && newItems.length > 0) {
-        // Append the new orders to the existing list
-        setOrders((prevOrders) => [...prevOrders, ...newItems]);
-        setCurrentPage((prevPage) => prevPage + 1);
-      } else {
-        // No more items to load
-        setHasMore(false);
-      }
-    } catch (error) {
-      console.error('Error fetching more orders:', error);
-    }
+  const clearFilterText = () => {
+    setFilterText('');
+    filterInput.current.value = '';
+    filterInput.current.focus();
   };
 
   useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.1, // Trigger when 10% of the last order card is visible
-    };
-
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && hasNextPage) {
-        // add sleep time 3 seconds to simulate the loading
-        setTimeout(() => {
-          loadMoreOrders();
-        }, 1500);
-      }
-    }, options);
-
-    if (lastOrderRef.current) {
-      observer.observe(lastOrderRef.current);
-    }
-
-    return () => {
-      if (lastOrderRef.current && !isLoading) {
-        observer.unobserve(lastOrderRef.current);
-      }
-    };
-  }, [hasNextPage, loadMoreOrders]);
+    refetch();
+  }, [filterText, router.query]);
 
   return (
     <>
       <NextSeo
         title={`Pedidos abiertos - ${store?.name}`}
-        description={`Pedidos abiertos - ${process.env.NEXT_PUBLIC_SITE_NAME}`}
+        description="Pedidos abiertos"
         canonical={process.env.NEXT_PUBLIC_SITE_URL + router.pathname}
       />
-      <Layout title="Orders" siteConfig={siteConfig} page={0}>
+      <Layout title="Pedidos abiertos" siteConfig={siteConfig} page={0}>
         <Flex gap={2} alignItems="center" mb={5} flexDirection={['column', 'row']}>
           <Flex gap={2} alignContent="center" alignItems="center">
             <Icon as={StoreIcon} boxSize={8} />
@@ -135,32 +78,38 @@ const OrdersPage = ({ siteConfig, store, stores, token }) => {
             </Text>
           </Flex>
           <Spacer />
-          {orders &&
-            <Box>
-              <InputGroup colorScheme="brand">
-                <InputLeftElement pointerEvents='none'>
-                  <SearchIcon color='gray.300' />
-                </InputLeftElement>
-                <Input type='text' placeholder='Buscar pedido' focusBorderColor='brand.400' />
-              </InputGroup>
-            </Box>
-          }
+          <Box>
+            <InputGroup colorScheme="brand">
+              <InputLeftElement pointerEvents='none'>
+                <SearchIcon color='gray.300' />
+              </InputLeftElement>
+              <Input type='text'
+                placeholder='Buscar pedido'
+                focusBorderColor='brand.400'
+                onChange={handleFilter}
+                ref={filterInput}
+              />
+              {filterText && (
+                <InputRightElement
+                  as={Button}
+                  size='sm'
+                  variant="ghost"
+                  borderRadius="full"
+                  onClick={clearFilterText}
+                >
+                  <CloseIcon />
+                </InputRightElement>
+              )}
+            </InputGroup>
+          </Box>
         </Flex>
-        {orders || isLoading ?
-          <OrdersList orders={orders} isLoading={isLoading} hasMore={hasNextPage} ref={lastOrderRef} />
-          :
-          <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
-            <TasksCompleteIlustration height={280} />
-            <Box>
-              <Heading variant="md" textAlign="center">
-                ¡Todo listo!
-              </Heading>
-              <Text variant="md" textAlign="center">
-                No hay pedidos abiertos ahora mismo
-              </Text>
-            </Box>
-          </Flex>
-        }
+        <OrdersListContainer
+          data={data}
+          isLoading={isLoading}
+          hasNextPage={hasNextPage}
+          loadMoreOrders={loadMoreOrders}
+          filter={filterText}
+        />
       </Layout>
     </>
   );
@@ -173,9 +122,12 @@ export async function getServerSideProps(context) {
   const { storeId } = context.params;
   const store = await getStore(session?.user?.accessToken, storeId);
   const stores = await getStores(session?.user?.accessToken);
+
+  const orders = await getOpenOrders('64b267fcd4f08', storeId, session?.user?.accessToken);
   if (session) {
     return {
       props: {
+        orders: orders?.data,
         store: store?.data,
         stores: stores?.data,
         token: session?.user?.accessToken,
