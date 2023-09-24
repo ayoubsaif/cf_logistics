@@ -58,6 +58,8 @@ $router->delete('/api/store/:id', 'StoreController@deleteOne');
 # Delivery > Create Shipping
 $router->options('/api/delivery', 'DeliveryCarrierController@getSuccessResponse');
 $router->post('/api/delivery', 'DeliveryCarrierController@sendShipping');
+$router->options('/api/delivery', 'DeliveryCarrierController@getSuccessResponse');
+$router->get('/api/delivery', 'DeliveryCarrierController@getMany');
 
 # Orders > Get Many
 $router->options('/api/orders', 'OrderController@getSuccessResponse');
