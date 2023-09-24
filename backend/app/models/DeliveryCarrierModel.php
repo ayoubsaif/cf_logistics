@@ -6,7 +6,6 @@ require_once 'app/models/AccountModel.php';
 
 class DeliveryCarrierModel
 {
-
     protected $conn;
     private $accountConn;
 
@@ -16,14 +15,15 @@ class DeliveryCarrierModel
     public $accountId;
     public $enviroment;
     public $deliveryType;
+    public $default;
 
-    public function __construct()
+    public function __construct($accountId)
     {
-        $this->conn = Connection::connectDB();
+        $this->conn = Connection::connectDB($accountId);
     }
     
     private static $carrierModels = array(
-        'correos' => CorreosModel::class,
+        'CORREOS_ES' => CorreosModel::class,
     );
 
     public static function getCarrierModel($carrier, $carrierId)
@@ -52,5 +52,14 @@ class DeliveryCarrierModel
         $this->accountId = (new AccountModel())->getAccountById($deliveryCarrier['accountId']);
         $this->enviroment = $deliveryCarrier['enviroment'];
         $this->deliveryType = $this->getCarrierModel($deliveryCarrier['deliveryType'], $this->id);
+        $this->default = $deliveryCarrier['default'];
+    }
+
+    public function getMany()
+    {
+        $query = "SELECT * FROM delivery_carriers";
+        $statement = $this->conn->prepare($query);
+        $statement->execute();
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 }
