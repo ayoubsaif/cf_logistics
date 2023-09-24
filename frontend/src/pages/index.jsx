@@ -20,12 +20,10 @@ import Layout from "@/layout/Layout";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
-
 import { getStores } from "@/services/stores";
 import { useSession } from "next-auth/react";
 
 export default function Home({ siteConfig, stores, user }) {
-  const { data: session } = useSession();
   siteConfig = {
     ...siteConfig,
     stores,
