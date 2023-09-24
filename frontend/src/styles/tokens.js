@@ -22,6 +22,10 @@ export default {
           subtle: 'brand.500',
           muted: 'brand.400',
         },
+        success: {
+          default: 'green.500',
+          _dark: 'green.300',
+        },
       },
       fg: {
         default: {
