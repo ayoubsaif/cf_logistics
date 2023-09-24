@@ -42,7 +42,7 @@ const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders }) =
           ))}
 
           {hasNextPage && (
-            <HStack spacing={4} py={4} m="0 auto">
+            <HStack spacing={4} py={4} m="0 auto" ref={lastOrderRef}>
               <Spinner speed="0.65s" color="brand.500" />
               <Text>Cargando más pedidos...</Text>
             </HStack>
