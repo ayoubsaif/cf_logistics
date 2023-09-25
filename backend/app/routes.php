@@ -60,6 +60,10 @@ $router->options('/api/delivery', 'DeliveryCarrierController@getSuccessResponse'
 $router->post('/api/delivery', 'DeliveryCarrierController@sendShipping');
 $router->get('/api/delivery', 'DeliveryCarrierController@getMany');
 
+# Delivery > Active Delivery Carrier
+$router->options('/api/delivery/:CarrierId/active', 'DeliveryCarrierController@getSuccessResponse');
+$router->put('/api/delivery/:CarrierId/active', 'DeliveryCarrierController@activeCarrier');
+
 # Orders > Get Many
 $router->options('/api/orders', 'OrderController@getSuccessResponse');
 $router->options('/api/orders/:storeId', 'OrderController@getSuccessResponse');

@@ -144,4 +144,49 @@ class DeliveryCarrierController
             echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
         }
     }
+
+    // Active Carrier and desable the latest active Carrier"""
+    function activeCarrier($carrierId)
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'manager', 'client');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+
+            $CarrierExists = $this->deliveryCarrierModel->getOne($carrierId);
+
+            if (!$CarrierExists) {
+                http_response_code(400);
+                echo json_encode(array(
+                    "message" => "Transportista inexistente",
+                    "deliveryCarrierId" => $carrierId
+                ));
+                return;
+            }
+
+            $deliveryCarrier = $this->deliveryCarrierModel->activeOne($carrierId);
+
+            if ($deliveryCarrier) {
+                http_response_code(200);
+                echo json_encode(array("message" => "Transportista Activado correctamente"));
+                return;
+            } else {
+                http_response_code(200);
+                echo json_encode(array("items" => []));
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
+    }
+
+    function getSuccessResponse()
+    {
+        http_response_code(200);
+        echo json_encode(array("message" => "Success"));
+    }
 }
