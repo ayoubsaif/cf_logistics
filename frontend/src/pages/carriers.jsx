@@ -15,13 +15,13 @@ import { getCarriers } from "@/services/carriers";
 import { getStores } from "@/services/stores";
 import CarriersListContainer from "@/components/carriers/CarriersListContainer";
 
-const CarriersPage = ({ siteConfig, stores, carriers }) => {
+const CarriersPage = ({ siteConfig, stores, carriers, token }) => {
   siteConfig = {
     ...siteConfig,
     stores,
   }
   const router = useRouter();
-  
+
   return (
     <>
       <NextSeo
@@ -42,6 +42,7 @@ const CarriersPage = ({ siteConfig, stores, carriers }) => {
         </Flex>
         <CarriersListContainer
           data={carriers}
+          token={token}
         />
       </Layout>
     </>
@@ -59,6 +60,7 @@ export async function getServerSideProps(context) {
       props: {
         stores: stores?.data,
         carriers: carriers?.data,
+        token: session?.user?.accessToken,
       },
     };
   } else {

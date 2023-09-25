@@ -3,12 +3,12 @@ import { SimpleGrid, Flex, Heading } from "@chakra-ui/react";
 import CarriersList from "@/components/carriers/CarriersList";
 import EmptyIlustration from "@/components/ilustrations/empty";
 
-const CarriersListContainer = ({data}) => {
+const CarriersListContainer = ({data, token}) => {
 
   return (
     <SimpleGrid columns={1} gap={2} alignContent="center">
       {data && data?.length > 0 ? (
-       <CarriersList carriers={data} />
+       <CarriersList carriers={data} token={token}/>
       ) : (
         <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
           <EmptyIlustration height={280} />
