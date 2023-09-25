@@ -184,6 +184,36 @@ class DeliveryCarrierController
         }
     }
 
+    function getOne($id)
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'manager', 'client');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+
+            $deliveryCarrier = $this->deliveryCarrierModel->getOne($id);
+
+            if ($deliveryCarrier) {
+                http_response_code(200);
+                echo json_encode($deliveryCarrier);
+                return;
+            } else {
+                http_response_code(400);
+                echo json_encode(array(
+                    "message" => "Transportista inexistente",
+                    "deliveryCarrierId" => $id
+                ));
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
+    }
+
     function getSuccessResponse()
     {
         http_response_code(200);

@@ -62,7 +62,7 @@ class DeliveryCarrierModel
 
     public function getOne($id)
     {
-        $query = "SELECT id, name, enviroment, deliveryType, isActive FROM delivery_carriers WHERE id = :id";
+        $query = "SELECT id, name, enviroment, deliveryType, isActive, username, password, labellerCode FROM delivery_carriers WHERE id = :id";
         $statement = $this->conn->prepare($query);
         $statement->bindParam(':id', $id);
         $statement->execute();
