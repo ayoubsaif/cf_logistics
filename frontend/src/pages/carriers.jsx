@@ -13,7 +13,7 @@ import { NextSeo } from "next-seo";
 import { SearchIcon } from "@chakra-ui/icons";
 import { getCarriers } from "@/services/carriers";
 import { getStores } from "@/services/stores";
-import CarriersListContainer from "@/components/carriers/CarriersListContainer";
+import CarriersList from "@/components/carriers/CarriersList";
 
 const CarriersPage = ({ siteConfig, stores, carriers, token }) => {
   siteConfig = {
@@ -40,7 +40,7 @@ const CarriersPage = ({ siteConfig, stores, carriers, token }) => {
             </InputGroup>
           </Box>
         </Flex>
-        <CarriersListContainer
+        <CarriersList
           data={carriers}
           token={token}
         />

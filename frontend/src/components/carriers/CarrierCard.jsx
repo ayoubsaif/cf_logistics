@@ -20,6 +20,7 @@ const CarrierCard = React.forwardRef((props, ref) => {
     deliveryType,
     username,
     password,
+    isActive
   } = carrier;
 
   const carrierInfo = getCarrierLogo(deliveryType);
@@ -35,14 +36,14 @@ const CarrierCard = React.forwardRef((props, ref) => {
     }
   }
 
-  function MaskPassword({ password }) {
+  const MaskPassword = ({ password }) => {
     if (password.length >= 4) {
       const firstTwo = password.slice(0, 2);
       const lastTwo = password.slice(-2);
       const maskedCharacters = '*'.repeat(password.length - 4);
-  
+
       const maskedPassword = `${firstTwo}${maskedCharacters}${lastTwo}`;
-  
+
       return (
         <Tooltip label="Contraseña" borderRadius="md">
           <Text fontSize="xs" cursor='default'>{maskedPassword}</Text>
@@ -81,12 +82,12 @@ const CarrierCard = React.forwardRef((props, ref) => {
               <Tooltip label="Usuario" borderRadius="md">
                 <Text fontSize="xs" cursor='default'>{username}</Text>
               </Tooltip>
-              <MaskPassword password={password}/>
+              <MaskPassword password={password} />
             </VStack>
           </Flex>
-          <Switch 
+          <Switch
             colorScheme="brand"
-            isChecked={carrier.isActive}
+            isChecked={isActive} isReadOnly={isActive}
             onChange={() => toggleActive(carrier.id)}
           />
         </Flex>

@@ -18,7 +18,7 @@ export function getCarriers(accountId, accessToken) {
 
 export function activeCarrier(accountId, accessToken, carrierId) {
     try {
-        return axios.put(`${API_URL}/api/delivery/${carrierId}/active`, {}, {
+        return axios.put(`/api/delivery/${carrierId}/active`, {}, {
             headers: {
                 AccountId: accountId,
                 Authorization: `Bearer ${accessToken}`,
