@@ -3,14 +3,27 @@ import {
   Box,
   Flex,
   Text,
-  Stack,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
   Icon,
   Tooltip,
   VStack,
-  Switch
+  Switch,
+  Link
 } from "@chakra-ui/react";
 import { getCarrierLogo } from "@/components/carriers/carriersData";
 import { motion } from "framer-motion";
+import NextLink from "next/link";
+
+import {
+  RiEditBoxLine as EditIcon,
+  RiMore2Fill as MenuIcon,
+} from "react-icons/ri";
+
+
 
 const CarrierCard = React.forwardRef((props, ref) => {
   const { carrier, toggleActive } = props;
@@ -85,11 +98,29 @@ const CarrierCard = React.forwardRef((props, ref) => {
               <MaskPassword password={password} />
             </VStack>
           </Flex>
-          <Switch
-            colorScheme="brand"
-            isChecked={isActive} isReadOnly={isActive}
-            onChange={() => toggleActive(carrier.id)}
-          />
+          <Flex justifyContent='space-between' direction='column'>
+            <Switch
+              colorScheme="brand"
+              isChecked={isActive} isReadOnly={isActive}
+              onChange={() => toggleActive(carrier.id)}
+            />
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                aria-label='Options'
+                icon={<Icon as={MenuIcon} boxSize={5} />}
+              />
+              <MenuList>
+                <MenuItem 
+                  icon={<Icon as={EditIcon} boxSize={5} />} 
+                  as={NextLink}
+                  href={`/carriers/${carrier.id}/edit`}
+                >
+                  Editar
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
         </Flex>
       </Box>
     </motion.div>

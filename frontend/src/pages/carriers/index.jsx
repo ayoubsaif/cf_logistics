@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import {
   Flex, InputGroup, InputLeftElement, Input, Box
 } from "@chakra-ui/react";

@@ -29,3 +29,17 @@ export function activeCarrier(accountId, accessToken, carrierId) {
         console.log(error);
     }
 }
+
+export function getCarrierById(accountId, accessToken, carrierId) {
+    try {
+        return axios.get(`${API_URL}/api/delivery/${carrierId}`, {
+            headers: {
+                AccountId: accountId,
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
