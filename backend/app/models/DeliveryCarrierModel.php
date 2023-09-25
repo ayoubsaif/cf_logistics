@@ -54,7 +54,7 @@ class DeliveryCarrierModel
 
     public function getMany()
     {
-        $query = "SELECT id, name, enviroment, deliveryType, isActive FROM delivery_carriers";
+        $query = "SELECT id, name, enviroment, deliveryType, isActive, username, password FROM delivery_carriers";
         $statement = $this->conn->prepare($query);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
