@@ -98,16 +98,18 @@ const CarrierCard = React.forwardRef((props, ref) => {
               <MaskPassword password={password} />
             </VStack>
           </Flex>
-          <Flex justifyContent='space-between' direction='column'>
+          <Flex justifyContent='space-between' alignContent="center" h={20}>
             <Switch
+              p={2}
               colorScheme="brand"
               isChecked={isActive} isReadOnly={isActive}
               onChange={() => toggleActive(carrier.id)}
             />
-            <Menu>
+            <Menu >
               <MenuButton
                 as={IconButton}
                 aria-label='Options'
+                variant="transparent"
                 icon={<Icon as={MenuIcon} boxSize={5} />}
               />
               <MenuList>
