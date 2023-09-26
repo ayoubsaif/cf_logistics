@@ -15,7 +15,9 @@ import {
     Divider, 
     Icon, 
     Box,
-    useToast
+    useToast,
+    FormControl,
+    IconButton
 } from "@chakra-ui/react";
 
 import {
@@ -33,7 +35,6 @@ export default function CarrierEditForm({ data, token }) {
     const router = useRouter();
 
     const [show, setShow] = useState(false)
-    const handleClick = () => setShow(!show)
     
     const onSubmit = async (data) => {
         const update = await updateCarrier('64b267fcd4f08', token, data?.id, data);
@@ -73,16 +74,16 @@ export default function CarrierEditForm({ data, token }) {
             w='100%'
         >
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Flex gap={10}>
+                <Flex gap={10} flexDirection={["column","row"]} >
                     <Input type='hidden' defaultValue={data?.id} {...register('id')}/>
-                    <Stack>
-                        <Text fontSize='md'>Nombre del Transportista</Text>
+                    <FormControl>
+                        <Text fontSize='md'>Nombre</Text>
                         <InputGroup colorScheme="brand">
                             <Input type='text' placeholder='Nombre del Transportista' focusBorderColor='brand.400' defaultValue={data?.name} {...register('name')}/>
                         </InputGroup>
-                    </Stack>
-                    <Stack>
-                        <Text fontSize='md'>Tipo de Transportista</Text>
+                    </FormControl>
+                    <FormControl>
+                        <Text fontSize='md'>Tipo</Text>
                         <InputGroup colorScheme="brand">
                             <Select placeholder='Tipo de Transportista' focusBorderColor='brand.400' defaultValue={data?.deliveryType} {...register('deliveryType')}>
                                 {carrierOptions.map((carrier, index) => (
@@ -90,9 +91,9 @@ export default function CarrierEditForm({ data, token }) {
                                 ))}
                             </Select>
                         </InputGroup>
-                    </Stack>
-                    <Stack>
-                        <Text fontSize='md'>Activar/Desactivar Transportista</Text>
+                    </FormControl>
+                    <FormControl>
+                        <Text fontSize='md'>Activar/Desactivar</Text>
                         <Switch
                             mt={3}
                             colorScheme="brand"
@@ -100,18 +101,18 @@ export default function CarrierEditForm({ data, token }) {
                             isReadOnly={data?.isActive}
                             {...register('isActive')}
                         />
-                    </Stack>
+                    </FormControl>
                 </Flex>
                 <Divider my={8} />
                 <Flex w='100%' gap={10}>
-                    <Stack w='50%'>
-                        <Text fontSize='md'>Nombre de usuario</Text>
+                    <FormControl w='50%'>
+                        <Text fontSize='md'>Usuario</Text>
                         <InputGroup colorScheme="brand">
                             <Input type='text' placeholder='Nombre de usuario' focusBorderColor='brand.400' defaultValue={data?.username} {...register('username')}/>
                         </InputGroup>
-                    </Stack>
-                    <Stack w='50%'>
-                        <Text fontSize='md'>Contraseña de usuario</Text>
+                    </FormControl>
+                    <FormControl w='50%'>
+                        <Text fontSize='md'>Contraseña</Text>
                         <InputGroup colorScheme="brand">
                             <Input
                                 type={show ? 'text' : 'password'}
@@ -119,13 +120,11 @@ export default function CarrierEditForm({ data, token }) {
                                 focusBorderColor='brand.400' 
                                 defaultValue={data?.password} {...register('password')}
                             />
-                            <InputRightElement width='4.5rem'>
-                                <Button h='1.75rem' size='sm' onClick={handleClick} variant='ghost'>
-                                    {show ? <Icon as={EyeCrossedIcon} boxSize={5} /> : <Icon as={EyeIcon} boxSize={5} />}
-                                </Button>
+                            <InputRightElement>
+                                <IconButton size='sm' onClick={() => setShow(!show)} variant='ghost' icon={show ? <Icon as={EyeCrossedIcon} boxSize={5} /> : <Icon as={EyeIcon} boxSize={5} />} />
                             </InputRightElement>
                         </InputGroup>
-                    </Stack>
+                    </FormControl>
                 </Flex>
                 <Button mt={10} colorScheme='brand' type='submit' >
                     <Icon as={SaveIcon} boxSize={5} mr={3}/>
