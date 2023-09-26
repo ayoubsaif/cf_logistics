@@ -15,6 +15,16 @@ const variants = {
       color: "white",
     },
   }),
+  transparent: ({ colorMode }) => ({
+    color: "gray.400",
+    bg: "transparent",
+    _hover: {
+      color: "gray.600",
+    },
+    _active: {
+      color: "brand.300",
+    },
+  }),
 };
 
 export const buttonTheme = {
