@@ -12,7 +12,7 @@ export function getCarriers(accountId, accessToken) {
         });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 
@@ -26,7 +26,7 @@ export function activeCarrier(accountId, accessToken, carrierId) {
         });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 
@@ -40,7 +40,7 @@ export function getCarrierById(accountId, accessToken, carrierId) {
         });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 
@@ -54,6 +54,6 @@ export function updateCarrier(accountId, accessToken, carrierId, data) {
         });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }

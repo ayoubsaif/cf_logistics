@@ -11,7 +11,7 @@ export function getStores(accessToken) {
                 });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }
 
@@ -24,6 +24,6 @@ export function getStore(accessToken, storeId) {
                 });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
     }
 }

@@ -19,7 +19,7 @@ export const getAllOrders = (accountId, storeId, accessToken, page, filter) => {
         return axios.get(`/api/orders/${storeId}`, { headers, params });
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
     }
 };
 
@@ -36,6 +36,6 @@ export const getOpenOrders = (accountId, storeId, accessToken, page) => {
         return axios.get(`/api/orders/${storeId}`, { headers, params });
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
     }
 }

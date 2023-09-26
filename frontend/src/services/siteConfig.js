@@ -13,7 +13,6 @@ export async function getSiteConfig() {
 
 export async function updateSiteConfig(data, accessToken) {
   try {
-    console.log(data);
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",

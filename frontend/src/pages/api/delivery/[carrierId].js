@@ -18,8 +18,6 @@ export default async (req, res) => {
         body
     } = req;
 
-    console.log(req);
-
     switch (method) {
         case "PUT":
             try {

@@ -126,7 +126,6 @@ export default function Register(props) {
                   });
                   router.push("/auth/login");
                 } else {
-                  console.log(signInStatus)
                   toast({
                     title: "Error al crear la cuenta",
                     description: `Error: ${signInStatus?.message}. Vuelve a intentarlo más tarde. `,
