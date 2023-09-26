@@ -213,6 +213,40 @@ class DeliveryCarrierController
             echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
         }
     }
+    
+    function updateOne($id){
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'manager');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            $deliveryCarrier = $this->deliveryCarrierModel->updateOne($id, $data);
+
+            if ($deliveryCarrier) {
+                http_response_code(200);
+                echo json_encode(array(
+                    "message" => "Transportista actualizado correctamente",
+                    "deliveryCarrierId" => $id
+                ));
+                return;
+            } else {
+                http_response_code(400);
+                echo json_encode(array(
+                    "message" => "Transportista inexistente",
+                    "deliveryCarrierId" => $id
+                ));
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }        
+    }
 
     function getSuccessResponse()
     {

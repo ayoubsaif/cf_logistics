@@ -63,6 +63,7 @@ $router->get('/api/delivery', 'DeliveryCarrierController@getMany');
 # Delivery > Get One
 $router->options('/api/delivery/:id', 'DeliveryCarrierController@getSuccessResponse');
 $router->get('/api/delivery/:id', 'DeliveryCarrierController@getOne');
+$router->put('/api/delivery/:id', 'DeliveryCarrierController@updateOne');
 
 # Delivery > Active Delivery Carrier
 $router->options('/api/delivery/:CarrierId/active', 'DeliveryCarrierController@getSuccessResponse');
