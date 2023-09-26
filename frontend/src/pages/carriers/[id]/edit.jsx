@@ -1,8 +1,9 @@
 import React from "react";
 import {
-  Flex, InputGroup, InputLeftElement, Input, Box
+  Flex, Heading, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Icon, Button
 } from "@chakra-ui/react";
 import Layout from "@/layout/Layout";
+import CarrierEditForm from "@/components/carriers/CarrierEditForm";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -11,8 +12,11 @@ import { useRouter } from "next/router";
 import { NextSeo } from "next-seo";
 import { getCarrierById } from "@/services/carriers";
 import { getStores } from "@/services/stores";
+import NextLink from "next/link";
 
-export default function EditCarrier({ siteConfig, stores, carrier }) {
+import { ChevronRightIcon } from '@chakra-ui/icons'
+
+export default function EditCarrier({ siteConfig, stores, carrier, token }) {
 
     siteConfig = {
         ...siteConfig,
@@ -29,9 +33,24 @@ export default function EditCarrier({ siteConfig, stores, carrier }) {
                 canonical={process.env.NEXT_PUBLIC_SITE_URL + router.pathname}
             />
             <Layout title="Edit Carrier" siteConfig={siteConfig}>
-                <div>
-                    Edit {carrier?.name}
-                </div>
+                <Flex gap={5} alignItems="flex-start" direction='column'>
+                    <Heading fontSize='xl'>Editar Transportista - {carrier?.name}</Heading>
+                    <Breadcrumb separator={<ChevronRightIcon color='brand.300' fontSize='xl' mx='0'/>}>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href='/' as={NextLink} >Inicio</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href='/carriers' as={NextLink}>Transportistas</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbItem isCurrentPage>
+                            <BreadcrumbLink>{carrier?.name}</BreadcrumbLink>
+                        </BreadcrumbItem>
+                    </Breadcrumb>
+                    <CarrierEditForm
+                        data={carrier}
+                        token={token}
+                    />
+                </Flex>
             </Layout>
         </>
     );
@@ -55,6 +74,7 @@ export async function getServerSideProps(context) {
             props: {
                 stores: stores?.data,
                 carrier: carrier?.data,
+                token: session?.user?.accessToken,
             },
         };
     } else {

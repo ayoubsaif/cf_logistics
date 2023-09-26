@@ -43,3 +43,17 @@ export function getCarrierById(accountId, accessToken, carrierId) {
         console.log(error);
     }
 }
+
+export function updateCarrier(accountId, accessToken, carrierId, data) {
+    try {
+        return axios.put(`/api/delivery/${carrierId}`, data, {
+            headers: {
+                AccountId: accountId,
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+}

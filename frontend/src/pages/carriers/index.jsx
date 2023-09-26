@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Flex, InputGroup, InputLeftElement, Input, Box
+  Flex, InputGroup, InputLeftElement, Input, Box, Breadcrumb, Button, BreadcrumbItem, BreadcrumbLink
 } from "@chakra-ui/react";
 import Layout from "@/layout/Layout";
 
@@ -14,6 +14,9 @@ import { SearchIcon } from "@chakra-ui/icons";
 import { getCarriers } from "@/services/carriers";
 import { getStores } from "@/services/stores";
 import CarriersList from "@/components/carriers/CarriersList";
+
+import { ChevronRightIcon } from '@chakra-ui/icons'
+import NextLink from "next/link";
 
 const CarriersPage = ({ siteConfig, stores, carriers, token }) => {
   siteConfig = {
@@ -30,7 +33,15 @@ const CarriersPage = ({ siteConfig, stores, carriers, token }) => {
         canonical={process.env.NEXT_PUBLIC_SITE_URL + router.pathname}
       />
       <Layout title="Carriers" siteConfig={siteConfig}>
-        <Flex gap={2} alignItems="center" mb={5} flexDirection={['column', 'row']}>
+        <Flex alignItems="center" mb={5} flexDirection={['column', 'row']} justifyContent='space-between'>
+          <Breadcrumb separator={<ChevronRightIcon color='brand.300' fontSize='xl' mx='0'/>}>
+              <BreadcrumbItem>
+                  <BreadcrumbLink as={NextLink} href='/'>Inicio</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbItem isCurrentPage>
+                  <BreadcrumbLink>Transportistas</BreadcrumbLink>
+              </BreadcrumbItem>
+          </Breadcrumb>
           <Box>
             <InputGroup colorScheme="brand">
               <InputLeftElement pointerEvents='none'>
