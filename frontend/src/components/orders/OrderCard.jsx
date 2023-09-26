@@ -127,7 +127,7 @@ const OrderCard = React.forwardRef(({ order, filter }, ref) => {
                   <Tag
                     variant="solid"
                     borderRadius="full"
-                    w={55}
+                    w="object-fit"
                     colorScheme={badgeColor}
                   >
                     <TagLabel textAlign="center" margin="0 auto">
