@@ -87,4 +87,29 @@ class DeliveryCarrierModel
             return false;
         }
     }
+
+    public function updateOne($id, $data)
+    {
+        if ($data['isActive'] == 1) {
+            $query = "UPDATE delivery_carriers SET isActive = 0 WHERE isActive = 1";
+            $statement = $this->conn->prepare($query);
+            $statement->execute();
+        }
+        $query = "UPDATE delivery_carriers SET name = :name, isActive = :isActive, enviroment = :enviroment, deliveryType = :deliveryType, username = :username, password = :password, labellerCode = :labellerCode WHERE id = :id";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':id', $id);
+        $statement->bindParam(':name', $data['name']);
+        $statement->bindParam(':isActive', $data['isActive']);
+        $statement->bindParam(':enviroment', $data['enviroment']);
+        $statement->bindParam(':deliveryType', $data['deliveryType']);
+        $statement->bindParam(':username', $data['username']);
+        $statement->bindParam(':password', $data['password']);
+        $statement->bindParam(':labellerCode', $data['labellerCode']);
+        if ($statement->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
