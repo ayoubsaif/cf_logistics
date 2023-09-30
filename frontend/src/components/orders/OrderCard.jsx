@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   Box,
@@ -15,7 +15,7 @@ import {
   Tooltip,
   Highlight
 } from "@chakra-ui/react";
-import { format, parseISO, formatDistanceToNow } from "date-fns";
+import { format, parseISO } from "date-fns";
 import esLocale from "date-fns/locale/es";
 
 import {
@@ -23,7 +23,6 @@ import {
   RiTruckLine as TruckIcon,
   RiCheckLine as CheckIcon,
   RiCloseLine as CloseIcon,
-  RiFileCopyLine as CopyIcon,
 } from "react-icons/ri";
 
 import { ORDER_STATUS } from "@/utils/constants/orders";
@@ -31,16 +30,14 @@ import { getMarketplaceData } from "@/components/marketplaces/marketplacesData";
 
 const PrintPDFButton = dynamic(() => import('@/components/button/printPDFButton'), {
   loading: () => <p>Loading...</p>,
-
 });
+
 import NextLink from 'next/link';
 import { motion } from "framer-motion";
 
-const OrderCard = React.forwardRef(({ order, filter }, ref) => {
+const OrderCard = forwardRef(({ order, filter }, ref) => {
   const {
     orderNumber,
-    clientName,
-    street,
     orderDate,
     orderOrigin,
     customerName,
@@ -200,11 +197,12 @@ const OrderCard = React.forwardRef(({ order, filter }, ref) => {
                     width={{ base: "full", md: "auto" }}>Cancelar</Button>
                 </ButtonGroup>
               </Box>
-            ) : order?.shipping?.urlLabel || order?.shipping?.trackingUrl &&
+            ) : /* check status done or picking*/ order?.status == ORDER_STATUS.done || order?.status == ORDER_STATUS.picking
+              && (order?.shipping?.urlLabel || order?.shipping?.trackingUrl) &&
             <Box mt={2}>
               <ButtonGroup variant="outline" spacing="1" size={"sm"}>
-                {order?.shipping?.urlLabel &&
-                  <PrintPDFButton pdfUrl={order?.shipping?.urlLabel} leftIcon={<TruckIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
+                {order?.shipping?.labelDatas &&
+                  <PrintPDFButton order={order} leftIcon={<TruckIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
                 }
                 {order?.shipping?.trackingUrl &&
                   <NextLink href={order?.shipping?.trackingUrl} target="_blank">

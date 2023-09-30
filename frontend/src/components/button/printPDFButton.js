@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import axios from 'axios';
 
-const PrintPDFButton = ({ children, pdfUrl, ...props }) => {
+const PrintPDFButton = ({ children, order, ...props }) => {
   useEffect(() => {
     // Load the PrintJS library dynamically
     const script = document.createElement('script');
@@ -16,21 +16,18 @@ const PrintPDFButton = ({ children, pdfUrl, ...props }) => {
     };
   }, []);
 
-  const handlePrint = () => {
-    // 1st get the pdf data base64 using axios
-    axios.get(pdfUrl, { responseType: 'arraybuffer' })
-      .then((response) => {
-        // 2nd convert the arraybuffer to base64
-        const base64 = btoa(
-          new Uint8Array(response.data).reduce(
-            (data, byte) => data + String.fromCharCode(byte),
-            '',
-          ),
-        );
+  // get the base64 string from the backend API /api/order/:id/shippinglabel
+  const [base64, setBase64] = React.useState('');
+  useEffect(() => {
+    const getBase64 = async () => {
+      const { data } = await axios.get(`/api/order/${order._id}/shippinglabel`);
+      setBase64(data);
+    };
+    getBase64();
+  }, [order]);
 
-        // 3rd print the base64 to pdf using PrintJS
-        window.printJS({ printable: base64, type: 'pdf', base64: true });
-      });
+  const handlePrint = () => {
+      window.printJS({ printable: base64, type: 'pdf', base64: true });
   };
 
   return (

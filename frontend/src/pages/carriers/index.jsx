@@ -33,7 +33,7 @@ const CarriersPage = ({ siteConfig, stores, carriers, token }) => {
         canonical={process.env.NEXT_PUBLIC_SITE_URL + router.pathname}
       />
       <Layout title="Carriers" siteConfig={siteConfig}>
-        <Flex alignItems="center" mb={5} flexDirection={['column', 'row']} justifyContent='space-between'>
+        <Flex mb={5} flexDirection={['column', 'row']} justifyContent='space-between' gap={4}>
           <Breadcrumb separator={<ChevronRightIcon color='brand.300' fontSize='xl' mx='0'/>}>
               <BreadcrumbItem>
                   <BreadcrumbLink as={NextLink} href='/'>Inicio</BreadcrumbLink>

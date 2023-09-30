@@ -95,7 +95,7 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
         </DrawerHeader>
         <DrawerBody p={0}>
           <Flex justifyContent="space-between" flexDir="column" height="100%">
-            {siteConfig?.stores &&
+            {siteConfig?.stores && siteConfig?.stores?.items?.length > 0 &&
               <Box overflow="hidden" height="100%" overflowX="hidden" overflowY="auto">
                 <Stores {...siteConfig} />
               </Box>
@@ -107,6 +107,7 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
                 href="/carriers"
                 icon={TruckIcon}
                 variant="ghost"
+                borderRadius={0}
                 w='full'
               >Transportistas</MenuItemButton>
               <Divider /> 

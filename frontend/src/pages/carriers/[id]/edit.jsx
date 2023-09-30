@@ -34,7 +34,6 @@ export default function EditCarrier({ siteConfig, stores, carrier, token }) {
             />
             <Layout title="Edit Carrier" siteConfig={siteConfig}>
                 <Flex gap={5} alignItems="flex-start" direction='column'>
-                    <Heading fontSize='xl'>Editar Transportista - {carrier?.name}</Heading>
                     <Breadcrumb separator={<ChevronRightIcon color='brand.300' fontSize='xl' mx='0'/>}>
                         <BreadcrumbItem>
                             <BreadcrumbLink href='/' as={NextLink} >Inicio</BreadcrumbLink>

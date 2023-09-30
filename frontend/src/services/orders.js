@@ -24,16 +24,39 @@ export const getAllOrders = (accountId, storeId, accessToken, page, filter) => {
 };
 
 export const getOpenOrders = (accountId, storeId, accessToken, page) => {
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`,
+        'AccountId': accountId
+    };
+    const params = {
+        'status': 'open',
+        'page': page
+    };
+    axios.get(`/api/orders/${storeId}`, { headers, params })
+    .then((res) => {
+        console.log(res);
+        return {
+            ok: true,
+            data: res.data,
+            error: null
+        };
+    })
+    .catch((err) => {
+        console.log(err);
+        return {
+            ok: false,
+            error: err.message
+        }
+    });
+}
+
+export const getShippingLabel = (accountId, orderId, accessToken) => {
     try {
         const headers = {
             'Authorization': `Bearer ${accessToken}`,
             'AccountId': accountId
         };
-        const params = {
-            'status': 'open',
-            'page': page
-        };
-        return axios.get(`/api/orders/${storeId}`, { headers, params });
+        return axios.get(`/api/order/${orderId}/shippingLabel`, { headers });
     }
     catch (err) {
         console.error(err);

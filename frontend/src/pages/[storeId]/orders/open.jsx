@@ -19,7 +19,7 @@ import { getOpenOrders } from "@/services/orders";
 import { useInfiniteQuery } from 'react-query';
 import OrdersListContainer from "@/components/orders/OrdersListContainer";
 
-const OrdersPage = ({ siteConfig, orders, store, stores, token }) => {
+const OrdersPage = ({ siteConfig, orders, store, stores, session }) => {
   siteConfig = {
     ...siteConfig,
     store,
@@ -32,7 +32,9 @@ const OrdersPage = ({ siteConfig, orders, store, stores, token }) => {
   const router = useRouter();
   const { data, isLoading, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
     queryKey: ['OpenOrders', filterText],
-    queryFn: ({ pageParam = 1 }) => getOpenOrders('64b267fcd4f08', store?.storeId, token, pageParam, filterText),
+    queryFn: ({ pageParam = 1 }) => getOpenOrders(session?.user?.accountId,
+                                                  store?.storeId, session?.user?.accessToken,
+                                                  pageParam, filterText),
     initialData: orders,
     getNextPageParam: (lastPage) => {
       const nextPage = lastPage?.data?.currentPage + 1;
@@ -119,18 +121,18 @@ export default OrdersPage;
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
-  const { storeId } = context.params;
-  const store = await getStore(session?.user?.accessToken, storeId);
-  const stores = await getStores(session?.user?.accessToken);
 
-  const orders = await getOpenOrders('64b267fcd4f08', storeId, session?.user?.accessToken);
   if (session) {
+    const { storeId } = context.params;
+    const store = await getStore(session?.user?.accessToken, storeId);
+    const stores = await getStores(session?.user?.accessToken, session?.user?.accountId);
+    const orders = await getOpenOrders(session?.user?.accountId, storeId, session?.user?.accessToken);
     return {
       props: {
         orders: orders?.data,
         store: store?.data,
         stores: stores?.data,
-        token: session?.user?.accessToken,
+        session,
       },
     };
   } else {

@@ -20,7 +20,7 @@ export default function Layout(props) {
         <NavBar siteConfig={siteConfig} page={page} />
       </GridItem>
 
-      <GridItem area={"main"} pt={[90, 110]}>
+      <GridItem area={"main"} pt={page != undefined ? [90, 110] : [50,20]}>
         <Container maxW="container.lg" py={6} w="full">
           {children}
         </Container>

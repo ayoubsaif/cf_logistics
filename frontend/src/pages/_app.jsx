@@ -6,16 +6,19 @@ import '@/styles/fonts.css';
 import { getSiteConfig } from "@/services/siteConfig";
 import { QueryClient, QueryClientProvider } from 'react-query'
 
+import NextProgress from "next-progress";
 const queryClient = new QueryClient()
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }) {
+  const brandColor = theme?.colors?.brand[300];
   return (
     <SessionProvider session={pageProps.session}>
       <QueryClientProvider client={queryClient}>
         <ChakraProvider theme={theme}>
           <CSSReset />
+          <NextProgress options={{ showSpinner: false }} color={brandColor} />
           <Component {...pageProps} />
         </ChakraProvider>
       </QueryClientProvider>

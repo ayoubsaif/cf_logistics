@@ -1,22 +1,25 @@
 import { CorreosIcon, DHLIcon, GLSIcon, CorreosExpressIcon } from "@/components/icons/carrierIcons";
   
   const carriersData = {
-    correos: {
+    CORREOS_ES: {
+      id: "CORREOS_ES",
       label: "Correos",
       color: "yellow",
       icon: CorreosIcon
     },
-    gls: {
+    GLS: {
+      id: "GLS",
       label: "GLS",
       color: "red",
       icon: GLSIcon
     },
-    dhl: {
+    DHL: {
+      id: "DHL",
       label: "DHL",
       color: "blue",
       icon: DHLIcon
     },
-    correosExpress: {
+    CORREOS_EXPRESS: {
       label: "Correos Express",
       color: "yellow",
       icon: CorreosExpressIcon

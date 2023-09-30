@@ -31,6 +31,8 @@ export const authOptions = {
           user.image = res.data?.image;
           user.accessToken = res.data?.accessToken;
           user.role = res.data?.role;
+          user.accountName = res.data?.accountName;
+          user.accountId = res.data?.accountId;
           user.exp = res.data?.exp;
           return true;
         }
@@ -61,6 +63,8 @@ export const authOptions = {
           email: user.email,
           image: user.image,
           role: user.role,
+          accountName: token.accountName,
+          accountId: token.accountId,
           accessToken: token.accessToken,
         };
       } else {

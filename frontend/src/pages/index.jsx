@@ -53,6 +53,12 @@ export default function Home({ siteConfig, stores, user }) {
         {user && user?.firstname ? (
           <Box py={10}>
             <Heading>Hola {user?.firstname},</Heading>
+            <Text fontSize="xl" color="gray.500">
+              Bienvenido a Cras Forum Logistics
+            </Text>
+            <Text fontSize="md" color="gray.800">
+              Tienes seleccionada la cuenta <b>{user?.accountName}</b>
+            </Text>
             <Dashboard />
           </Box>
         ) : (
