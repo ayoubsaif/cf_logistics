@@ -38,6 +38,10 @@ $router->get('/api/account/:id', 'AccountController@getOne');
 $router->options('/api/account', 'AccountController@getSuccessResponse');
 $router->post('/api/account', 'AccountController@createOne');
 
+# Account > Stats
+$router->options('/api/stats', 'AccountController@getSuccessResponse');
+$router->get('/api/stats', 'AccountController@getStats');
+
 # Account > Relate
 $router->options('/api/account/relate', 'AccountController@getSuccessResponse');
 $router->post('/api/account/relate', 'AccountController@relateUser');
@@ -74,6 +78,14 @@ $router->options('/api/orders', 'OrderController@getSuccessResponse');
 $router->options('/api/orders/:storeId', 'OrderController@getSuccessResponse');
 $router->get('/api/orders/:storeId', 'OrderController@getMany');
 
+# Order > Get One
+$router->options('/api/order/:id', 'OrderController@getSuccessResponse');
+$router->get('/api/order/:id', 'OrderController@getOne');
+
+# Order > Get Shipping Label
+$router->options('/api/order/:id/shippinglabel', 'OrderController@getSuccessResponse');
+$router->get('/api/order/:id/shippinglabel', 'OrderController@getShippingLabel');
+
 # Orders > Confirm Order
-$router->options('/api/orders/:storeId', 'OrderController@getSuccessResponse');
-$router->post('/api/order/:OrderId', 'OrderController@confirmOrder');
+$router->options('/api/order/:id/confirm', 'OrderController@getSuccessResponse');
+$router->post('/api/order/:id/confirm', 'OrderController@confirmOrder');

@@ -22,6 +22,9 @@ class OrderModel
     public $contactPhone;
     public $contactMobile;
     public $contactEmail;
+    public $shippingNumber;
+    public $shippingLabelDatas;
+    public $shippingLabelFileName;
 
     public function __construct($accountId)
     {
@@ -39,13 +42,17 @@ class OrderModel
         }
 
         $offset = ($page - 1) * $limit;
-        $query = "SELECT * FROM orders {$where} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}";
+        $query = "SELECT id, orderNumber, orderDate, orderOrigin, orderStatus, customerName, state, country, postalCode
+                    FROM orders {$where} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}";
 
         $statement = $this->conn->query($query);
+        # get all orders from database with custom array
+        $items = $statement->fetchAll(PDO::FETCH_ASSOC);
+
         return array(
             "currentPage"=>$page,
             "totalPages"=>ceil($this->getTotal($where) / $limit),
-            "items"=>$statement->fetchAll(PDO::FETCH_ASSOC),
+            "items"=>$items
         );
     }
 
@@ -70,10 +77,26 @@ class OrderModel
         return $statement->fetch(PDO::FETCH_ASSOC)['total'];
     }
 
-    public function confirmOrder($orderId, $shipment)
+    public function getShipping($orderId, $shipment)
     {
         // Update state to done, and add shipment number, and base64 label into shippmentLabel
-        
+        $query = "UPDATE orders
+            SET orderStatus = 'picking',
+                shippingNumber = '{$shipment['tracking_number']}',
+                shippingLabelDatas = '{$shipment['file']['datas']}',
+                shippingLabelFileName = '{$shipment['file']['name']}'
+            WHERE id = {$orderId}";
+        // return confirmed order data
+        $statement = $this->conn->query($query);
+        return $statement->rowCount();
+    }
+
+    public function confirmOrder($orderId)
+    {
+        // Update state to done, and add shipment number, and base64 label into shippmentLabel
+        $query = "UPDATE orders SET orderStatus = 'done' WHERE id = {$orderId}";
+        // return confirmed order data
+        $statement = $this->conn->query($query);
         return $statement->rowCount();
     }
 
@@ -99,5 +122,16 @@ class OrderModel
         $this->contactPhone = $order['contactPhone'];
         $this->contactMobile = $order['contactMobile'];
         $this->contactEmail = $order['contactEmail'];
+    }
+
+    public function getStats()
+    {
+        $query = "SELECT orderStatus, COUNT(*) as total FROM orders GROUP BY orderStatus";
+        $statement = $this->conn->query($query);
+        echo json_encode($statement->fetchAll(PDO::FETCH_ASSOC));
+        if ($statement->rowCount() > 0) {
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return array();
     }
 }

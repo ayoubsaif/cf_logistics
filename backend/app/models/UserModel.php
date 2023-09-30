@@ -16,6 +16,8 @@ class UserModel
     public $createDate;
     public $image;
     public $role;
+    public $accountId;
+    public $accountName;
 
     # External Auth Provider Identifiers
     public $googleId;
@@ -28,7 +30,7 @@ class UserModel
 
     function create()
     {
-        try{
+        try {
             $query = "INSERT INTO users
                     SET
                         firstName=:firstName,
@@ -37,8 +39,7 @@ class UserModel
                         role=:role,
                         password=:password,
                         image=:image,
-                        googleId=:googleId"
-                        ;
+                        googleId=:googleId";
 
             $stmt = $this->conn->prepare($query);
 
@@ -65,7 +66,7 @@ class UserModel
             }
 
             return false;
-        }catch(Exception $e){
+        } catch (Exception $e) {
             echo json_encode(array("message" => $e->getMessage()));
             return false;
         }
@@ -73,7 +74,7 @@ class UserModel
 
     function emailExists()
     {
-        try{
+        try {
             $query = "SELECT *
                         FROM users
                         WHERE email = ?
@@ -94,10 +95,35 @@ class UserModel
                 $this->password = $row['password'];
                 $this->image = $row['image'];
                 $this->role = $row['role'];
+                $this->assignFirstAccountRel();
                 return true;
             }
             return false;
-        }catch(Exception $e){
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    function assignFirstAccountRel()
+    {
+        try {
+            $query = "SELECT accounts.accountId AS accountId, accounts.name as accountName
+                    FROM accounts
+                    INNER JOIN accounts_users_rel ON accounts.id = accounts_users_rel.accountId
+                    WHERE accounts_users_rel.userId = ?
+                    LIMIT 1";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $this->id);
+            $stmt->execute();
+            $num = $stmt->rowCount();
+            if ($num > 0) {
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $this->accountId = $row['accountId'];
+                $this->accountName = $row['accountName'];
+            }
+        } catch (Exception $e) {
+            echo json_encode(array("message" => $e->getMessage()));
             return false;
         }
     }
@@ -107,8 +133,9 @@ class UserModel
         return password_verify($password, $this->password);
     }
 
-    function getOne($id){
-        try{
+    function getOne($id)
+    {
+        try {
             $query = "SELECT *
             FROM users
             WHERE id = ?
@@ -122,7 +149,7 @@ class UserModel
             if ($num > 0) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $this->id = $row['id'];
-                $this->active = $row['active'] == 1? true : false;
+                $this->active = $row['active'] == 1 ? true : false;
                 $this->firstName = $row['firstName'];
                 $this->lastName = $row['lastName'];
                 $this->name = $this->firstName . " " . $this->lastName;
@@ -132,22 +159,23 @@ class UserModel
                 return true;
             }
             return false;
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return false;
         }
     }
 
-    function updateProfile($updateProfileValues) {
-        try{
+    function updateProfile($updateProfileValues)
+    {
+        try {
             if (count($updateProfileValues) === 0) {
                 return true;
             }
-            
+
             $query = "UPDATE users
-                    SET ".implode(", ", $updateProfileValues)."
+                    SET " . implode(", ", $updateProfileValues) . "
                     WHERE id = :id";
             $stmt = $this->conn->prepare($query);
-            
+
             $stmt->bindParam(":id", $this->id);
             $this->name = $this->firstName . " " . $this->lastName;
 
@@ -157,20 +185,21 @@ class UserModel
             }
 
             return false;
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return false;
         }
     }
 
-    function googleIdUpdate(){
-        try{
+    function googleIdUpdate()
+    {
+        try {
             $query = "UPDATE users
                         SET
                             googleId = :googleId
                         WHERE
                             id = :id AND googleId != :googleId";
             $stmt = $this->conn->prepare($query);
-            
+
             $this->googleId = htmlspecialchars(strip_tags($this->googleId));
             $stmt->bindParam(":googleId", $this->googleId);
             $stmt->bindParam(":id", $this->id);
@@ -179,21 +208,22 @@ class UserModel
                 return true;
             }
             return false;
-        }catch(Exception $e){
+        } catch (Exception $e) {
             error_log($e->getMessage());
             return false;
         }
     }
 
-    function updatePassword($password){
-        try{
+    function updatePassword($password)
+    {
+        try {
             $query = "UPDATE users
                         SET
                             password = :password
                         WHERE
                             id = :id";
             $stmt = $this->conn->prepare($query);
-            
+
             $password_hash = password_hash($password, PASSWORD_BCRYPT);
             $stmt->bindParam(":password", $password_hash);
             $stmt->bindParam(":id", $this->id);
@@ -202,7 +232,7 @@ class UserModel
                 return true;
             }
             return false;
-        }catch(Exception $e){
+        } catch (Exception $e) {
             error_log($e->getMessage());
             return false;
         }
@@ -210,7 +240,7 @@ class UserModel
 
     function getMany()
     {
-        try{
+        try {
             $query = "SELECT *
                         FROM users
                         ORDER BY id DESC";
@@ -224,7 +254,7 @@ class UserModel
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $user_item = array(
                         "id" => $row['id'],
-                        "active" => $row['active'] == 1? true : false,
+                        "active" => $row['active'] == 1 ? true : false,
                         "name" => $row['firstName'] . " " . $row['lastName'],
                         "firstName" => $row['firstName'],
                         "lastName" => $row['lastName'],
@@ -238,14 +268,14 @@ class UserModel
                 return $users_arr;
             }
             return false;
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return false;
         }
     }
 
     function deleteOne()
     {
-        try{
+        try {
             $query = "DELETE FROM users WHERE id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(":id", $this->id);
@@ -253,7 +283,7 @@ class UserModel
                 return true;
             }
             return false;
-        }catch(Exception $e){
+        } catch (Exception $e) {
             echo json_encode(array("message" => $e->getMessage()));
             return false;
         }

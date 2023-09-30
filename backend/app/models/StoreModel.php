@@ -25,15 +25,25 @@ class StoreModel
     public $contactEmail;
     public $contactPhone;
 
-    public function __construct()
+    public function __construct($accountId = null)
     {
         $this->conn = Connection::connectDB();
+        $this->accountId = $accountId;
     }
 
     public function getAllStores()
     {
         $query = "SELECT * FROM stores";
         $statement = $this->conn->query($query);
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getMany()
+    {
+        $query = "SELECT * FROM stores WHERE accountId = :accountId";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':accountId', $this->accountId);
+        $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -104,7 +114,7 @@ class StoreModel
     
     public function setOne($id)
     {
-        $query = "SELECT * FROM stores WHERE id = :id";
+        $query = "SELECT * FROM stores WHERE storeId = :id";
         $statement = $this->conn->prepare($query);
         $statement->bindParam(':id', $id);
         $statement->execute();

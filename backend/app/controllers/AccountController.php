@@ -2,6 +2,7 @@
 
 require_once 'app/models/AccountModel.php';
 require_once 'app/middleware/PermissionMiddleware.php';
+require_once 'app/models/OrderModel.php';
 
 class AccountController
 {
@@ -221,6 +222,32 @@ class AccountController
         } catch (Exception $e) {
             http_response_code(401);
             echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
+    }
+
+    function getStats()
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'client');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+            
+            $headers = apache_request_headers();
+            $accountId = $headers['AccountId'];
+
+            $orderModel = new OrderModel($accountId);
+            $orderStats = $orderModel->getStats();
+            if ($orderStats) {
+                http_response_code(200);
+                echo json_encode($orderStats);
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado"));
         }
     }
 

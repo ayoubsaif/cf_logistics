@@ -7,36 +7,35 @@ require_once 'app/models/AccountModel.php';
 class DeliveryCarrierModel
 {
     protected $conn;
-    private $accountConn;
 
     public $id;
     public $name;
     public $accountId;
     public $enviroment;
     public $deliveryType;
+    public $carrierModel;
     public $isActive;
 
     public function __construct($accountId)
     {
         $this->conn = Connection::connectDB($accountId);
+        $this->accountId = $accountId;
     }
     
     private static $carrierModels = array(
         'CORREOS_ES' => CorreosModel::class,
     );
 
-    public static function getCarrierModel($carrier, $carrierId)
+    public static function getCarrierModel($carrier, $carrierId, $accountId)
     {
         if (isset(self::$carrierModels[$carrier])) {
             $modelClass = self::$carrierModels[$carrier];
-            return new $modelClass($carrierId);
+            return new $modelClass($carrierId, $accountId);
         }
         return null;
     }
 
-    public function sendShipping($picking){
-
-    }
+    public function sendShipping($order){}
 
     public function setOne($id)
     {
@@ -48,7 +47,8 @@ class DeliveryCarrierModel
         $this->id = $deliveryCarrier['id'];
         $this->name = $deliveryCarrier['name'];
         $this->enviroment = $deliveryCarrier['enviroment'];
-        $this->deliveryType = $this->getCarrierModel($deliveryCarrier['deliveryType'], $this->id);
+        $this->deliveryType = $deliveryCarrier['deliveryType'];
+        $this->carrierModel = $this->getCarrierModel($deliveryCarrier['deliveryType'], $this->id, $this->accountId);
         $this->isActive = $deliveryCarrier['isActive'];
     }
 
@@ -67,6 +67,21 @@ class DeliveryCarrierModel
         $statement->bindParam(':id', $id);
         $statement->execute();
         return $statement->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function setActiveCarrier()
+    {
+        $query = "SELECT id FROM delivery_carriers WHERE isActive = 1 LIMIT 1";
+        $statement = $this->conn->prepare($query);
+        $statement->execute();
+        $deliveryCarrier = $statement->fetch(PDO::FETCH_ASSOC);
+        $this->id = $deliveryCarrier['id'];
+        $this->setOne($this->id);
+        if ($this->id) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function activeOne($id)

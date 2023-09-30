@@ -19,16 +19,16 @@ class CorreosModel extends DeliveryCarrierModel
     protected $correos_password;
     protected $correos_labeller_code;
 
-    public function __construct($id)
+    public function __construct($id, $accountId)
     {
-        $this->conn = Connection::connectDB();
+        parent::__construct($accountId);
         $this->setOne($id);
-        $this->deliveryType = 'correos';
+        $this->deliveryType = 'CORREOS_ES';
     }
 
     public function sendShipping($orderData)
     {
-        if ($this->deliveryType === 'correos') {
+        if ($this->deliveryType === 'CORREOS_ES') {
             return $this->correos_send_shipping($orderData);
         } else {
             // Handle unsupported deliveryType or call parent method
@@ -65,17 +65,12 @@ class CorreosModel extends DeliveryCarrierModel
         }
         $carrierTrackingRef = (string) $response->Bulto->CodEnvio;
         $attachmentData = (string) $response->Bulto->Etiqueta->Etiqueta_pdf->Fichero;
-
         $attachmentName = (string) $response->Bulto->Etiqueta->Etiqueta_pdf->NombreF;
-        $attachmentFilename = 'correos_' . $carrierTrackingRef;
-        
-        //$attachmentData = base64_decode($attachmentData);
-        
         return array(
             'tracking_number' => $carrierTrackingRef,
             'file' => array(
-                'file_name' => $attachmentName,
-                'data' => $attachmentData
+                'name' => $attachmentName,
+                'datas' => $attachmentData
             )
         );
     }
@@ -212,8 +207,7 @@ class CorreosModel extends DeliveryCarrierModel
         $deliveryCarrier = $statement->fetch(PDO::FETCH_ASSOC);
         $this->id = $deliveryCarrier['id'];
         $this->name = $deliveryCarrier['name'];
-        $this->status = $deliveryCarrier['status'];
-        $this->accountId = (new AccountModel())->getAccountById($deliveryCarrier['accountId']);
+        $this->isActive = $deliveryCarrier['isActive'];
         $this->enviroment = $deliveryCarrier['enviroment'];
         $this->correos_username = $deliveryCarrier['username'];
         $this->correos_password = $deliveryCarrier['password'];

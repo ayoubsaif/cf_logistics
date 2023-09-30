@@ -4,7 +4,22 @@ require_once 'app/models/StoreModel.php';
 require_once 'app/middleware/PermissionMiddleware.php';
 
 class StoreController
-{
+{    
+    private $storeModel;
+
+    public function __construct()
+    {
+        # Get Account ID from headers
+        $headers = apache_request_headers();
+        if (!isset($headers['AccountId'])) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado"));
+            return;
+        }
+        $accountId = $headers['AccountId'];
+        $this->storeModel = new StoreModel($accountId);
+    }
+
     function getMany()
     {
         try {
@@ -15,14 +30,17 @@ class StoreController
                 return;
             }
             $store = new StoreModel();
-            $storeArray = $store->getAllStores();
+            $storeArray = $store->getMany();
             if ($storeArray) {
                 http_response_code(200);
                 echo json_encode(array("items"=> $storeArray));
                 return;
             } else {
-                http_response_code(500);
-                echo json_encode(array("message" => "No se han encontrado tiendas"));
+                http_response_code(200);
+                echo json_encode(array(
+                    "items" => array(),
+                    "message" => "No se han encontrado tiendas"
+                ));
                 return;
             }
         } catch (Exception $e) {
