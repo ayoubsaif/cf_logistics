@@ -68,10 +68,12 @@ $router->get('/api/delivery', 'DeliveryCarrierController@getMany');
 $router->options('/api/delivery/:id', 'DeliveryCarrierController@getSuccessResponse');
 $router->get('/api/delivery/:id', 'DeliveryCarrierController@getOne');
 $router->put('/api/delivery/:id', 'DeliveryCarrierController@updateOne');
+$router->delete('/api/delivery/:id', 'DeliveryCarrierController@deleteOne');
 
 # Delivery > Active Delivery Carrier
 $router->options('/api/delivery/:CarrierId/active', 'DeliveryCarrierController@getSuccessResponse');
 $router->put('/api/delivery/:CarrierId/active', 'DeliveryCarrierController@activeCarrier');
+$router->post('/api/delivery/carrier', 'DeliveryCarrierController@createOne');
 
 # Orders > Get Many
 $router->options('/api/orders', 'OrderController@getSuccessResponse');

@@ -127,4 +127,34 @@ class DeliveryCarrierModel
         }
     }
 
+    public function createOne($data)
+    {
+        $query = "INSERT INTO delivery_carriers (name, isActive, enviroment, deliveryType, username, password, labellerCode) VALUES (:name, :isActive, :enviroment, :deliveryType, :username, :password, :labellerCode)";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':name', $data['name']);
+        $statement->bindParam(':isActive', $data['isActive']);
+        $statement->bindParam(':enviroment', $data['enviroment']);
+        $statement->bindParam(':deliveryType', $data['deliveryType']);
+        $statement->bindParam(':username', $data['username']);
+        $statement->bindParam(':password', $data['password']);
+        $statement->bindParam(':labellerCode', $data['labellerCode']);
+        if ($statement->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteOne($id)
+    {
+        $query = "DELETE FROM delivery_carriers WHERE id = :id";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':id', $id);
+        if ($statement->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

@@ -57,3 +57,31 @@ export function updateCarrier(accountId, accessToken, carrierId, data) {
         console.error(error);
     }
 }
+
+export function createCarrier(accountId, accessToken, data) {
+    try {
+        return axios.post(`/api/delivery/carrier`, data, {
+            headers: {
+                AccountId: accountId,
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
+
+export function deleteCarrier(accountId, accessToken, carrierId) {
+    try {
+        return axios.delete(`/api/delivery/${carrierId}`, {
+            headers: {
+                AccountId: accountId,
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+    }
+    catch (error) {
+        console.error(error);
+    }
+}

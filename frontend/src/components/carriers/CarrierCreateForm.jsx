@@ -24,12 +24,12 @@ import {
 import {
     RiEyeLine as EyeIcon,
     RiEyeOffLine as EyeCrossedIcon,
-    RiSaveLine as SaveIcon
+    RiAddLine as AddIcon
 } from "react-icons/ri";
 
-import { updateCarrier } from "@/services/carriers";
+import { createCarrier } from "@/services/carriers";
 
-export default function CarrierEditForm({ data, token }) {
+export default function CarrierCreateForm({ token }) {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const toast = useToast();
@@ -38,10 +38,10 @@ export default function CarrierEditForm({ data, token }) {
     const [show, setShow] = useState(false)
 
     const onSubmit = async (data) => {
-        const update = await updateCarrier('64b267fcd4f08', token, data?.id, data);
-        if (update?.status === 200) {
+        const create = await createCarrier('64b267fcd4f08', token, data);
+        if (create?.status === 200) {
             toast({
-                title: "Transportista actualizado",
+                title: "Transportista Creado",
                 status: "success",
                 duration: 3000,
                 isClosable: true,
@@ -52,7 +52,7 @@ export default function CarrierEditForm({ data, token }) {
         } else {
             toast({
                 title: "Algo ha ido mal",
-                description: `No se ha podido actualizar el transportista. Por favor, inténtalo de nuevo más tarde.`,
+                description: `No se ha podido crear el transportista. Por favor, inténtalo de nuevo más tarde.`,
                 status: "error",
                 duration: 4000,
                 isClosable: true,
@@ -78,14 +78,7 @@ export default function CarrierEditForm({ data, token }) {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Stack spacing={5}>
                     <Flex w='full' justifyContent='space-between'>
-                        <Heading as="h2" fontSize='2xl' fontWeight='bold' mb="2">Editar Transportista</Heading>
-                        {data && data?.icon &&
-                            <Icon
-                                as={...data?.icon}
-                                boxSize={20}
-                                borderRadius='lg'
-                            />
-                        }
+                        <Heading as="h2" fontSize='2xl' fontWeight='bold' mb="2">Crear Transportista</Heading>
                     </Flex>
                     <Flex>
                         <FormControl>
@@ -93,25 +86,23 @@ export default function CarrierEditForm({ data, token }) {
                             <Switch
                                 mt={3}
                                 colorScheme="brand"
-                                defaultChecked={data?.isActive}
-                                isReadOnly={data?.isActive}
+                                isReadOnly
                                 {...register('isActive')}
                             />
                         </FormControl>
                     </Flex>
                     <Flex gap={5} flexDirection={["column", "row"]} >
-                        <Input type='hidden' defaultValue={data?.id} {...register('id')} />
                         <FormControl>
                             <Text fontSize='md'>Nombre</Text>
                             <InputGroup colorScheme="brand">
-                                <Input type='text' placeholder='Nombre del Transportista' focusBorderColor='brand.400' defaultValue={data?.name} {...register('name', { required: true })} />
+                                <Input type='text' placeholder='Nombre del Transportista' focusBorderColor='brand.400' {...register('name', { required: true })} />
                             </InputGroup>
                             {errors.name && <Text color="red.300" fontsize="xs" mt={1}>El nombre del transportista es obligatorio</Text>}
                         </FormControl>
                         <FormControl>
                             <Text fontSize='md'>Empresa de transporte</Text>
                             <InputGroup colorScheme="brand">
-                                <Select focusBorderColor='brand.400' defaultValue={data?.deliveryType} {...register('deliveryType', { required: true })}>
+                                <Select focusBorderColor='brand.400' {...register('deliveryType', { required: true })}>
                                     {carrierOptions.map((carrier, index) => (
                                         <option key={index} value={carrier?.value}>{carrier?.label}</option>
                                     ))}
@@ -125,7 +116,14 @@ export default function CarrierEditForm({ data, token }) {
                         <FormControl>
                             <Text fontSize='md'>Usuario</Text>
                             <InputGroup colorScheme="brand">
-                                <Input type='text' placeholder='Nombre de usuario' focusBorderColor='brand.400' defaultValue={data?.username} {...register('username', { required: true })} />
+                                <Input 
+                                    type='text' 
+                                    placeholder='Nombre de usuario' 
+                                    focusBorderColor='brand.400' 
+                                    {...register('username', { required: true })}
+                                    autoComplete="off"
+                                    aria-autocomplete="none"
+                                />
                             </InputGroup>
                             {errors.username && <Text color="red.300" fontsize="xs" mt={1}>El usuario es obligatorio</Text>}
                         </FormControl>
@@ -135,8 +133,9 @@ export default function CarrierEditForm({ data, token }) {
                                 <Input
                                     type={show ? 'text' : 'password'}
                                     placeholder='Contraseña'
-                                    focusBorderColor='brand.400'
-                                    defaultValue={data?.password} {...register('password', { required: true })}
+                                    focusBorderColor='brand.400' 
+                                    autoComplete="new-password"
+                                    {...register('password', { required: true })}
                                 />
                                 <InputRightElement>
                                     <IconButton size='sm' onClick={() => setShow(!show)} variant='ghost' icon={show ? <Icon as={EyeCrossedIcon} boxSize={5} /> : <Icon as={EyeIcon} boxSize={5} />} />
@@ -150,25 +149,25 @@ export default function CarrierEditForm({ data, token }) {
                         <FormControl>
                             <Text fontSize='md'>Entorno</Text>
                             <InputGroup colorScheme="brand">
-                                <Select focusBorderColor='brand.400' {...register('enviroment', { required: true })} defaultValue={data?.enviroment}>
+                                <Select focusBorderColor='brand.400' {...register('environment', { required: true })}>
                                     {envOptions.map((env, index) => (
                                         <option key={index} value={env?.value}>{env?.label}</option>
                                     ))}
                                 </Select>
-                                {errors.enviroment && <span>This field is required</span>}
+                                {errors.environment && <span>This field is required</span>}
                             </InputGroup>
                         </FormControl>
                         <FormControl>
                             <Text fontSize='md'>Código de etiquetado</Text>
                             <InputGroup colorScheme="brand">
-                                <Input type='text' defaultValue={data?.labellerCode} placeholder='Código de etiquetado' focusBorderColor='brand.400' {...register('labellerCode', { required: true })} />
+                                <Input type='text' placeholder='Código de etiquetado' focusBorderColor='brand.400' {...register('labellerCode', { required: true })} />
                             </InputGroup>
                             {errors.labellerCode && <Text color="red.300" fontsize="xs" mt={1}>This field is required</Text>}
                         </FormControl>
                     </Flex>
                     <Button mt={10} colorScheme='brand' type='submit' >
-                        <Icon as={SaveIcon} boxSize={5} mr={3} />
-                        Guardar
+                        <Icon as={AddIcon} boxSize={5} mr={3} />
+                        Crear
                     </Button>
                 </Stack>
             </form>

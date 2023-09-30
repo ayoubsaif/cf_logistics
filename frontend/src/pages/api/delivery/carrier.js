@@ -13,32 +13,15 @@ export default async (req, res) => {
     }
 
     const {
-        query: { carrierId },
         method,
         body
     } = req;
 
     switch (method) {
-        case "PUT":
+        case "POST":
             try {
-                const response = await axios.put(
-                    `${process.env.NEXT_APP_API_URL}/api/delivery/${carrierId}`, body,
-                    {
-                        headers: {
-                            AccountId: req.headers.accountid,
-                            Authorization: `Bearer ${session?.user?.accessToken}`,
-                        },
-                    }
-                );
-                res.status(200).json(response.data);
-            } catch (error) {
-                res.status(400).json({ error });
-            }
-            break;
-        case "DELETE":
-            try {
-                const response = await axios.delete(
-                    `${process.env.NEXT_APP_API_URL}/api/delivery/${carrierId}`,
+                const response = await axios.post(
+                    `${process.env.NEXT_APP_API_URL}/api/delivery/carrier`, body,
                     {
                         headers: {
                             AccountId: req.headers.accountid,
@@ -52,7 +35,7 @@ export default async (req, res) => {
             }
             break;
         default:
-            res.setHeader("Allow", ["PUT", "DELETE"]);
+            res.setHeader("Allow", ["POST"]);
             res.status(405).end(`Method ${method} Not Allowed`);
     }
 };

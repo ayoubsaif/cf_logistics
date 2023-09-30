@@ -240,6 +240,74 @@ class DeliveryCarrierController
         }        
     }
 
+    function createOne()
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'manager');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            $deliveryCarrier = $this->deliveryCarrierModel->createOne($data);
+
+            if ($deliveryCarrier) {
+                http_response_code(200);
+                echo json_encode(array(
+                    "message" => "Transportista creado correctamente",
+                    "deliveryCarrierId" => $deliveryCarrier
+                ));
+                return;
+            } else {
+                http_response_code(400);
+                echo json_encode(array(
+                    "message" => "Error al crear el transportista",
+                    "deliveryCarrierId" => $deliveryCarrier
+                ));
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }        
+    }
+
+    function deleteOne($id)
+    {   
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'manager');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+
+            $deliveryCarrier = $this->deliveryCarrierModel->deleteOne($id);
+
+            if ($deliveryCarrier) {
+                http_response_code(200);
+                echo json_encode(array(
+                    "message" => "Transportista eliminado correctamente",
+                    "deliveryCarrierId" => $id
+                ));
+                return;
+            } else {
+                http_response_code(400);
+                echo json_encode(array(
+                    "message" => "Error al eliminar el transportista",
+                    "deliveryCarrierId" => $id
+                ));
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }        
+    }
+
     function getSuccessResponse()
     {
         http_response_code(200);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Box,
   Flex,
@@ -12,13 +12,25 @@ import {
   Tooltip,
   VStack,
   Switch,
-  Link
+  Link,
+  useToast,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Button
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { getCarrierLogo } from "@/components/carriers/carriersData";
+import { deleteCarrier } from "@/services/carriers";
 import { motion } from "framer-motion";
 import NextLink from "next/link";
 
 import {
+  RiDeleteBin7Line as DeleteIcon,
   RiEditBoxLine as EditIcon,
   RiMore2Fill as MenuIcon,
 } from "react-icons/ri";
@@ -26,7 +38,7 @@ import {
 
 
 const CarrierCard = React.forwardRef((props, ref) => {
-  const { carrier, toggleActive } = props;
+  const { carrier, toggleActive, token } = props;
 
   const {
     name,
@@ -68,6 +80,35 @@ const CarrierCard = React.forwardRef((props, ref) => {
           <Text Text fontSize="xs" cursor='default'>{password}</Text>
         </Tooltip>
       )
+    }
+  }
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const cancelRef = useRef()
+
+  const router = useRouter();
+  const toast = useToast();
+
+  const deleteCarrierById = async (id) => {
+    const deleteOne = await deleteCarrier('64b267fcd4f08', token, id);
+    if (deleteOne?.status === 200) {
+      toast({
+        title: "Transportista Eliminado",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setTimeout(() => {
+        router.reload();
+      }, 500);
+    } else {
+      toast({
+        title: "Algo ha ido mal",
+        description: `No se ha podido eliminar el transportista. Por favor, inténtalo de nuevo más tarde.`,
+        status: "warning",
+        duration: 4000,
+        isClosable: true,
+      });
     }
   }
 
@@ -120,8 +161,41 @@ const CarrierCard = React.forwardRef((props, ref) => {
                 >
                   Editar
                 </MenuItem>
+                <MenuItem 
+                  icon={<Icon as={DeleteIcon} boxSize={5} />}
+                  isDisabled={isActive}
+                  onClick={onOpen}
+                >
+                  Eliminar
+                </MenuItem>
               </MenuList>
             </Menu>
+            <AlertDialog
+              isOpen={isOpen}
+              leastDestructiveRef={cancelRef}
+              onClose={onClose}
+            >
+              <AlertDialogOverlay>
+                <AlertDialogContent>
+                  <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                    Eliminar Transportista
+                  </AlertDialogHeader>
+
+                  <AlertDialogBody>
+                    ¿ Estás seguro ? No podrás deshacer esta acción.
+                  </AlertDialogBody>
+
+                  <AlertDialogFooter>
+                    <Button ref={cancelRef} onClick={onClose}>
+                      Cancelar
+                    </Button>
+                    <Button colorScheme='red' onClick={() => deleteCarrierById(carrier.id)} ml={3}>
+                      Eliminar
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialogOverlay>
+            </AlertDialog>
           </Flex>
         </Flex>
       </Box>

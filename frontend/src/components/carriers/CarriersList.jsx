@@ -31,7 +31,7 @@ const CarriersList = React.forwardRef(({ data, token }, ref) => {
     <SimpleGrid columns={1} gap={2} alignContent="center">
       {carriersList && carriersList?.length > 0 ? (
         carriersList && carriersList?.map((carrier, index) => (
-          <CarrierCard key={index} carrier={carrier} toggleActive={toggleActiveCarrier} />
+          <CarrierCard key={index} carrier={carrier} toggleActive={toggleActiveCarrier} token={token}/>
         ))
       ) : (
         <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>

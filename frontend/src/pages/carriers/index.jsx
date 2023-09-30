@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Flex, InputGroup, InputLeftElement, Input, Box, Breadcrumb, Button, BreadcrumbItem, BreadcrumbLink
+  Flex, Icon, Breadcrumb, Button, BreadcrumbItem, BreadcrumbLink
 } from "@chakra-ui/react";
 import Layout from "@/layout/Layout";
 
@@ -10,7 +10,6 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { useRouter } from "next/router";
 import { NextSeo } from "next-seo";
 
-import { SearchIcon } from "@chakra-ui/icons";
 import { getCarriers } from "@/services/carriers";
 import { getStores } from "@/services/stores";
 import CarriersList from "@/components/carriers/CarriersList";
@@ -18,7 +17,11 @@ import CarriersList from "@/components/carriers/CarriersList";
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import NextLink from "next/link";
 
-const CarriersPage = ({ siteConfig, stores, carriers, token }) => {
+import {
+  RiAddLine as AddIcon
+} from "react-icons/ri";
+
+const CarriersPage = ({ siteConfig, stores, carriers, token, role }) => {
   siteConfig = {
     ...siteConfig,
     stores,
@@ -42,14 +45,12 @@ const CarriersPage = ({ siteConfig, stores, carriers, token }) => {
                   <BreadcrumbLink>Transportistas</BreadcrumbLink>
               </BreadcrumbItem>
           </Breadcrumb>
-          <Box>
-            <InputGroup colorScheme="brand">
-              <InputLeftElement pointerEvents='none'>
-                <SearchIcon color='gray.300' />
-              </InputLeftElement>
-              <Input type='text' placeholder='Buscar transportista' focusBorderColor='brand.400' />
-            </InputGroup>
-          </Box>
+          {role === 'admin' && (
+            <Button colorScheme='brand' as={NextLink} href='/carriers/create'>
+              <Icon as={AddIcon} boxSize={5} mr={3} />
+              Crear Transportista
+            </Button>
+          )}
         </Flex>
         <CarriersList
           data={carriers}
@@ -72,6 +73,7 @@ export async function getServerSideProps(context) {
         stores: stores?.data,
         carriers: carriers?.data,
         token: session?.user?.accessToken,
+        role: session?.user?.role,
       },
     };
   } else {
