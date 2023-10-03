@@ -5,7 +5,6 @@ import EmptyIlustration from "@/components/ilustrations/empty";
 
 const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders, filter }) => {
   const lastOrderRef = useRef(null);
-
   useEffect(() => {
     const options = {
       root: null,
@@ -32,23 +31,20 @@ const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders, fil
       }
     };
   }, [hasNextPage, loadMoreOrders]);
-
   return (
     <SimpleGrid columns={1} gap={2} alignContent="center">
-      {data?.pages && data?.pages[0]?.data?.items &&
+      {data?.items &&
         <>
-          {data.pages.map((page, pageIndex) => (
-            page.data.items.length > 0 ? (
-              <OrdersList key={pageIndex} orders={page.data.items} isLoading={isLoading} hasMore={hasNextPage} filter={filter} />
-            ) : (
-              <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
-                <EmptyIlustration height={280} />
-                <Heading variant="md" textAlign="center">
-                  No se han encontrado pedidos
-                </Heading>
-              </Flex>
-            )
-          ))}
+          {data.items.length > 0 ? (
+            <OrdersList orders={data.items} isLoading={isLoading} hasMore={hasNextPage} filter={filter} />
+          ) : (
+            <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
+              <EmptyIlustration height={280} />
+              <Heading variant="md" textAlign="center">
+                No se han encontrado pedidos
+              </Heading>
+            </Flex>
+          )}
           {hasNextPage && (
             <HStack spacing={4} py={4} m="0 auto" ref={lastOrderRef}>
               <Spinner speed="0.65s" color="brand.500" />

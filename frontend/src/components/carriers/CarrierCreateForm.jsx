@@ -28,9 +28,11 @@ import {
 } from "react-icons/ri";
 
 import { createCarrier } from "@/services/carriers";
+import { useSession } from "next-auth/react";
 
 export default function CarrierCreateForm({ token }) {
-
+    const { data: session } = useSession();
+    const user = session?.user;
     const { register, handleSubmit, formState: { errors } } = useForm();
     const toast = useToast();
     const router = useRouter();
@@ -38,7 +40,7 @@ export default function CarrierCreateForm({ token }) {
     const [show, setShow] = useState(false)
 
     const onSubmit = async (data) => {
-        const create = await createCarrier('64b267fcd4f08', token, data);
+        const create = await createCarrier(user?.accountId, user?.accessToken, data);
         if (create?.status === 200) {
             toast({
                 title: "Transportista Creado",

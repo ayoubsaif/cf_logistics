@@ -99,6 +99,43 @@ class OrderController
         }
     }
 
+    function getOpenOrders($storeId)
+    {
+        try {
+            $PermissionMiddleware = new PermissionMiddleware();
+            $allowed = array('admin', 'client');
+            $UserPermmited = $PermissionMiddleware->handle($allowed);
+            if (!$UserPermmited) {
+                return;
+            }
+            
+            if (empty($storeId)) {
+                http_response_code(400);
+                echo json_encode(array("message" => "No se ha enviado el ID de la tienda"));
+                return;
+            }
+
+            $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+            $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
+            $filter = isset($_GET['filter']) ? $_GET['filter'] : null;
+    
+            $orders = $this->orderModel->getManyOpen($storeId, $filter, $page, $limit);
+    
+            if ($orders) {
+                http_response_code(200);
+                echo json_encode($orders);
+                return;
+            } else {
+                http_response_code(200);
+                echo json_encode(array("items" => []));
+                return;
+            }
+        } catch (Exception $e) {
+            http_response_code(401);
+            echo json_encode(array("message" => "No autorizado {$e->getMessage()}"));
+        }
+    }
+
     function getShipping($OrderId)
     {
         try {

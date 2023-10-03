@@ -76,9 +76,12 @@ $router->put('/api/delivery/:CarrierId/active', 'DeliveryCarrierController@activ
 $router->post('/api/delivery/carrier', 'DeliveryCarrierController@createOne');
 
 # Orders > Get Many
-$router->options('/api/orders', 'OrderController@getSuccessResponse');
-$router->options('/api/orders/:storeId', 'OrderController@getSuccessResponse');
-$router->get('/api/orders/:storeId', 'OrderController@getMany');
+$router->options('/api/orders/:storeId/all', 'OrderController@getSuccessResponse');
+$router->get('/api/orders/:storeId/all', 'OrderController@getMany');
+
+# Orders > Get Open Orders
+$router->options('/api/orders/:storeId/open', 'OrderController@getSuccessResponse');
+$router->get('/api/orders/:storeId/open', 'OrderController@getOpenOrders');
 
 # Order > Get One
 $router->options('/api/order/:id', 'OrderController@getSuccessResponse');

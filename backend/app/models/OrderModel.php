@@ -56,6 +56,29 @@ class OrderModel
         );
     }
 
+    public function getManyOpen($storeId, $filter = '', $page = 1, $limit = 20)
+    {
+        $where = "WHERE storeId = {$storeId} AND orderStatus in ('open', 'picking')";
+        
+        if (!empty($filter)) {
+            $where .= " AND (orderNumber LIKE '%{$filter}%' OR customerName LIKE '%{$filter}%')";
+        }
+
+        $offset = ($page - 1) * $limit;
+        $query = "SELECT id, orderNumber, orderDate, orderOrigin, orderStatus, customerName, state, country, postalCode
+                    FROM orders {$where} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}";
+
+        $statement = $this->conn->query($query);
+        # get all orders from database with custom array
+        $items = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        return array(
+            "currentPage"=>$page,
+            "totalPages"=>ceil($this->getTotal($where) / $limit),
+            "items"=>$items
+        );
+    }
+
     public function getOne($id)
     {
         $query = "SELECT * FROM orders WHERE id = {$id}";

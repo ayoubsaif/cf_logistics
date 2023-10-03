@@ -34,11 +34,12 @@ import {
   RiEditBoxLine as EditIcon,
   RiMore2Fill as MenuIcon,
 } from "react-icons/ri";
-
-
+import { useSession } from "next-auth/react";
 
 const CarrierCard = React.forwardRef((props, ref) => {
-  const { carrier, toggleActive, token } = props;
+  const { carrier, toggleActive } = props;
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const {
     name,
@@ -65,7 +66,7 @@ const CarrierCard = React.forwardRef((props, ref) => {
     if (password.length >= 4) {
       const firstTwo = password.slice(0, 2);
       const lastTwo = password.slice(-2);
-      const maskedCharacters = '*'.repeat(password.length - 4);
+      const maskedCharacters = '******'
 
       const maskedPassword = `${firstTwo}${maskedCharacters}${lastTwo}`;
 
@@ -90,7 +91,7 @@ const CarrierCard = React.forwardRef((props, ref) => {
   const toast = useToast();
 
   const deleteCarrierById = async (id) => {
-    const deleteOne = await deleteCarrier('64b267fcd4f08', token, id);
+    const deleteOne = await deleteCarrier(user?.accountId, user?.accessToken, id);
     if (deleteOne?.status === 200) {
       toast({
         title: "Transportista Eliminado",

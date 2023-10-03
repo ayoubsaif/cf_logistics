@@ -40,7 +40,7 @@ class StoreModel
 
     public function getMany()
     {
-        $query = "SELECT * FROM stores WHERE accountId = :accountId";
+        $query = "SELECT stores.* FROM stores INNER JOIN accounts ON accounts.id = stores.accountId WHERE accounts.accountId = :accountId";
         $statement = $this->conn->prepare($query);
         $statement->bindParam(':accountId', $this->accountId);
         $statement->execute();

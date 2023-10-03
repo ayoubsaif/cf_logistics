@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Flex, Heading, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Icon, Button
+    Flex, Heading, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Icon, Button
 } from "@chakra-ui/react";
 import Layout from "@/layout/Layout";
 import CarrierEditForm from "@/components/carriers/CarrierEditForm";
@@ -16,7 +16,7 @@ import NextLink from "next/link";
 
 import { ChevronRightIcon } from '@chakra-ui/icons'
 
-export default function EditCarrier({ siteConfig, stores, carrier, token }) {
+export default function EditCarrier({ siteConfig, stores, carrier }) {
 
     siteConfig = {
         ...siteConfig,
@@ -34,7 +34,7 @@ export default function EditCarrier({ siteConfig, stores, carrier, token }) {
             />
             <Layout title="Edit Carrier" siteConfig={siteConfig}>
                 <Flex gap={5} alignItems="flex-start" direction='column'>
-                    <Breadcrumb separator={<ChevronRightIcon color='brand.300' fontSize='xl' mx='0'/>}>
+                    <Breadcrumb separator={<ChevronRightIcon color='brand.300' fontSize='xl' mx='0' />}>
                         <BreadcrumbItem>
                             <BreadcrumbLink href='/' as={NextLink} >Inicio</BreadcrumbLink>
                         </BreadcrumbItem>
@@ -47,7 +47,6 @@ export default function EditCarrier({ siteConfig, stores, carrier, token }) {
                     </Breadcrumb>
                     <CarrierEditForm
                         data={carrier}
-                        token={token}
                     />
                 </Flex>
             </Layout>
@@ -57,10 +56,10 @@ export default function EditCarrier({ siteConfig, stores, carrier, token }) {
 
 export async function getServerSideProps(context) {
     const session = await getServerSession(context.req, context.res, authOptions);
-    const stores = await getStores(session?.user?.accessToken);
+    const stores = await getStores(session.user.accessToken);
 
     if (session) {
-        if(session?.user?.role !== 'admin') {
+        if (session.user.role !== 'admin') {
             return {
                 redirect: {
                     destination: "/",
@@ -68,12 +67,11 @@ export async function getServerSideProps(context) {
                 },
             };
         }
-        const carrier = await getCarrierById('64b267fcd4f08', session?.user?.accessToken, context.query.id);
+        const carrier = await getCarrierById(session.user.accountId, session.user.accessToken, context.query.id);
         return {
             props: {
                 stores: stores?.data,
                 carrier: carrier?.data,
-                token: session?.user?.accessToken,
             },
         };
     } else {
@@ -84,4 +82,4 @@ export async function getServerSideProps(context) {
             },
         };
     }
-  }
+}

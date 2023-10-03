@@ -37,9 +37,9 @@ export default function ProfileMenu({ session, signOut }) {
       <Menu>
         <MenuButton rounded={"full"} variant={"link"} cursor={"pointer"} minW={0}>
           <Flex direction={"row"} align={"center"} p={2}>
-            <Avatar size={"sm"} src={session?.user?.image} />
+            <Avatar size={"sm"} src={session.user.image} />
             <Text ml={2} display={{ base: "none", md: "flex" }}>
-              {session?.user?.firstname}
+              {session.user.firstname}
             </Text>
           </Flex>
         </MenuButton>
@@ -49,10 +49,10 @@ export default function ProfileMenu({ session, signOut }) {
         >
           <Flex direction={"row"} align={"center"} p={2}>
             <Center>
-              <Avatar size={"lg"} src={session?.user?.image} />
+              <Avatar size={"lg"} src={session.user.image} />
             </Center>
             <Box px={2}>
-              <Text ml={2}>{session?.user?.name}</Text>
+              <Text ml={2}>{session.user.name}</Text>
               <Button
                 ml={2}
                 size="sm"
@@ -61,12 +61,12 @@ export default function ProfileMenu({ session, signOut }) {
                 variant="outline"
                 onClick={onOpen}
                 rightIcon={<ArrowDownIcon size={18} />}
-              >{session?.user?.accountName}</Button>
+              >{session.user.accountName}</Button>
               <AccountsModal isCentered isOpen={isOpen} onClose={onClose} />
             </Box>
           </Flex>
           <MenuDivider />
-          {session?.user?.role === "admin" && (
+          {session.user.role === "admin" && (
             <>
               <MenuGroup fontSize="md" title="Admin" icon={<AdminIcon />}>
                 <MenuItem as={NextLink} href={"/admin/users"} pl={5}

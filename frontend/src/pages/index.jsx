@@ -163,7 +163,7 @@ function DottedBox() {
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
   if (session) {
-    const stores = await getStores(session?.user?.accessToken);
+    const stores = await getStores(session.user.accessToken, session.user.accountId);
     return {
       props: {
         stores: stores?.data,

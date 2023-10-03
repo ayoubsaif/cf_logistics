@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Text, Icon, Flex, InputGroup, InputLeftElement, InputRightElement, Input, Spacer, Box, Button, filter
+  Text, Icon, Flex, InputGroup, InputLeftElement, InputRightElement, Input, Spacer, Box, Button, filter, useToast
 } from "@chakra-ui/react";
 import Layout from "@/layout/Layout";
 
@@ -20,25 +20,24 @@ import { useInfiniteQuery } from 'react-query';
 import OrdersListContainer from "@/components/orders/OrdersListContainer";
 
 const OrdersPage = ({ siteConfig, orders, store, stores, session }) => {
+  const router = useRouter();
+  const { storeId } = router.query;
   siteConfig = {
     ...siteConfig,
     store,
     stores
   }
-  // Step 1: Add a state variable to store the filter text
   const [filterText, setFilterText] = useState('');
   const [filterIsLoading, setFilterIsLoading] = useState(false);
   const filterInput = React.useRef(null);
-  const router = useRouter();
   const { data, isLoading, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
-    queryKey: ['OpenOrders', filterText],
-    queryFn: ({ pageParam = 1 }) => getOpenOrders(session?.user?.accountId,
-                                                  store?.storeId, session?.user?.accessToken,
-                                                  pageParam, filterText),
+    queryKey: ['OpenOrders', storeId],
+    queryFn: ({ pageParam = 1 }) => getOpenOrders(session.user.accountId,
+      storeId, session.user.accessToken, pageParam, filterText),
     initialData: orders,
     getNextPageParam: (lastPage) => {
-      const nextPage = lastPage?.data?.currentPage + 1;
-      return nextPage <= lastPage?.data?.totalPages ? nextPage : undefined;
+      const nextPage = lastPage?.currentPage + 1;
+      return nextPage <= lastPage?.totalPages ? nextPage : undefined;
     },
   });
 
@@ -63,6 +62,8 @@ const OrdersPage = ({ siteConfig, orders, store, stores, session }) => {
   useEffect(() => {
     refetch();
   }, [filterText, router.query]);
+
+  console.log("~~ data: ", data);
 
   return (
     <>
@@ -123,18 +124,28 @@ export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (session) {
-    const { storeId } = context.params;
-    const store = await getStore(session?.user?.accessToken, storeId);
-    const stores = await getStores(session?.user?.accessToken, session?.user?.accountId);
-    const orders = await getOpenOrders(session?.user?.accountId, storeId, session?.user?.accessToken);
-    return {
-      props: {
-        orders: orders?.data,
-        store: store?.data,
-        stores: stores?.data,
-        session,
-      },
-    };
+    try {
+      const { storeId } = context.params;
+      const store = await getStore(session.user.accessToken, session.user?.accountId, storeId);
+      const stores = await getStores(session.user.accessToken, session.user.accountId);
+      const orders = await getOpenOrders(session.user.accountId, storeId, session.user.accessToken);
+      return {
+        props: {
+          orders: orders,
+          store: store,
+          stores: stores.data,
+          session,
+        },
+      };
+    } catch (error) {
+      return {
+        props: {
+          orders: [],
+          store: {},
+          stores: [],
+        },
+      };
+    }
   } else {
     return {
       redirect: {

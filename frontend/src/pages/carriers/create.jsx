@@ -55,10 +55,10 @@ export default function CreateCarrier({ siteConfig, stores, token }) {
 
 export async function getServerSideProps(context) {
     const session = await getServerSession(context.req, context.res, authOptions);
-    const stores = await getStores(session?.user?.accessToken);
+    const stores = await getStores(session.user.accessToken);
 
     if (session) {
-        if(session?.user?.role !== 'admin') {
+        if(session.user.role !== 'admin') {
             return {
                 redirect: {
                     destination: "/",
@@ -69,7 +69,7 @@ export async function getServerSideProps(context) {
         return {
             props: {
                 stores: stores?.data,
-                token: session?.user?.accessToken,
+                token: session.user.accessToken,
             },
         };
     } else {

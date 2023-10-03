@@ -29,8 +29,9 @@ import {
 
 import { updateCarrier } from "@/services/carriers";
 
-export default function CarrierEditForm({ data, token }) {
-
+export default function CarrierEditForm({ data }) {
+    const { data: session } = useSession();
+    const user = session?.user;
     const { register, handleSubmit, formState: { errors } } = useForm();
     const toast = useToast();
     const router = useRouter();
@@ -38,7 +39,7 @@ export default function CarrierEditForm({ data, token }) {
     const [show, setShow] = useState(false)
 
     const onSubmit = async (data) => {
-        const update = await updateCarrier('64b267fcd4f08', token, data?.id, data);
+        const update = await updateCarrier(user?.accountId, user?.accessToken, data?.id, data);
         if (update?.status === 200) {
             toast({
                 title: "Transportista actualizado",

@@ -2,18 +2,22 @@ import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
-export function getCarriers(accountId, accessToken) {
-    try {
-        return axios.get(`${API_URL}/api/delivery`, {
-            headers: {
-                AccountId: accountId,
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
+export async function getCarriers(accountId, accessToken) {
+    const response = await fetch(`${API_URL}/api/delivery`, {
+        method: 'GET',
+        headers: {
+            AccountId: accountId,
+            Authorization: `Bearer ${accessToken}`,
+        },
+    })
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
     }
-    catch (error) {
-        console.error(error);
-    }
+    
+    return response.json();
+
 }
 
 export function activeCarrier(accountId, accessToken, carrierId) {

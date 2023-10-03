@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Flex, Icon, Breadcrumb, Button, BreadcrumbItem, BreadcrumbLink
+  Flex, Icon, Breadcrumb, Button, BreadcrumbItem, BreadcrumbLink, useToast
 } from "@chakra-ui/react";
 import Layout from "@/layout/Layout";
 
@@ -21,12 +21,25 @@ import {
   RiAddLine as AddIcon
 } from "react-icons/ri";
 
-const CarriersPage = ({ siteConfig, stores, carriers, token, role }) => {
+const CarriersPage = ({ siteConfig, stores, carriers, role, error }) => {
+
+
   siteConfig = {
     ...siteConfig,
     stores,
   }
   const router = useRouter();
+
+  if (error) {
+    const toast = useToast();
+    toast({
+      title: "Error",
+      description: "Ocurrió un error al cargar los transportistas",
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+    });
+  }
 
   return (
     <>
@@ -37,13 +50,13 @@ const CarriersPage = ({ siteConfig, stores, carriers, token, role }) => {
       />
       <Layout title="Carriers" siteConfig={siteConfig}>
         <Flex mb={5} flexDirection={['column', 'row']} justifyContent='space-between' gap={4}>
-          <Breadcrumb separator={<ChevronRightIcon color='brand.300' fontSize='xl' mx='0'/>}>
-              <BreadcrumbItem>
-                  <BreadcrumbLink as={NextLink} href='/'>Inicio</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem isCurrentPage>
-                  <BreadcrumbLink>Transportistas</BreadcrumbLink>
-              </BreadcrumbItem>
+          <Breadcrumb separator={<ChevronRightIcon color='brand.300' fontSize='xl' mx='0' />}>
+            <BreadcrumbItem>
+              <BreadcrumbLink as={NextLink} href='/'>Inicio</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbItem isCurrentPage>
+              <BreadcrumbLink>Transportistas</BreadcrumbLink>
+            </BreadcrumbItem>
           </Breadcrumb>
           {role === 'admin' && (
             <Button colorScheme='brand' as={NextLink} href='/carriers/create'>
@@ -54,7 +67,6 @@ const CarriersPage = ({ siteConfig, stores, carriers, token, role }) => {
         </Flex>
         <CarriersList
           data={carriers}
-          token={token}
         />
       </Layout>
     </>
@@ -65,17 +77,30 @@ export default CarriersPage;
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
-  const stores = await getStores(session?.user?.accessToken);
-  const carriers = await getCarriers('64b267fcd4f08', session?.user?.accessToken);
   if (session) {
-    return {
-      props: {
-        stores: stores?.data,
-        carriers: carriers?.data,
-        token: session?.user?.accessToken,
-        role: session?.user?.role,
-      },
-    };
+    try {
+      const stores = await getStores(session.user.accessToken, session.user.accountId);
+      const carriers = await getCarriers(session.user.accountId, session.user.accessToken);
+
+      if (carriers) {
+        console.log("CARRIERS: ", carriers);
+      }
+      return {
+        props: {
+          stores: stores?.data,
+          carriers: carriers,
+          role: session.user.role,
+        },
+      };
+    } catch (error) {
+      return {
+        props: {
+          stores: [],
+          carriers: [],
+          role: session.user.role,
+        },
+      };
+    }
   } else {
     return {
       redirect: {

@@ -26,7 +26,7 @@ export default async (req, res) => {
                     {
                         headers: {
                             AccountId: req.headers.accountid,
-                            Authorization: `Bearer ${session?.user?.accessToken}`,
+                            Authorization: `Bearer ${session.user.accessToken}`,
                         },
                     }
                 );
@@ -42,7 +42,7 @@ export default async (req, res) => {
                     {
                         headers: {
                             AccountId: req.headers.accountid,
-                            Authorization: `Bearer ${session?.user?.accessToken}`,
+                            Authorization: `Bearer ${session.user.accessToken}`,
                         },
                     }
                 );

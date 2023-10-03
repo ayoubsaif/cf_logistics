@@ -6,6 +6,7 @@ require_once 'app/middleware/PermissionMiddleware.php';
 class StoreController
 {    
     private $storeModel;
+    private $accountId;
 
     public function __construct()
     {
@@ -16,8 +17,8 @@ class StoreController
             echo json_encode(array("message" => "No autorizado"));
             return;
         }
-        $accountId = $headers['AccountId'];
-        $this->storeModel = new StoreModel($accountId);
+        $this->accountId = $headers['AccountId'];
+        $this->storeModel = new StoreModel($this->accountId);
     }
 
     function getMany()
@@ -26,10 +27,11 @@ class StoreController
             $PermissionMiddleware = new PermissionMiddleware();
             $allowed = array('admin', 'client');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
-            if (!$UserPermmited) {
+            if (!$UserPermmited || !isset($this->accountId)) {
                 return;
             }
-            $store = new StoreModel();
+
+            $store = new StoreModel($this->accountId);
             $storeArray = $store->getMany();
             if ($storeArray) {
                 http_response_code(200);
@@ -55,10 +57,10 @@ class StoreController
             $PermissionMiddleware = new PermissionMiddleware();
             $allowed = array('admin', 'client');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
-            if (!$UserPermmited) {
+            if (!$UserPermmited || !isset($this->accountId)) {
                 return;
             }
-            $store = new StoreModel();
+            $store = new StoreModel($this->accountId);
             $storeArray = $store->getStoreById($id);
             if ($storeArray) {
                 http_response_code(200);

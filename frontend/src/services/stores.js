@@ -5,26 +5,28 @@ const API_URL = process.env.NEXT_PUBLIC_API;
 export function getStores(accessToken, accountId) {
     try {
         return axios.get(`${API_URL}/api/stores`, {
-                    headers: {
-                        AccountId: accountId,
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
+            headers: {
+                AccountId: accountId,
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
     }
     catch (error) {
         console.error(error);
     }
 }
 
-export function getStore(accessToken, storeId) {
-    try {
-        return axios.get(`${API_URL}/api/store/${storeId}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
+export const getStore = async (accessToken, accountId, storeId) => {
+    const response = await fetch(`${API_URL}/api/store/${storeId}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            AccountId: accountId,
+        },
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        console.error("Error Store",error.message);
+        throw new Error(error.message);
     }
-    catch (error) {
-        console.error(error);
-    }
+    return response.json();
 }
