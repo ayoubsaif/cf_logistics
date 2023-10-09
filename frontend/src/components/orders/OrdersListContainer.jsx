@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from "react";
-import { SimpleGrid, HStack, Spinner, Text, Flex, Heading, Divider } from "@chakra-ui/react";
-import OrdersList from "@/components/orders/OrdersList";
-import EmptyIlustration from "@/components/ilustrations/empty";
+import { SimpleGrid } from "@chakra-ui/react";
+import OrderCard from "./OrderCard";
+import OrderCardSkeleton from "./OrderCardSkeleton";
 
-const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders, filter }) => {
+const OrdersListContainer = ({ data, isLoading, hasNextPage, fetchNextPage, filter }) => {
   const lastOrderRef = useRef(null);
   useEffect(() => {
     const options = {
@@ -16,7 +16,7 @@ const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders, fil
       if (entry.isIntersecting && hasNextPage) {
         // add sleep time 3 seconds to simulate the loading
         setTimeout(() => {
-          loadMoreOrders();
+          fetchNextPage();
         }, 1500);
       }
     }, options);
@@ -30,29 +30,20 @@ const OrdersListContainer = ({ data, isLoading, hasNextPage, loadMoreOrders, fil
         observer.unobserve(lastOrderRef.current);
       }
     };
-  }, [hasNextPage, loadMoreOrders]);
+  }, [hasNextPage, fetchNextPage]);
+  console.log(data)
   return (
     <SimpleGrid columns={1} gap={2} alignContent="center">
-      {data?.items &&
-        <>
-          {data.items.length > 0 ? (
-            <OrdersList orders={data.items} isLoading={isLoading} hasMore={hasNextPage} filter={filter} />
-          ) : (
-            <Flex spacing={2} alignItems="center" justifyContent="center" color="fg.muted" flexDirection={['column', 'row']}>
-              <EmptyIlustration height={280} />
-              <Heading variant="md" textAlign="center">
-                No se han encontrado pedidos
-              </Heading>
-            </Flex>
-          )}
-          {hasNextPage && (
-            <HStack spacing={4} py={4} m="0 auto" ref={lastOrderRef}>
-              <Spinner speed="0.65s" color="brand.500" />
-              <Text>Cargando más pedidos...</Text>
-            </HStack>
-          )}
-        </>
-      }
+      {data?.pages?.map((page, index) => (
+        <React.Fragment key={index}>
+          {page?.items && page?.items?.map((order, index) => (
+            <OrderCard key={index} order={order} filter={filter} />
+          ))}
+        </React.Fragment>
+      ))}
+      {hasNextPage && !isLoading && (
+        <OrderCardSkeleton ref={lastOrderRef}/>
+      )}
     </SimpleGrid>
   );
 };

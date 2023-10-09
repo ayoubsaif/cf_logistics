@@ -28,6 +28,7 @@ import {
 } from "react-icons/ri";
 
 import { updateCarrier } from "@/services/carriers";
+import { useSession } from "next-auth/react";
 
 export default function CarrierEditForm({ data }) {
     const { data: session } = useSession();

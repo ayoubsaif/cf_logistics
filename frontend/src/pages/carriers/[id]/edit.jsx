@@ -56,8 +56,6 @@ export default function EditCarrier({ siteConfig, stores, carrier }) {
 
 export async function getServerSideProps(context) {
     const session = await getServerSession(context.req, context.res, authOptions);
-    const stores = await getStores(session.user.accessToken);
-
     if (session) {
         if (session.user.role !== 'admin') {
             return {
@@ -67,11 +65,13 @@ export async function getServerSideProps(context) {
                 },
             };
         }
-        const carrier = await getCarrierById(session.user.accountId, session.user.accessToken, context.query.id);
+        const carrierId = context.query.id;
+        const carrier = await getCarrierById(session.user.accountId, session.user.accessToken, carrierId);
+        const stores = await getStores(session.user.accessToken, session.user.accountId);
         return {
             props: {
-                stores: stores?.data,
-                carrier: carrier?.data,
+                stores,
+                carrier,
             },
         };
     } else {

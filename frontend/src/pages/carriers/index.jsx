@@ -81,14 +81,10 @@ export async function getServerSideProps(context) {
     try {
       const stores = await getStores(session.user.accessToken, session.user.accountId);
       const carriers = await getCarriers(session.user.accountId, session.user.accessToken);
-
-      if (carriers) {
-        console.log("CARRIERS: ", carriers);
-      }
       return {
         props: {
-          stores: stores?.data,
-          carriers: carriers,
+          stores,
+          carriers,
           role: session.user.role,
         },
       };

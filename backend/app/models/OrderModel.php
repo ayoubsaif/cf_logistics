@@ -23,6 +23,7 @@ class OrderModel
     public $contactMobile;
     public $contactEmail;
     public $shippingNumber;
+    public $shippingUrl;
     public $shippingLabelDatas;
     public $shippingLabelFileName;
 
@@ -33,7 +34,7 @@ class OrderModel
 
     public function getMany($storeId, $status, $filter = '', $page = 1, $limit = 20)
     {
-        $where = "WHERE storeId = {$storeId}";
+        $where = "WHERE storeId = {$storeId} AND orderStatus = 'done'";
         if (!empty($status)) {
             $where .= " AND orderStatus = '{$status}'";
         }
@@ -42,7 +43,7 @@ class OrderModel
         }
 
         $offset = ($page - 1) * $limit;
-        $query = "SELECT id, orderNumber, orderDate, orderOrigin, orderStatus, customerName, state, country, postalCode
+        $query = "SELECT id, orderNumber, orderDate, orderOrigin, orderStatus, customerName, state, country, postalCode, shippingNumber, shippingUrl
                     FROM orders {$where} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}";
 
         $statement = $this->conn->query($query);
@@ -65,7 +66,7 @@ class OrderModel
         }
 
         $offset = ($page - 1) * $limit;
-        $query = "SELECT id, orderNumber, orderDate, orderOrigin, orderStatus, customerName, state, country, postalCode
+        $query = "SELECT id, orderNumber, orderDate, orderOrigin, orderStatus, customerName, state, country, postalCode, shippingNumber, shippingUrl
                     FROM orders {$where} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}";
 
         $statement = $this->conn->query($query);
@@ -106,6 +107,7 @@ class OrderModel
         $query = "UPDATE orders
             SET orderStatus = 'picking',
                 shippingNumber = '{$shipment['tracking_number']}',
+                shippingUrl = '{$shipment['tracking_url']}',
                 shippingLabelDatas = '{$shipment['file']['datas']}',
                 shippingLabelFileName = '{$shipment['file']['name']}'
             WHERE id = {$orderId}";

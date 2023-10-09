@@ -1,3 +1,4 @@
+import RequestFactory from "@/utils/RequestFactory";
 import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
@@ -36,7 +37,7 @@ export function activeCarrier(accountId, accessToken, carrierId) {
 
 export function getCarrierById(accountId, accessToken, carrierId) {
     try {
-        return axios.get(`${API_URL}/api/delivery/${carrierId}`, {
+        return RequestFactory(`${API_URL}/api/delivery/${carrierId}`, {
             headers: {
                 AccountId: accountId,
                 Authorization: `Bearer ${accessToken}`,
@@ -50,7 +51,7 @@ export function getCarrierById(accountId, accessToken, carrierId) {
 
 export function updateCarrier(accountId, accessToken, carrierId, data) {
     try {
-        return axios.put(`/api/delivery/${carrierId}`, data, {
+        return RequestFactory(`/api/delivery/${carrierId}`, data, {
             headers: {
                 AccountId: accountId,
                 Authorization: `Bearer ${accessToken}`,

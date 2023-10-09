@@ -68,6 +68,7 @@ class CorreosModel extends DeliveryCarrierModel
         $attachmentName = (string) $response->Bulto->Etiqueta->Etiqueta_pdf->NombreF;
         return array(
             'tracking_number' => $carrierTrackingRef,
+            'tracking_url' => 'https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking-number=' . $carrierTrackingRef,
             'file' => array(
                 'name' => $attachmentName,
                 'datas' => $attachmentData

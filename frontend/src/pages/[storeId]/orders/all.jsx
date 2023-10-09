@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Text, Icon, Flex, InputGroup, InputLeftElement, InputRightElement, Input, Spacer, Box, Button, filter
+  Text, Icon, Flex, InputGroup, InputLeftElement, InputRightElement, Input, Spacer, Box, Button, Fade
 } from "@chakra-ui/react";
 import Layout from "@/layout/Layout";
 
@@ -18,9 +18,9 @@ import { getStores, getStore } from "@/services/stores";
 import { getAllOrders } from "@/services/orders";
 import { useInfiniteQuery } from 'react-query';
 import OrdersListContainer from "@/components/orders/OrdersListContainer";
-import { useSession } from "next-auth/react";
+import EmptyIlustration from "@/components/ilustrations/empty";
 
-const OrdersPage = ({ siteConfig, orders, store, stores, session }) => {
+const OrdersPage = ({ siteConfig, orders, store, stores, user }) => {
   siteConfig = {
     ...siteConfig,
     store,
@@ -28,44 +28,29 @@ const OrdersPage = ({ siteConfig, orders, store, stores, session }) => {
   }
 
   const [filterText, setFilterText] = useState('');
-  const [filterIsLoading, setFilterIsLoading] = useState(false);
-  const filterInput = React.useRef(null);
   const router = useRouter();
   const { storeId } = router.query;
-  const { data: sessionData } = useSession();
-  const { user } = sessionData;
   const { data, isLoading, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
-    queryKey: ['AllOrders', storeId],
+    queryKey: ['all-orders', storeId],
     queryFn: ({ pageParam = 1 }) => getAllOrders(user.accountId, storeId, user.accessToken, pageParam, filterText),
     initialData: orders,
     getNextPageParam: (lastPage) => {
-      console.log(lastPage);
-      const nextPage = lastPage?.currentPage + 1;
+      let nextPage = lastPage?.currentPage + 1;
       return nextPage <= lastPage?.totalPages ? nextPage : undefined;
     },
   });
 
-  // Call fetchNextPage to load more data
-  const loadMoreOrders = () => {
-    fetchNextPage();
-  };
-
-  // Step 2: Create a function to handle the filter text changes,
-  // add a timeoout to avoid refetching too often waiting for the user to finish typing
   const handleFilter = (event) => {
     setTimeout(() => {
-      setFilterIsLoading(true);
       setFilterText(event.target.value);
-      setFilterIsLoading(false);
     }, 2000);
   };
 
-  // Step 4: Trigger a refetch when the filter text changes
-  // add delay to avoid refetching too often
   useEffect(() => {
     refetch();
   }, [filterText]);
 
+  const filterInput = React.useRef(null);
   const clearFilterText = () => {
     setFilterText('');
     filterInput.current.value = '';
@@ -117,9 +102,28 @@ const OrdersPage = ({ siteConfig, orders, store, stores, session }) => {
           data={data}
           isLoading={isLoading}
           hasNextPage={hasNextPage}
-          loadMoreOrders={loadMoreOrders}
+          fetchNextPage={fetchNextPage}
           filter={filterText}
         />
+        {data?.pages && (
+          data?.pages[0].items.length === 0 && (
+            <Fade in={true}>
+              <Flex
+                w='full'
+                h='full'
+                flexDirection='column'
+                justifyContent='center'
+                alignItems='center'
+                gap={2}
+              >
+                <Icon as={EmptyIlustration} boxSize={60} />
+                <Text fontSize='2xl' fontWeight='bold'>No hay pedidos</Text>
+                <Text fontSize='md' fontWeight='light'>No se han encontrado pedidos para los filtros aplicados y la tienda seleccionada</Text>
+              </Flex>
+            </Fade>
+          )
+        )
+        }
       </Layout>
     </>
   );
@@ -135,13 +139,12 @@ export async function getServerSideProps(context) {
       const store = await getStore(session.user.accessToken, session.user.accountId, storeId);
       const stores = await getStores(session.user.accessToken, session.user.accountId);
       const orders = await getAllOrders(session.user.accountId, storeId, session.user.accessToken);
-      console.log("session", session);
       return {
         props: {
-          orders: orders,
-          store: store,
-          stores: stores?.data,
-          session
+          orders,
+          store,
+          stores,
+          user: session.user,
         },
       };
     } catch (error) {

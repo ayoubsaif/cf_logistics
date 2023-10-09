@@ -209,7 +209,7 @@ class DeliveryCarrierController
     function updateOne($id){
         try {
             $PermissionMiddleware = new PermissionMiddleware();
-            $allowed = array('admin', 'manager');
+            $allowed = array('admin', 'manager', 'client');
             $UserPermmited = $PermissionMiddleware->handle($allowed);
             if (!$UserPermmited) {
                 return;

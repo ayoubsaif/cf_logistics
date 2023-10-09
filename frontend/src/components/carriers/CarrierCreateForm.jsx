@@ -30,7 +30,7 @@ import {
 import { createCarrier } from "@/services/carriers";
 import { useSession } from "next-auth/react";
 
-export default function CarrierCreateForm({ token }) {
+export default function CarrierCreateForm() {
     const { data: session } = useSession();
     const user = session?.user;
     const { register, handleSubmit, formState: { errors } } = useForm();

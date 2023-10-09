@@ -13,7 +13,8 @@ import {
   Icon,
   useBreakpointValue,
   Tooltip,
-  Highlight
+  Highlight,
+  Link
 } from "@chakra-ui/react";
 import { format, parseISO } from "date-fns";
 import esLocale from "date-fns/locale/es";
@@ -23,6 +24,7 @@ import {
   RiTruckLine as TruckIcon,
   RiCheckLine as CheckIcon,
   RiCloseLine as CloseIcon,
+  RiExternalLinkLine as ExternalLinkIcon
 } from "react-icons/ri";
 
 import { ORDER_STATUS } from "@/utils/constants/orders";
@@ -168,6 +170,15 @@ const OrderCard = forwardRef(({ order, filter }, ref) => {
               </TagLabel>
             </Tag>
           </Flex>
+          <Flex justifyContent="space-between" flexDirection={{ base: "column", md: "row" }}>
+            {order && order.shippingUrl &&
+              <Text fontSize="sm" fontWeight="bold" color="fg.accent">
+                <Link as={NextLink} href={order.shippingUrl} target="_blank" _hover={{color:"brand.500"}}>
+                  <Flex gap={1} alignItems="center"><ExternalLinkIcon size={12} />{order.shippingNumber}</Flex>
+                </Link>
+              </Text>
+            }
+          </Flex>
           <Flex
             justifyContent="space-between"
             flexDirection={{ base: "column", md: "row" }}
@@ -185,32 +196,22 @@ const OrderCard = forwardRef(({ order, filter }, ref) => {
             {orderStatus == ORDER_STATUS.open ? (
               <Box mt={2}>
                 <ButtonGroup
-                  variant="outline"
                   isAttached
                   spacing="2"
-                  size={"sm"}
+                  size="sm"
                   width={{ base: "full", md: "auto" }}
                 >
                   <Button colorScheme="green" leftIcon={<CheckIcon size={18} />}
                     width={{ base: "full", md: "auto" }}>Confirmar</Button>
-                  <Button colorScheme="brand" leftIcon={<CloseIcon size={18} />}
+                  <Button variant="outline" colorScheme="brand" leftIcon={<CloseIcon size={18} />}
                     width={{ base: "full", md: "auto" }}>Cancelar</Button>
                 </ButtonGroup>
               </Box>
-            ) : /* check status done or picking*/ order?.status == ORDER_STATUS.done || order?.status == ORDER_STATUS.picking
-              && (order?.shipping?.urlLabel || order?.shipping?.trackingUrl) &&
-            <Box mt={2}>
-              <ButtonGroup variant="outline" spacing="1" size={"sm"}>
-                {order?.shipping?.labelDatas &&
-                  <PrintPDFButton order={order} leftIcon={<TruckIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
-                }
-                {order?.shipping?.trackingUrl &&
-                  <NextLink href={order?.shipping?.trackingUrl} target="_blank">
-                    <Button isExternal leftIcon={<TrackIcon size={18} target="_blank" />}>Seguimiento</Button>
-                  </NextLink>
-                }
-              </ButtonGroup>
-            </Box>
+            ) : orderStatus === ORDER_STATUS.done || orderStatus === ORDER_STATUS.picking &&
+              <Flex mt={2} gap={1}>
+                  <PrintPDFButton size="sm" variant="outline" colorScheme="black" order={order} leftIcon={<TruckIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
+                  <Button size="sm" variant="outline" colorScheme="cyan" leftIcon={<CheckIcon size={18} />}>Completado</Button>
+              </Flex>
             }
           </Flex>
         </Stack>

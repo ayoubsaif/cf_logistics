@@ -166,7 +166,7 @@ export async function getServerSideProps(context) {
     const stores = await getStores(session.user.accessToken, session.user.accountId);
     return {
       props: {
-        stores: stores?.data,
+        stores: stores,
         user: session?.user,
       },
     };

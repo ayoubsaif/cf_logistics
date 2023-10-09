@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Text, Icon, Flex, InputGroup, InputLeftElement, InputRightElement, Input, Spacer, Box, Button, filter, useToast
+  Text, Icon, Flex, InputGroup, InputLeftElement, InputRightElement, Input, Spacer, Box, Button, Fade
 } from "@chakra-ui/react";
 import Layout from "@/layout/Layout";
 
@@ -18,38 +18,31 @@ import { getStores, getStore } from "@/services/stores";
 import { getOpenOrders } from "@/services/orders";
 import { useInfiniteQuery } from 'react-query';
 import OrdersListContainer from "@/components/orders/OrdersListContainer";
+import TasksCompleteIlustration from "@/components/ilustrations/tasksComplete";
 
-const OrdersPage = ({ siteConfig, orders, store, stores, session }) => {
-  const router = useRouter();
-  const { storeId } = router.query;
+const OrdersPage = ({ siteConfig, orders, store, stores, user }) => {
   siteConfig = {
     ...siteConfig,
     store,
     stores
   }
   const [filterText, setFilterText] = useState('');
-  const [filterIsLoading, setFilterIsLoading] = useState(false);
-  const filterInput = React.useRef(null);
+  const router = useRouter();
+  const { storeId } = router.query;
   const { data, isLoading, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
-    queryKey: ['OpenOrders', storeId],
-    queryFn: ({ pageParam = 1 }) => getOpenOrders(session.user.accountId,
-      storeId, session.user.accessToken, pageParam, filterText),
+    queryKey: ['open-orders', storeId],
+    queryFn: ({ pageParam = 1 }) => getOpenOrders(user.accountId, storeId, user.accessToken, pageParam, filterText),
     initialData: orders,
     getNextPageParam: (lastPage) => {
-      const nextPage = lastPage?.currentPage + 1;
+      let nextPage = lastPage?.currentPage + 1;
       return nextPage <= lastPage?.totalPages ? nextPage : undefined;
     },
   });
 
-  const loadMoreOrders = () => {
-    fetchNextPage();
-  };
-
+  const filterInput = React.useRef(null);
   const handleFilter = (event) => {
     setTimeout(() => {
-      setFilterIsLoading(true);
       setFilterText(event.target.value);
-      setFilterIsLoading(false);
     }, 2000);
   };
 
@@ -62,8 +55,6 @@ const OrdersPage = ({ siteConfig, orders, store, stores, session }) => {
   useEffect(() => {
     refetch();
   }, [filterText, router.query]);
-
-  console.log("~~ data: ", data);
 
   return (
     <>
@@ -110,9 +101,28 @@ const OrdersPage = ({ siteConfig, orders, store, stores, session }) => {
           data={data}
           isLoading={isLoading}
           hasNextPage={hasNextPage}
-          loadMoreOrders={loadMoreOrders}
+          fetchNextPage={fetchNextPage}
           filter={filterText}
         />
+        {data?.pages && (
+          data?.pages[0].items.length === 0 && (
+            <Fade in={true}>
+              <Flex
+                w='full'
+                h='full'
+                flexDirection='column'
+                justifyContent='center'
+                alignItems='center'
+                gap={2}
+              >
+                <Icon as={TasksCompleteIlustration} boxSize={60} />
+                <Text fontSize='2xl' fontWeight='bold'>¡Estás al día!</Text>
+                <Text fontSize='md' fontWeight='light'>No hay más pedidos abiertos</Text>
+              </Flex>
+            </Fade>
+          )
+        )
+        }
       </Layout>
     </>
   );
@@ -131,10 +141,10 @@ export async function getServerSideProps(context) {
       const orders = await getOpenOrders(session.user.accountId, storeId, session.user.accessToken);
       return {
         props: {
-          orders: orders,
-          store: store,
-          stores: stores.data,
-          session,
+          orders,
+          store,
+          stores,
+          user: session.user,
         },
       };
     } catch (error) {

@@ -17,22 +17,27 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${session.user.accessToken}`,
                 'AccountId': session.user.accountId
             },
-            params: {}
         }
+
+        // add params using fetch API
+        let params = {};
         if (page) {
-            options.params['page'] = page;
+            params.page = page;
         }
         if (filter) {
-            options.params['filter'] = filter;
+            params.filter = filter;
         }
-        console.log('options:', options);
-        const response = await fetch(`${process.env.NEXT_APP_API_URL}/api/orders/${storeId}/all`, options);
+        const searchParams = new URLSearchParams(params);
+        const url = `${process.env.NEXT_APP_API_URL}/api/orders/${storeId}/all?${searchParams.toString()}`;
+        const response = await fetch(url, options);
         
         if (!response.ok) {
-            const error = await response.json();
+            const error = response.json();
             throw new Error(error.message);
         }
-        res.status(response.status).json(await response.json());
+        // await response and console log currentPage from response body
+        const data = await response.json();
+        res.status(response.status).json(data);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ message: 'Internal Server Error' });

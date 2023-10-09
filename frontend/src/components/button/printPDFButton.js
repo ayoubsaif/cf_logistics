@@ -6,7 +6,7 @@ const PrintPDFButton = ({ children, order, ...props }) => {
   useEffect(() => {
     // Load the PrintJS library dynamically
     const script = document.createElement('script');
-    script.src = 'https://printjs-4de6.kxcdn.com/print.min.js'; // Replace with the correct URL
+    script.src = '/assets/js/printjs.min.js'; // Replace with the correct URL
     script.async = true;
     document.body.appendChild(script);
 
@@ -16,18 +16,14 @@ const PrintPDFButton = ({ children, order, ...props }) => {
     };
   }, []);
 
-  // get the base64 string from the backend API /api/order/:id/shippinglabel
-  const [base64, setBase64] = React.useState('');
-  useEffect(() => {
-    const getBase64 = async () => {
-      const { data } = await axios.get(`/api/order/${order._id}/shippinglabel`);
-      setBase64(data);
-    };
-    getBase64();
-  }, [order]);
-
-  const handlePrint = () => {
-      window.printJS({ printable: base64, type: 'pdf', base64: true });
+  const handlePrint = async () => {
+    const orderResponse = await fetch(`/api/order/${order.id}`);
+    const data = await orderResponse.json();
+    order = {
+      ...order,
+      ...data.order,
+    }
+    window.printJS({ printable: await data.shipping.labelDatas, type: 'pdf', base64: true });
   };
 
   return (

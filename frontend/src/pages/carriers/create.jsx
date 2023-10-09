@@ -44,9 +44,7 @@ export default function CreateCarrier({ siteConfig, stores, token }) {
                             <BreadcrumbLink>Nuevo</BreadcrumbLink>
                         </BreadcrumbItem>
                     </Breadcrumb>
-                    <CarrierCreateForm
-                        token={token}
-                    />
+                    <CarrierCreateForm/>
                 </Flex>
             </Layout>
         </>
@@ -55,7 +53,6 @@ export default function CreateCarrier({ siteConfig, stores, token }) {
 
 export async function getServerSideProps(context) {
     const session = await getServerSession(context.req, context.res, authOptions);
-    const stores = await getStores(session.user.accessToken);
 
     if (session) {
         if(session.user.role !== 'admin') {
@@ -66,9 +63,10 @@ export async function getServerSideProps(context) {
                 },
             };
         }
+        const stores = await getStores(session.user.accountId, session.user.accessToken);
         return {
             props: {
-                stores: stores?.data,
+                stores: stores,
                 token: session.user.accessToken,
             },
         };

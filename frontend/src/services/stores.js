@@ -1,10 +1,11 @@
+import RequestFactory from "@/utils/RequestFactory";
 import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
 export function getStores(accessToken, accountId) {
     try {
-        return axios.get(`${API_URL}/api/stores`, {
+        return RequestFactory(`${API_URL}/api/stores`, {
             headers: {
                 AccountId: accountId,
                 Authorization: `Bearer ${accessToken}`,
