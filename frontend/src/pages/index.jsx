@@ -12,16 +12,12 @@ import {
 } from "@chakra-ui/react";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { NextSeo } from "next-seo";
-
 import { signIn } from "next-auth/react";
-import Dashboard from "@/components/home/dashboard";
 import Layout from "@/layout/Layout";
-
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-
 import { getStores } from "@/services/stores";
-import { useSession } from "next-auth/react";
+import StoresList from "@/components/home/storesList";
 
 export default function Home({ siteConfig, stores, user }) {
   siteConfig = {
@@ -53,13 +49,15 @@ export default function Home({ siteConfig, stores, user }) {
         {user && user?.firstname ? (
           <Box py={10}>
             <Heading>Hola {user?.firstname},</Heading>
-            <Text fontSize="xl" color="gray.500">
+            <Text fontSize="2xl" color="fg.muted">
               Bienvenido a Cras Forum Logistics
             </Text>
-            <Text fontSize="md" color="gray.800">
+            <Text fontSize="lg" color="fg.subtle">
               Tienes seleccionada la cuenta <b>{user?.accountName}</b>
             </Text>
-            <Dashboard />
+            {stores?.items && stores?.items.length > 0 && (
+              <StoresList stores={stores} />
+            )}
           </Box>
         ) : (
           <Stack
@@ -166,7 +164,7 @@ export async function getServerSideProps(context) {
     const stores = await getStores(session.user.accessToken, session.user.accountId);
     return {
       props: {
-        stores: stores,
+        stores,
         user: session?.user,
       },
     };
