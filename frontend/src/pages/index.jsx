@@ -17,7 +17,7 @@ import Layout from "@/layout/Layout";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getStores } from "@/services/stores";
-import StoresList from "@/components/home/storesList";
+import StoresList from "@/components/home/StoresList";
 
 export default function Home({ siteConfig, stores, user }) {
   siteConfig = {

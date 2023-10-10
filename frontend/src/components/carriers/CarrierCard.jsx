@@ -24,7 +24,7 @@ import {
   Button
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { getCarrierLogo } from "@/components/carriers/carriersData";
+import { getCarrierLogo } from "@/components/carriers/CarriersData";
 import { deleteCarrier } from "@/services/carriers";
 import { motion } from "framer-motion";
 import NextLink from "next/link";
