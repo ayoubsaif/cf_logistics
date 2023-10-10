@@ -15,12 +15,12 @@ class OrderController
     {
         # Get Account ID from headers
         $headers = apache_request_headers();
-        if (!isset($headers['AccountId'])) {
+        if (!isset($headers['Accountid'])) {
             http_response_code(401);
             echo json_encode(array("message" => "No autorizado"));
             return;
         }
-        $accountId = $headers['AccountId'];
+        $accountId = $headers['Accountid'];
         $this->orderModel = new OrderModel($accountId);
     }
 

@@ -10,7 +10,7 @@ export const getAllOrders = async (accountId, storeId, accessToken, page, filter
         method : 'get',
         headers: {
             Authorization: `Bearer ${accessToken}`,
-            AccountId: accountId,
+            Accountid: accountId,
         },
         params: {}
     };
@@ -43,7 +43,7 @@ export const getOpenOrders = async (accountId, storeId, accessToken, page, filte
     let options = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
-            AccountId: accountId,
+            Accountid: accountId,
         },
         params: {}
     };

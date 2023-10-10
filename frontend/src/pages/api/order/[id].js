@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         },
     }
     try {
-        const url = `${process.env.NEXT_APP_API_URL}/api/order/${id}`;
+        const url = `${process.env.NEXT_PUBLIC_API}/api/order/${id}`;
         const response = await fetch(url, options);
 
         if (!response.ok) {

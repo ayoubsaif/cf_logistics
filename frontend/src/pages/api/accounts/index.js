@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         const headers = {
             'Authorization': `Bearer ${accessToken}`
         };
-        const response = await axios.get(`${process.env.NEXT_APP_API_URL}/api/accounts`, { headers })
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/api/accounts`, { headers })
         if (!response.status === 200) {
             console.error(response.json());
             throw new Error('Failed to fetch data from the backend API');

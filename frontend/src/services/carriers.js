@@ -7,7 +7,7 @@ export async function getCarriers(accountId, accessToken) {
     const response = await fetch(`${API_URL}/api/delivery`, {
         method: 'GET',
         headers: {
-            AccountId: accountId,
+            Accountid: accountId,
             Authorization: `Bearer ${accessToken}`,
         },
     })
@@ -25,7 +25,7 @@ export function activeCarrier(accountId, accessToken, carrierId) {
     try {
         return axios.put(`/api/delivery/${carrierId}/active`, {}, {
             headers: {
-                AccountId: accountId,
+                Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,
             },
         });
@@ -39,7 +39,7 @@ export function getCarrierById(accountId, accessToken, carrierId) {
     try {
         return RequestFactory(`${API_URL}/api/delivery/${carrierId}`, {
             headers: {
-                AccountId: accountId,
+                Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,
             },
         });
@@ -53,7 +53,7 @@ export function updateCarrier(accountId, accessToken, carrierId, data) {
     try {
         return RequestFactory(`/api/delivery/${carrierId}`, data, {
             headers: {
-                AccountId: accountId,
+                Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,
             },
         });
@@ -67,7 +67,7 @@ export function createCarrier(accountId, accessToken, data) {
     try {
         return axios.post(`/api/delivery/carrier`, data, {
             headers: {
-                AccountId: accountId,
+                Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,
             },
         });
@@ -81,7 +81,7 @@ export function deleteCarrier(accountId, accessToken, carrierId) {
     try {
         return axios.delete(`/api/delivery/${carrierId}`, {
             headers: {
-                AccountId: accountId,
+                Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,
             },
         });

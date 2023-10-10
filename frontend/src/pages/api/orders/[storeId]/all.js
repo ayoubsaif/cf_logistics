@@ -28,7 +28,7 @@ export default async function handler(req, res) {
             params.filter = filter;
         }
         const searchParams = new URLSearchParams(params);
-        const url = `${process.env.NEXT_APP_API_URL}/api/orders/${storeId}/all?${searchParams.toString()}`;
+        const url = `${process.env.NEXT_PUBLIC_API}/api/orders/${storeId}/all?${searchParams.toString()}`;
         const response = await fetch(url, options);
         
         if (!response.ok) {

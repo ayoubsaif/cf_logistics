@@ -236,7 +236,7 @@ class AccountController
             }
             
             $headers = apache_request_headers();
-            $accountId = $headers['AccountId'];
+            $accountId = $headers['Accountid'];
 
             $orderModel = new OrderModel($accountId);
             $orderStats = $orderModel->getStats();

@@ -7,7 +7,7 @@ export function getStores(accessToken, accountId) {
     try {
         return RequestFactory(`${API_URL}/api/stores`, {
             headers: {
-                AccountId: accountId,
+                Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,
             },
         });
@@ -21,7 +21,7 @@ export const getStore = async (accessToken, accountId, storeId) => {
     const response = await fetch(`${API_URL}/api/store/${storeId}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
-            AccountId: accountId,
+            Accountid: accountId,
         },
     });
     if (!response.ok) {

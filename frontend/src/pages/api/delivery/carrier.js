@@ -21,10 +21,10 @@ export default async (req, res) => {
         case "POST":
             try {
                 const response = await axios.post(
-                    `${process.env.NEXT_APP_API_URL}/api/delivery/carrier`, body,
+                    `${process.env.NEXT_PUBLIC_API}/api/delivery/carrier`, body,
                     {
                         headers: {
-                            AccountId: req.headers.accountid,
+                            Accountid: req.headers.accountid,
                             Authorization: `Bearer ${session.user.accessToken}`,
                         },
                     }

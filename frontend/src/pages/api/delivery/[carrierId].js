@@ -22,10 +22,10 @@ export default async (req, res) => {
         case "PUT":
             try {
                 const response = await axios.put(
-                    `${process.env.NEXT_APP_API_URL}/api/delivery/${carrierId}`, body,
+                    `${process.env.NEXT_PUBLIC_API}/api/delivery/${carrierId}`, body,
                     {
                         headers: {
-                            AccountId: req.headers.accountid,
+                            Accountid: req.headers.accountid,
                             Authorization: `Bearer ${session.user.accessToken}`,
                         },
                     }
@@ -38,10 +38,10 @@ export default async (req, res) => {
         case "DELETE":
             try {
                 const response = await axios.delete(
-                    `${process.env.NEXT_APP_API_URL}/api/delivery/${carrierId}`,
+                    `${process.env.NEXT_PUBLIC_API}/api/delivery/${carrierId}`,
                     {
                         headers: {
-                            AccountId: req.headers.accountid,
+                            Accountid: req.headers.accountid,
                             Authorization: `Bearer ${session.user.accessToken}`,
                         },
                     }

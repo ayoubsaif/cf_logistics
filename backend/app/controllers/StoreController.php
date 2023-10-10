@@ -12,12 +12,12 @@ class StoreController
     {
         # Get Account ID from headers
         $headers = apache_request_headers();
-        if (!isset($headers['AccountId'])) {
+        if (!isset($headers['Accountid'])) {
             http_response_code(401);
             echo json_encode(array("message" => "No autorizado"));
             return;
         }
-        $this->accountId = $headers['AccountId'];
+        $this->accountId = $headers['Accountid'];
         $this->storeModel = new StoreModel($this->accountId);
     }
 

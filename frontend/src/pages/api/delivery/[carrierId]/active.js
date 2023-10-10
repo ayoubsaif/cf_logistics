@@ -21,10 +21,10 @@ export default async (req, res) => {
         case "PUT":
             try {
                 const response = await axios.put(
-                    `${process.env.NEXT_APP_API_URL}/api/delivery/${carrierId}/active`, {},
+                    `${process.env.NEXT_PUBLIC_API}/api/delivery/${carrierId}/active`, {},
                     {
                         headers: {
-                            AccountId: req.headers.accountid,
+                            Accountid: req.headers.accountid,
                             Authorization: `Bearer ${session.user.accessToken}`,
                         },
                     }

@@ -14,7 +14,7 @@ class DeliveryCarrierController
     {
         # Get Account ID from headers
         $headers = apache_request_headers();
-        $accountId = $headers['AccountId'];
+        $accountId = $headers['Accountid'];
         $this->deliveryCarrierModel = new DeliveryCarrierModel($accountId);
     }
 
@@ -83,7 +83,7 @@ class DeliveryCarrierController
     {
         try {
             $headers = apache_request_headers();
-            $accountId = $headers['AccountId'];
+            $accountId = $headers['Accountid'];
 
             if (!$order)
             {

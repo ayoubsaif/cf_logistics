@@ -1,5 +1,6 @@
 # Apache 2.4 configuration file for eLearning 1.6
-
+# Allow Authorization header
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 # Begin
 <IfModule mod_rewrite.c>
 # Options
