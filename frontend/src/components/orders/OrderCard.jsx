@@ -20,8 +20,7 @@ import { format, parseISO } from "date-fns";
 import esLocale from "date-fns/locale/es";
 
 import {
-  RiMapPin5Line as TrackIcon,
-  RiTruckLine as TruckIcon,
+  RiPrinterFill as PrinterIcon,
   RiCheckLine as CheckIcon,
   RiCloseLine as CloseIcon,
   RiExternalLinkLine as ExternalLinkIcon
@@ -209,7 +208,7 @@ const OrderCard = forwardRef(({ order, filter }, ref) => {
               </Box>
             ) : orderStatus === ORDER_STATUS.done || orderStatus === ORDER_STATUS.picking &&
               <Flex mt={2} gap={1}>
-                  <PrintPDFButton size="sm" variant="outline" colorScheme="black" order={order} leftIcon={<TruckIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
+                  <PrintPDFButton size="sm" variant="outline" colorScheme="black" order={order} leftIcon={<PrinterIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
                   <Button size="sm" variant="outline" colorScheme="cyan" leftIcon={<CheckIcon size={18} />}>Completado</Button>
               </Flex>
             }

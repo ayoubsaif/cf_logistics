@@ -27,7 +27,7 @@ import {
   RiAdminLine as AdminIcon,
   RiGroupLine as UsersIcon,
   RiBuilding4Line as AccountsIcon,
-  RiArrowDownSLine as ArrowDownIcon,
+  RiBuildingLine as AccountIcon,
 } from "react-icons/ri";
 import AccountsModal from "@/components/accounts/AccountsModal";
 
@@ -60,7 +60,7 @@ export default function ProfileMenu({ session, signOut }) {
                 color="gray.500"
                 variant="outline"
                 onClick={onOpen}
-                rightIcon={<ArrowDownIcon size={18} />}
+                leftIcon={<AccountIcon size={18} />}
               >{session.user.accountName}</Button>
               <AccountsModal isCentered isOpen={isOpen} onClose={onClose} />
             </Box>

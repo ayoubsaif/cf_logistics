@@ -14,8 +14,8 @@ export default async function handler(req, res) {
         const options = {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${session.user.accessToken}`,
-                'AccountId': session.user.accountId
+                Authorization: `Bearer ${session.user.accessToken}`,
+                Accountid: session.user.accountId
             },
         }
 
@@ -30,7 +30,6 @@ export default async function handler(req, res) {
         const searchParams = new URLSearchParams(params);
         const url = `${process.env.NEXT_PUBLIC_API}/api/orders/${storeId}/all?${searchParams.toString()}`;
         const response = await fetch(url, options);
-        
         if (!response.ok) {
             const error = response.json();
             throw new Error(error.message);
@@ -39,7 +38,7 @@ export default async function handler(req, res) {
         const data = await response.json();
         res.status(response.status).json(data);
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error in all.js:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }

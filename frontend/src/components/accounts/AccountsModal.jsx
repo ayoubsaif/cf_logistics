@@ -18,10 +18,14 @@ import {
     FormControl,
     FormLabel,
     Divider,
+    Icon,
+    Flex,
 } from "@chakra-ui/react";
 
 import { useQuery } from 'react-query';
-
+import {
+    RiBuildingLine as AccountIcon,
+} from "react-icons/ri";
 
 export default function AccountsModal(props) {
     const Router = useRouter();
@@ -36,7 +40,7 @@ export default function AccountsModal(props) {
     const onSubmit = async ({ account }) => {
         await update({ ...session, user: { ...session.user, accountId: account.value, accountName: account.label } });
         props.onClose();
-        Router.reload();
+        Router.push('/');
     };
 
     const handleSelectChange = (selectedValue) => {
@@ -52,7 +56,11 @@ export default function AccountsModal(props) {
             />
             <ModalContent>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <ModalHeader>Cuenta</ModalHeader>
+                    <ModalHeader>
+                        <Flex gap={2} alignItems="center">
+                            <Icon as={AccountIcon} />Cuenta
+                        </Flex>
+                    </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Text fontSize="sm" color="GrayText">

@@ -31,7 +31,6 @@ const OrdersListContainer = ({ data, isLoading, hasNextPage, fetchNextPage, filt
       }
     };
   }, [hasNextPage, fetchNextPage]);
-  console.log(data)
   return (
     <SimpleGrid columns={1} gap={2} alignContent="center">
       {data?.pages?.map((page, index) => (
