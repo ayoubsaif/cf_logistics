@@ -1,5 +1,4 @@
 import RequestFactory from "@/utils/RequestFactory";
-import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
@@ -18,16 +17,15 @@ export function getStores(accessToken, accountId) {
 }
 
 export const getStore = async (accessToken, accountId, storeId) => {
-    const response = await fetch(`${API_URL}/api/store/${storeId}`, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-            Accountid: accountId,
-        },
-    });
-    if (!response.ok) {
-        const error = await response.json();
-        console.error("Error Store",error.message);
-        throw new Error(error.message);
+    try {
+        return await RequestFactory(`${API_URL}/api/store/${storeId}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                Accountid: accountId,
+            },
+        });
     }
-    return response.json();
+    catch (error) {
+        console.error(error);
+    }
 }

@@ -16,6 +16,8 @@ import {
   Highlight,
   Link
 } from "@chakra-ui/react";
+import NextLink from 'next/link';
+import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
 import esLocale from "date-fns/locale/es";
 
@@ -29,12 +31,9 @@ import {
 import { ORDER_STATUS } from "@/utils/constants/orders";
 import { getMarketplaceData } from "@/components/marketplaces/marketplacesData";
 
-const PrintPDFButton = dynamic(() => import('@/components/button/printPDFButton'), {
+const PrintButton = dynamic(() => import('@/components/button/PrintButton'), {
   loading: () => <p>Loading...</p>,
 });
-
-import NextLink from 'next/link';
-import { motion } from "framer-motion";
 
 const OrderCard = forwardRef(({ order, filter }, ref) => {
   const {
@@ -57,11 +56,12 @@ const OrderCard = forwardRef(({ order, filter }, ref) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const updateTimePassed = () => {
+    const date = new Date();
     const diffInHours = Math.abs(
-      Math.round((new Date() - parsedDate) / (1000 * 60 * 60))
+      Math.round((date - parsedDate) / (1000 * 60 * 60))
     );
     const diffInMinutes = Math.abs(
-      Math.round((new Date() - parsedDate) / (1000 * 60))
+      Math.round((date - parsedDate) / (1000 * 60))
     );
 
     if (diffInHours >= 1 && diffInHours <= 48) {
@@ -208,7 +208,7 @@ const OrderCard = forwardRef(({ order, filter }, ref) => {
               </Box>
             ) : orderStatus === ORDER_STATUS.done || orderStatus === ORDER_STATUS.picking &&
               <Flex mt={2} gap={1}>
-                  <PrintPDFButton size="sm" variant="outline" colorScheme="black" order={order} leftIcon={<PrinterIcon size={18} />}>Etiqueta de envío</PrintPDFButton>
+                  <PrintButton size="sm" variant="outline" colorScheme="black" order={order} leftIcon={<PrinterIcon size={18} />}>Etiqueta de envío</PrintButton>
                   <Button size="sm" variant="outline" colorScheme="cyan" leftIcon={<CheckIcon size={18} />}>Completado</Button>
               </Flex>
             }

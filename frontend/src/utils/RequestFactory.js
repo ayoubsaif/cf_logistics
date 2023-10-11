@@ -24,3 +24,28 @@ export default async function RequestFactory(url, { method = 'get', data, params
         }
     }
 }
+
+// RequestFactory.post
+export async function post(url, data, { params, headers }) {
+    return RequestFactory(url, { method: 'post', data, params, headers });
+}
+
+// RequestFactory.get
+export async function get(url, { params, headers }) {
+    return RequestFactory(url, { method: 'get', params, headers });
+}
+
+// RequestFactory.put
+export async function put(url, data, { params, headers }) {
+    return RequestFactory(url, { method: 'put', data, params, headers });
+}
+
+// RequestFactory.delete
+export async function del(url, { params, headers }) {
+    return RequestFactory(url, { method: 'delete', params, headers });
+}
+
+// RequestFactory.patch
+export async function patch(url, data, { params, headers }) {
+    return RequestFactory(url, { method: 'patch', data, params, headers });
+}

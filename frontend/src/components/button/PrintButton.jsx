@@ -1,8 +1,7 @@
 import { Button } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
-import axios from 'axios';
 
-const PrintPDFButton = ({ children, order, ...props }) => {
+const PrintButton = ({ children, order, ...props }) => {
   useEffect(() => {
     // Load the PrintJS library dynamically
     const script = document.createElement('script');
@@ -31,4 +30,4 @@ const PrintPDFButton = ({ children, order, ...props }) => {
   );
 };
 
-export default PrintPDFButton;
+export default PrintButton;

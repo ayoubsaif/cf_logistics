@@ -1,4 +1,5 @@
 import axios from "axios";
+import RequestFactory from "@/utils/RequestFactory";
 
 const API_URL = process.env.NEXT_APP_API_HOST;
 const API_PUBLIC_URL = process.env.NEXT_PUBLIC_API;
@@ -59,12 +60,11 @@ export async function getUsers(accessToken) {
   
   export async function deleteUser(id, accessToken) {
     try {
-      const res = await axios.delete(`${API_PUBLIC_URL}/api/user/${id}`,
+      return await RequestFactory.delete(`${API_PUBLIC_URL}/api/user/${id}`,
         { headers: { 
           Authorization: `Bearer ${accessToken}`
         }}
       );
-      return res.data;
     } catch (error) {
       console.error(error);
       throw error;
