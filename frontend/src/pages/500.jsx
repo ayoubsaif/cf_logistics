@@ -15,7 +15,7 @@ export default function CallToActionWithIllustration(props) {
   return (
     <>
       <NextSeo
-        title={`Ha ocurrido un error ${siteConfig?.title}`}
+        title={`Ha ocurrido un error - ${siteConfig?.title || process.env.NEXT_APP_PUBLIC_NAME}`}
         description="Quizás el recurso que ha buscado ha sido borrado o ya no se encuentre disponible."
       />
       <Container maxW={"5xl"}>

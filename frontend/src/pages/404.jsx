@@ -15,7 +15,7 @@ export default function CallToActionWithIllustration(props) {
   return (
     <>
       <NextSeo
-        title={`Página no encontrada ${siteConfig?.title}`}
+        title={`Página no encontrada ${siteConfig?.title || process.env.NEXT_APP_PUBLIC_NAME}`}
         description="Quizás el recurso que ha buscado ha sido borrado o ya no se encuentre disponible."
       />
       <Container maxW={"5xl"}>
