@@ -1,30 +1,28 @@
-import axios from "axios";
+import RequestFactory from "@/utils/RequestFactory";
 
-const API_URL = process.env.NEXT_PUBLIC_API || "http://localhost";
+const API_URL = process.env.NEXT_PUBLIC_API;
 
 export async function getSiteConfig() {
   try {
-    const response = await axios.get(`${API_URL}/api/siteconfig`);
-    return response.data;
+    return await RequestFactory.get(`${API_URL}/api/siteconfig`);
   } catch (error) {
-    throw new Error("Failed to fetch data");
+    console.error(error);
   }
 }
 
 export async function updateSiteConfig(data, accessToken) {
   try {
-    const config = {
+    const options = {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${accessToken}`,
       },
     };
-    const response = await axios.post(
+    return await RequestFactory.post(
       `${API_URL}/api/siteconfig`,
       data,
-      config
+      options
     );
-    return response.data;
   } catch (error) {
     throw new Error("Failed to update data");
   }
