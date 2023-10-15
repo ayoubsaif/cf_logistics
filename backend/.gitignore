@@ -1,5 +1,12 @@
-vendor
+
 logs/*
 /uploads/*/*.*
 !/uploads/*/.gitkeep
 .htaccess
+
+# Ignore lock files
+composer.lock
+vendor/*
+
+# Ignore config files
+.env

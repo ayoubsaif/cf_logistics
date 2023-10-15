@@ -6,13 +6,13 @@ $router->get('/api/siteconfig', 'SiteConfigController@get');
 $router->post('/api/siteconfig', 'SiteConfigController@update');
 
 # Auth
-$router->post('/auth/login', 'UserController@login');
-$router->options('/auth/register', 'UserController@getSuccessResponse');
-$router->post('/auth/register', 'UserController@register');
+$router->post('/api/auth/login', 'UserController@login');
+$router->options('/api/auth/register', 'UserController@getSuccessResponse');
+$router->post('/api/auth/register', 'UserController@register');
 
-$router->get('/auth/verify-token', 'UserController@verifyToken');
+$router->get('/api/auth/verify-token', 'UserController@verifyToken');
 # Auth > Google
-$router->post('/auth/google', 'UserController@googleAuth');
+$router->post('/api/auth/google', 'UserController@googleAuth');
 
 # Profile
 $router->options('/api/profile', 'UserController@getSuccessResponse');
