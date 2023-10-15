@@ -5,7 +5,7 @@ export const getAccounts = (accessToken) => {
     const headers = {
         'Authorization': `Bearer ${accessToken}`
     };
-    axios.get(`${API_URL}/api/accounts`, { headers })
+    axios.get(`${API_URL}/accounts`, { headers })
         .then((res) => {return res;})
         .catch((err) => {return err.message});
 }

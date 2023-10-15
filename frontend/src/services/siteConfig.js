@@ -4,7 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API;
 
 export async function getSiteConfig() {
   try {
-    return await get(`${API_URL}/api/siteconfig`, {});
+    return await get(`${API_URL}/siteconfig`, {});
   } catch (error) {
     console.error(error);
   }
@@ -19,7 +19,7 @@ export async function updateSiteConfig(data, accessToken) {
       },
     };
     return await RequestFactory.post(
-      `${API_URL}/api/siteconfig`,
+      `${API_URL}/siteconfig`,
       data,
       options
     );

@@ -4,7 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API;
 
 export function getStores(accessToken, accountId) {
     try {
-        return get(`${API_URL}/api/stores`, {
+        return get(`${API_URL}/stores`, {
             headers: {
                 Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,
@@ -18,7 +18,7 @@ export function getStores(accessToken, accountId) {
 
 export const getStore = async (accessToken, accountId, storeId) => {
     try {
-        return await get(`${API_URL}/api/store/${storeId}`, {
+        return await get(`${API_URL}/store/${storeId}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
                 Accountid: accountId,
