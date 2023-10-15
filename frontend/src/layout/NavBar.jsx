@@ -23,13 +23,13 @@ import {
 } from "react-icons/ri";
 import { useSession, signIn, signOut } from "next-auth/react";
 
-import ProfileMenu from "./navbar/ProfileMenu";
+import ProfileMenu from "../components/navbar/ProfileMenu";
 import useScrollListener from "@/hooks/useScrollListener";
-import SideBarDrawer from "./navbar/SideBarDrawer";
+import SideBarDrawer from "../components/navbar/SideBarDrawer";
 
-import OrderTabs from "@/layout/navbar/pageTab";
+import OrderTabs from "@/components/navbar/pageTab";
 import { AnimatePresence } from "framer-motion";
-import { LogoSmall, NavBarLogo } from "./Logo";
+import { NavBarLogo } from "./Logo";
 
 export function NavBarChild({ siteConfig, page }) {
   const { data: session } = useSession();
