@@ -238,12 +238,21 @@ class UserModel
         }
     }
 
-    function getMany()
+    function getMany($filter = '', $page = 1, $limit = 20, $orderBy = 'id', $order = 'DESC')
     {
+        $where = "WHERE 1=1";
         try {
-            $query = "SELECT *
+            if (!empty($status)) {
+                $where .= " AND orderStatus = '{$status}'";
+            }
+            if (!empty($filter)) {
+                $where .= " AND (orderNumber LIKE '%{$filter}%' OR customerName LIKE '%{$filter}%')";
+            }
+            $offset = ($page - 1) * $limit;
+            $query = "SELECT id, active, firstName, lastName, email, image, role, createDate
                         FROM users
-                        ORDER BY id DESC";
+                        {$where}
+                        ORDER BY {$orderBy} {$order} LIMIT {$limit} OFFSET {$offset}";
 
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
@@ -265,12 +274,23 @@ class UserModel
                     );
                     array_push($users_arr, $user_item);
                 }
-                return $users_arr;
             }
+            return array(
+                "currentPage" => $page,
+                "totalPages" => ceil($this->getTotal($where) / $limit),
+                "items" => $users_arr
+            );
             return false;
         } catch (Exception $e) {
-            return false;
+            echo json_encode(array("message" => $e->getMessage()));
         }
+    }
+
+    private function getTotal($where)
+    {
+        $query = "SELECT COUNT(*) as total FROM users {$where}";
+        $statement = $this->conn->query($query);
+        return $statement->fetch(PDO::FETCH_ASSOC)['total'];
     }
 
     function deleteOne()

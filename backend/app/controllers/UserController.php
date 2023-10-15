@@ -341,10 +341,10 @@ class UserController
         $user->id = $id;
         if ($user->deleteOne($id)) {
             http_response_code(200);
-            echo json_encode(array("message" => "User was deleted"));
+            echo json_encode(array("message" => "El usuario fue eliminado"));
         } else {
             http_response_code(503);
-            echo json_encode(array("message" => "Unable to delete user"));
+            echo json_encode(array("message" => "No se puede eliminar el usuario"));
         }
     }
 
@@ -356,8 +356,15 @@ class UserController
         if (!$UserPermmited) {
             return;
         }
+
+        $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+        $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
+        $filter = isset($_GET['filter']) ? $_GET['filter'] : null;
+        $orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : "id";
+        $order = isset($_GET['order']) ? $_GET['order'] : "asc";
+
         $user = new UserModel();
-        $users = $user->getMany();
+        $users = $user->getMany($filter, $page, $limit, $orderBy, $order);
         if ($users) {
             http_response_code(200);
             echo json_encode($users);
@@ -365,12 +372,6 @@ class UserController
             http_response_code(404);
             echo json_encode(array("message" => "No users found"));
         }
-    }
-
-    public function getSuccessResponse()
-    {
-        http_response_code(200);
-        echo json_encode(array("message" => "Success"));
     }
 
     public function verifyToken()
@@ -422,5 +423,11 @@ class UserController
             http_response_code(401);
             echo json_encode(array("message" => "Unauthorized", "error" => $e->getMessage()));
         }
+    }
+
+    public function getSuccessResponse()
+    {
+        http_response_code(200);
+        echo json_encode(array("message" => "Success"));
     }
 }
