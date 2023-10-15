@@ -1,5 +1,5 @@
 import axios from "axios";
-import RequestFactory from "@/utils/RequestFactory";
+import { del } from "@/utils/RequestFactory";
 
 const API_URL = process.env.NEXT_APP_API_HOST;
 const API_PUBLIC_URL = process.env.NEXT_PUBLIC_API;
@@ -60,7 +60,7 @@ export async function getUsers(accessToken) {
   
   export async function deleteUser(id, accessToken) {
     try {
-      return await RequestFactory.delete(`${API_PUBLIC_URL}/api/user/${id}`,
+      return await del(`${API_PUBLIC_URL}/api/user/${id}`,
         { headers: { 
           Authorization: `Bearer ${accessToken}`
         }}
