@@ -11,6 +11,10 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header('Content-Type: application/json; charset=utf-8');
 
+require('vendor/autoload.php');
+$dotenv = Dotenv\Dotenv::createImmutable('.');
+$dotenv->load();
+
 # DB Connection
 require_once "app/config/database.php";
 

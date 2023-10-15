@@ -1,3 +1,4 @@
+import Layout from "@/layout/Layout";
 import {
   Flex,
   Container,
@@ -10,20 +11,18 @@ import {
 import { NextSeo } from "next-seo";
 import NextLink from "next/link";
 
-export default function CallToActionWithIllustration(props) {
-  const { siteConfig } = props;
+export default function Error404({ siteConfig }) {
   return (
     <>
       <NextSeo
-        title={`Página no encontrada ${siteConfig?.title || process.env.NEXT_APP_PUBLIC_NAME}`}
+        title={`Página no encontrada - ${siteConfig?.title || process.env.NEXT_APP_PUBLIC_NAME}`}
         description="Quizás el recurso que ha buscado ha sido borrado o ya no se encuentre disponible."
       />
-      <Container maxW={"5xl"}>
+      <Layout siteConfig={siteConfig} >
         <Stack
-          textAlign={"center"}
-          align={"center"}
+          textAlign="center"
+          align="center"
           spacing={{ base: 8, md: 10 }}
-          py={{ base: 20, md: 28 }}
         >
           <Heading
             fontWeight={600}
@@ -54,7 +53,7 @@ export default function CallToActionWithIllustration(props) {
             <Image src={"/assets/404.svg"} alt={"404"} />
           </Flex>
         </Stack>
-      </Container>
+      </Layout>
     </>
   );
 }

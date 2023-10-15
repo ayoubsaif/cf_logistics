@@ -137,6 +137,14 @@ export async function getServerSideProps(context) {
     try {
       const { storeId } = context.params;
       const store = await getStore(session.user.accessToken, session.user?.accountId, storeId);
+      if (!store) {
+        return {
+          redirect: {
+            destination: "/",
+            permanent: false,
+          },
+        };
+      }
       const stores = await getStores(session.user.accessToken, session.user.accountId);
       const orders = await getOpenOrders(session.user.accountId, storeId, session.user.accessToken);
       return {

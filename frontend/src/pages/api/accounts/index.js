@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/pages/api/auth/[...nextauth]"
-import axios from "axios";
+import { get } from "@/utils/RequestFactory";
 
 export default async function handler(req, res) {
     try {
@@ -13,13 +13,9 @@ export default async function handler(req, res) {
         const headers = {
             'Authorization': `Bearer ${accessToken}`
         };
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/api/accounts`, { headers })
-        if (!response.status === 200) {
-            console.error(response.json());
-            throw new Error('Failed to fetch data from the backend API');
-        }
-        const data = await response?.data;
-        res.status(response.status).json(data);
+        const response = await get(`${process.env.NEXT_PUBLIC_API}/api/accounts`, { headers })
+        const data = await response;
+        res.status(200).json(data);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ message: 'Internal Server Error' });

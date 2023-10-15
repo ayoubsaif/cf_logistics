@@ -23,7 +23,6 @@ import * as Yup from "yup";
 import { FcGoogle } from "react-icons/fc";
 import { RiArrowLeftLine } from "react-icons/ri";
 
-import { Link } from "@chakra-ui/next-js";
 import NextLink from "next/link"; 
 
 import { getServerSession } from "next-auth/next";
@@ -163,12 +162,6 @@ export default function Login(props) {
                   >
                     Iniciar Sesión
                   </Button>
-                  <Text align={"center"}>
-                    ¿No tienes cuenta?{" "}
-                    <Link color={"brand.400"} href={"/auth/register"}>
-                      ¡Registrate ahora!
-                    </Link>
-                  </Text>
                 </Stack>
               </form>
             </Stack>

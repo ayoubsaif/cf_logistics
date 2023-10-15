@@ -15,15 +15,12 @@ import NextLink from "next/link";
 
 import { ChevronRightIcon } from '@chakra-ui/icons'
 
-export default function CreateCarrier({ siteConfig, stores, token }) {
-
+export default function CreateCarrier({ siteConfig, stores }) {
     siteConfig = {
         ...siteConfig,
         stores,
     }
-
     const router = useRouter();
-
     return (
         <>
             <NextSeo
@@ -63,11 +60,10 @@ export async function getServerSideProps(context) {
                 },
             };
         }
-        const stores = await getStores(session.user.accountId, session.user.accessToken);
+        const stores = await getStores(session.user.accessToken, session.user.accountId);
         return {
             props: {
-                stores: stores,
-                token: session.user.accessToken,
+                stores,
             },
         };
     } else {

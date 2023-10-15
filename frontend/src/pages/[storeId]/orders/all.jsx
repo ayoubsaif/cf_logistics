@@ -133,12 +133,22 @@ export default OrdersPage;
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
-  if (session) {
+  if (session && session.user) {
     try {
       const { storeId } = context.params;
-      const store = await getStore(session.user.accessToken, session.user.accountId, storeId);
+      const store = await getStore(session.user.accessToken, session.user?.accountId, storeId);
+      if (!store) {
+        return {
+          redirect: {
+            destination: "/",
+            permanent: false,
+          },
+        };
+      }
+      
       const stores = await getStores(session.user.accessToken, session.user.accountId);
       const orders = await getAllOrders(session.user.accountId, storeId, session.user.accessToken);
+      
       return {
         props: {
           orders,
@@ -148,6 +158,7 @@ export async function getServerSideProps(context) {
         },
       };
     } catch (error) {
+      console.error("Error fetching:", error);
       return {
         props: {
           orders: [],
