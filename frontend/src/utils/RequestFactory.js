@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default async function RequestFactory(url, { method = 'get', data, params, headers }) {
+async function RequestFactory(url, { method = 'get', data, params, headers }) {
     try {
         const response = await axios({
             method,
