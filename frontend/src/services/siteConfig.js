@@ -1,10 +1,10 @@
-import RequestFactory from "@/utils/RequestFactory";
+import { get } from "@/utils/RequestFactory";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
 export async function getSiteConfig() {
   try {
-    return await RequestFactory.get(`${API_URL}/api/siteconfig`);
+    return await get(`${API_URL}/api/siteconfig`, {});
   } catch (error) {
     console.error(error);
   }

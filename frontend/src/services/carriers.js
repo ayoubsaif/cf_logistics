@@ -1,24 +1,15 @@
-import RequestFactory from "@/utils/RequestFactory";
+import RequestFactory, { get } from "@/utils/RequestFactory";
 import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
 export async function getCarriers(accountId, accessToken) {
-    const response = await fetch(`${API_URL}/api/delivery`, {
-        method: 'GET',
+    return await get(`${API_URL}/api/delivery`, {
         headers: {
             Accountid: accountId,
             Authorization: `Bearer ${accessToken}`,
         },
     })
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
-    }
-    
-    return response.json();
-
 }
 
 export function activeCarrier(accountId, accessToken, carrierId) {
@@ -37,7 +28,7 @@ export function activeCarrier(accountId, accessToken, carrierId) {
 
 export function getCarrierById(accountId, accessToken, carrierId) {
     try {
-        return RequestFactory(`${API_URL}/api/delivery/${carrierId}`, {
+        return get(`${API_URL}/api/delivery/${carrierId}`, {
             headers: {
                 Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,
@@ -51,7 +42,7 @@ export function getCarrierById(accountId, accessToken, carrierId) {
 
 export function updateCarrier(accountId, accessToken, carrierId, data) {
     try {
-        return RequestFactory(`/api/delivery/${carrierId}`, data, {
+        return get(`/api/delivery/${carrierId}`, data, {
             headers: {
                 Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,

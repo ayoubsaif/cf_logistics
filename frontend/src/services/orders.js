@@ -1,5 +1,4 @@
-
-import axios from 'axios';
+import { get } from '@/utils/RequestFactory';
 import RequestFactory from '../utils/RequestFactory';
 
 const API_URL = process.env.NEXT_PUBLIC_API;
@@ -7,7 +6,6 @@ const API_URL = process.env.NEXT_PUBLIC_API;
 // get orders by account and store id
 export const getAllOrders = async (accountId, storeId, accessToken, page, filter) => {
     let options = {
-        method : 'get',
         headers: {
             Authorization: `Bearer ${accessToken}`,
             Accountid: accountId,
@@ -23,7 +21,7 @@ export const getAllOrders = async (accountId, storeId, accessToken, page, filter
     }
 
     try {
-        return await RequestFactory(`/api/orders/${storeId}/all`, options);
+        return await get(`/api/orders/${storeId}/all`, options);
     } catch (error) {
         if (error.response) {
             // The request was made and the server responded with a status code
@@ -56,8 +54,7 @@ export const getOpenOrders = async (accountId, storeId, accessToken, page, filte
     }
     
     try {
-        const response = await axios.get(`/api/orders/${storeId}/open`, options);
-        return response.data;
+        return await get(`/api/orders/${storeId}/open`, options);
     } catch (error) {
         if (error.response) {
             // The request was made and the server responded with a status code
