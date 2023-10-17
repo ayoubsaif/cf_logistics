@@ -171,7 +171,9 @@ class AccountModel
             // note if accoundId is not found, it will return false
             if (!$this->checkIfAccountExists($accountId)) {
                 $notes[] = "Account with id {$accountId} not found";
+                continue;
             }
+            $statement->execute();
         }
         return $notes;
     }
