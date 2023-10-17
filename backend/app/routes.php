@@ -43,9 +43,9 @@ $router->options('/api/stats', 'AccountController@getSuccessResponse');
 $router->get('/api/stats', 'AccountController@getStats');
 
 # Account > Relate
-$router->options('/api/account/relate', 'AccountController@getSuccessResponse');
-$router->post('/api/account/relate', 'AccountController@relateUser');
-$router->delete('/api/account/relate', 'AccountController@deleteUserRelation');
+$router->options('/api/accounts/relate', 'AccountController@getSuccessResponse');
+$router->post('/api/accounts/relate', 'AccountController@relateUser');
+$router->delete('/api/accounts/relate', 'AccountController@deleteUserRelation');
 
 # Store
 $router->options('/api/stores', 'StoreController@getSuccessResponse');

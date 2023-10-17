@@ -199,23 +199,21 @@ class AccountController
             }
             $data = json_decode(file_get_contents('php://input'), true);
             $account = new AccountModel();
-            $account->setOne($data['accountId']);
-            if ($account->uuid) {
-                if ($account->assignUser($data['userId']))
-                {
-                    http_response_code(200);
-                    echo json_encode(array("message" => "Usuario relacionado con éxito"));
-                    return;
-                }else
-                {
-                    http_response_code(400);
-                    echo json_encode(array("message" => "Usuario ya tiene permiso en esta cuenta"));
-                    return;
-                }
-            }else
-            {
-                http_response_code(401);
-                echo json_encode(array("message" => "Cuenta no encontrada"));
+            $notes = $account->assignUserToAccounts($data['userId'], $data['accountsIds']);
+            if (!$notes) {
+                http_response_code(200);
+                echo json_encode(array(
+                    "status" => "success",
+                    "message" => "Usuario relacionado con éxito",
+                ));
+                return;
+            } else {
+                http_response_code(200);
+                echo json_encode(array(
+                    "status" => "warning",
+                    "message" => "Cuenta/s no encontrada",
+                    "notes" => $notes
+                ));
                 return;
             }
             

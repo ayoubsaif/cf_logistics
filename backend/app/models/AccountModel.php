@@ -156,6 +156,26 @@ class AccountModel
         return $statement->execute();
     }
 
+    public function assignUserToAccounts($id, $accountIds)
+    {
+        $query = "DELETE FROM accounts_users_rel WHERE userId = :userId";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':userId', $id);
+        $statement->execute();
+        $notes = [];
+        foreach ($accountIds as $accountId) {
+            $query = "INSERT INTO accounts_users_rel (accountId, userId) VALUES (:accountId, :userId)";
+            $statement = $this->conn->prepare($query);
+            $statement->bindParam(':accountId', $accountId);
+            $statement->bindParam(':userId', $id);
+            // note if accoundId is not found, it will return false
+            if (!$this->checkIfAccountExists($accountId)) {
+                $notes[] = "Account with id {$accountId} not found";
+            }
+        }
+        return $notes;
+    }
+
     public function checkIfUserExists($userId)
     {
         $query = "SELECT 1 FROM accounts_users_rel WHERE accountId = :accountId AND userId = :userId LIMIT 1";
@@ -173,6 +193,15 @@ class AccountModel
         $statement->bindParam(':accountId', $this->id);
         $statement->bindParam(':userId', $userId);
         return $statement->execute();
+    }
+
+    public function checkIfAccountExists($accountId)
+    {
+        $query = "SELECT 1 FROM accounts WHERE id = :accountId LIMIT 1";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':accountId', $accountId);
+        $statement->execute();
+        return $statement->fetch(PDO::FETCH_ASSOC);
     }
     
 }
