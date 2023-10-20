@@ -31,7 +31,7 @@ const OrdersPage = ({ siteConfig, orders, store, stores, user }) => {
   const { storeId } = router.query;
   const { data, isLoading, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
     queryKey: ['open-orders', storeId],
-    queryFn: ({ pageParam = 1 }) => getOpenOrders(user.accountId, storeId, user.accessToken, pageParam, filterText),
+    queryFn: ({ pageParam = 1 }) => getOpenOrders(user.account.id, storeId, user.accessToken, pageParam, filterText),
     initialData: orders,
     getNextPageParam: (lastPage) => {
       let nextPage = lastPage?.currentPage + 1;
@@ -132,11 +132,10 @@ export default OrdersPage;
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
-
   if (session) {
     try {
       const { storeId } = context.params;
-      const store = await getStore(session.user.accessToken, session.user?.accountId, storeId);
+      const store = await getStore(session.user.accessToken, session.user.account.id, storeId);
       if (!store) {
         return {
           redirect: {
@@ -145,8 +144,8 @@ export async function getServerSideProps(context) {
           },
         };
       }
-      const stores = await getStores(session.user.accessToken, session.user.accountId);
-      const orders = await getOpenOrders(session.user.accountId, storeId, session.user.accessToken);
+      const stores = await getStores(session.user.accessToken, session.user.account.id);
+      const orders = await getOpenOrders(session.user.account.id, storeId, session.user.accessToken);
       return {
         props: {
           orders,

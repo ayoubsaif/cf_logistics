@@ -34,6 +34,7 @@ import {
 } from "react-icons/ri";
 
 import { useColorMode } from "@chakra-ui/color-mode";
+import { useSession } from "next-auth/react";
 
 const Stores = (props) => {
   const { stores } = props;
@@ -77,6 +78,7 @@ const MenuItemButton = ({ children, icon, ...props }) => {
 };
 
 export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
+  const { data: session } = useSession();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const handleMode = () => {
@@ -102,15 +104,17 @@ export default function SideBarDrawer({ siteConfig, isOpen, onClose }) {
             }
             <Divider />
             <VStack align='strech' gap='0'>
-              <MenuItemButton
-                as={NextLink}
-                href="/carriers"
-                icon={TruckIcon}
-                variant="ghost"
-                borderRadius={0}
-                w='full'
-              >Transportistas</MenuItemButton>
-              <Divider /> 
+              {session?.user &&
+                <MenuItemButton
+                  as={NextLink}
+                  href="/carriers"
+                  icon={TruckIcon}
+                  variant="ghost"
+                  borderRadius={0}
+                  w='full'
+                >Transportistas</MenuItemButton>
+              }
+              <Divider />
               <Flex>
                 <MenuItemButton
                   as={NextLink}

@@ -172,8 +172,8 @@ const OrderCard = forwardRef(({ order, filter }, ref) => {
           <Flex justifyContent="space-between" flexDirection={{ base: "column", md: "row" }}>
             {order && order.shippingUrl &&
               <Text fontSize="sm" fontWeight="bold" color="fg.accent">
-                <Link as={NextLink} href={order.shippingUrl} target="_blank" _hover={{color:"brand.500"}}>
-                  <Flex gap={1} alignItems="center"><ExternalLinkIcon size={12} />{order.shippingNumber}</Flex>
+                <Link href={order.shippingUrl} _hover={{color:"brand.500"}} isExternal>
+                  {order.shippingNumber} <Icon as={ExternalLinkIcon} mx='2px' />
                 </Link>
               </Text>
             }

@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${session.user.accessToken}`,
-            Accountid: session.user.accountId
+            Accountid: session.user.account.id
         },
     }
     try {

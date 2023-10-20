@@ -60,7 +60,7 @@ export async function getServerSideProps(context) {
                 },
             };
         }
-        const stores = await getStores(session.user.accessToken, session.user.accountId);
+        const stores = await getStores(session.user.accessToken, session.user.account.id);
         return {
             props: {
                 stores,

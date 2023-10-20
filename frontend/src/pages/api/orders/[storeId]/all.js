@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { get } from "@/utils/RequestFactory";
 
 export default async function handler(req, res) {
     try {
@@ -12,10 +13,9 @@ export default async function handler(req, res) {
         // Extract [storeId]
         const { storeId, page, filter } = req.query;
         const options = {
-            method: 'GET',
             headers: {
                 Authorization: `Bearer ${session.user.accessToken}`,
-                Accountid: session.user.accountId
+                Accountid: session.user.account.id
             },
         }
 
@@ -28,15 +28,13 @@ export default async function handler(req, res) {
             params.filter = filter;
         }
         const searchParams = new URLSearchParams(params);
-        const url = `${process.env.NEXT_PUBLIC_API}/api/orders/${storeId}/all?${searchParams.toString()}`;
-        const response = await fetch(url, options);
-        if (!response.ok) {
-            const error = response.json();
-            throw new Error(error.message);
-        }
+        const url = `${process.env.NEXT_PUBLIC_API}/orders/${storeId}/all?${searchParams.toString()}`;
+        const response = await get(url, options);
         // await response and console log currentPage from response body
-        const data = await response.json();
-        res.status(response.status).json(data);
+        const data = await response;
+        if (data) {
+            res.status(200).json(data);
+        }
     } catch (error) {
         console.error('Error in all.js:', error);
         res.status(500).json({ message: 'Internal Server Error' });

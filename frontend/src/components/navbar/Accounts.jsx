@@ -13,7 +13,7 @@ export default function AccountsModal(props) {
     const Router = useRouter();
     const { data: session, update } = useSession();
     const { isLoading, error, data } = useQuery("accounts", () =>
-        get("/api/accounts").then((res) => res.json())
+        get("/api/accounts", {}).then((res) => res.json())
     );
     const [selectedAccountId, setSelectedAccountId] = useState(null);
 
@@ -27,15 +27,19 @@ export default function AccountsModal(props) {
     return (
         <>
             {data && (
-                <MenuGroup {...props} title="Cuentas">
-                    {data.map((account) => {
-                        <MenuItem key={account.id}
-                            onClick={() => handleSelectChange(account)}
-                            pl={5}>
-                            {account.name}
-                        </MenuItem>
-                    })}
-                </MenuGroup>
+                <>
+                    <MenuGroup {...props} title="Cuentas">
+                        {data.map((account) => {
+                            { console.log(account)}
+                            <MenuItem key={account.id}
+                                onClick={() => handleSelectChange(account)}
+                                pl={5}>
+                                {account.name}
+                            </MenuItem>
+                        })}
+                    </MenuGroup>
+                    <MenuDivider />
+                </>
             )}
         </>
     );

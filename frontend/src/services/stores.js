@@ -2,12 +2,12 @@ import { get } from "@/utils/RequestFactory";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
-export function getStores(accessToken, accountId) {
+export const getStores = async (accessToken, accountId) => {
     try {
-        return get(`${API_URL}/stores`, {
+        return await get(`${API_URL}/stores`, {
             headers: {
-                Accountid: accountId,
                 Authorization: `Bearer ${accessToken}`,
+                Accountid: accountId,
             },
         });
     }

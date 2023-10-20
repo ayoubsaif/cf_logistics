@@ -1,8 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-
-import axios from "axios";
+import { get, post } from "@/utils/RequestFactory";
 
 export const authOptions = {
   callbacks: {
@@ -15,25 +14,29 @@ export const authOptions = {
           image: profile?.picture,
           googleId: profile?.sub,
         };
-        const res = await axios.post(
+        const res = await post(
           `${process.env.NEXT_PUBLIC_API}/auth/google`,
+          data,
           {
             headers: {
               "Content-Type": "application/json",
             },
-            ...data,
           }
         );
-        if (res && res.data?.accessToken) {
-          user.firstname = res.data?.firstName;
-          user.name = res.data?.name;
-          user.email = res.data?.email;
-          user.image = res.data?.image;
-          user.accessToken = res.data?.accessToken;
-          user.role = res.data?.role;
-          user.accountName = res.data?.accountName;
-          user.accountId = res.data?.accountId;
-          user.exp = res.data?.exp;
+        
+        if (res && res.accessToken) {
+          user.firstname = res.firstName;
+          user.name = res.name;
+          user.email = res.email;
+          user.image = res.image;
+          user.accessToken = res.accessToken;
+          user.role = res.role;
+          user.account = {
+            id: res.account.accountId,
+            name: res.account.name,
+            company: res.account.company
+          }
+          user.exp = res.exp;
           return true;
         }
       }
@@ -47,7 +50,7 @@ export const authOptions = {
     },
     async session({ session, token }) {
       // Verify token with backend
-      const res = await axios.get(
+      const res = await get(
         `${process.env.NEXT_PUBLIC_API}/auth/verify-token`,
         {
           headers: {
@@ -55,16 +58,19 @@ export const authOptions = {
           },
         }
       );
-      if (res.data.valid) {
-        const user = res.data.data
+      
+      if (res && res.data && res.data?.email) {
         session.user = {
-          firstname: user.firstName,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          role: user.role,
-          accountName: token.accountName,
-          accountId: token.accountId,
+          firstname: res.data.firstName,
+          name: res.data.name,
+          email: res.data.email,
+          image: res.data.image,
+          role: res.data.role,
+          account: {
+            id: token.account.id,
+            name: token.account.name,
+            company: token.account.company
+          },
           accessToken: token.accessToken,
         };
       } else {
@@ -77,36 +83,35 @@ export const authOptions = {
 };
 
 const providers = [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {},
-      async authorize(credentials, req) {
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API}/auth/login`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            email: credentials?.email,
-            password: credentials?.password,
-          }
-        );
-
-        if (res && res.data) {
-          return await res.data;
+  CredentialsProvider({
+    name: "Credentials",
+    credentials: {},
+    async authorize(credentials, req) {
+      const res = await post(
+        `${process.env.NEXT_PUBLIC_API}/auth/login`,
+        { ...credentials },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-        return {
-          status: "error",
-          error: "Invalid credentials",
-        };
-      },
-    }),
-    // only add GoogleProvider if client id and secret are set
-    GoogleProvider({
-      clientId: process.env.NEXTAUTH_GOOGLE_CLIENT_ID,
-      clientSecret: process.env.NEXTAUTH_GOOGLE_CLIENT_SECRET,
-    }),
-  ];
+      );
+
+      if (res) {
+        return await res;
+      }
+      return {
+        status: "error",
+        error: "Invalid credentials",
+      };
+    },
+  }),
+  // only add GoogleProvider if client id and secret are set
+  GoogleProvider({
+    clientId: process.env.NEXTAUTH_GOOGLE_CLIENT_ID,
+    clientSecret: process.env.NEXTAUTH_GOOGLE_CLIENT_SECRET,
+  }),
+];
 
 export default NextAuth({
   providers,
@@ -116,7 +121,7 @@ export default NextAuth({
   },
   pages: {
     signIn: "/auth/login",
-    newUser: "/auth/register",
+    // newUser: "/auth/register",
   },
   ...authOptions,
 });

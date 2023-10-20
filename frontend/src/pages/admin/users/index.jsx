@@ -68,7 +68,7 @@ export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
   if (session) {
     try {
-      const stores = await getStores(session.user.accessToken, session.user.accountId);
+      const stores = await getStores(session.user.accessToken, session.user.account.id);
       const users = await getUsers(session.user.accessToken);
       return {
         props: {

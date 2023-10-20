@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         const headers = {
             'Authorization': `Bearer ${accessToken}`
         };
-        const response = await get(`${process.env.NEXT_PUBLIC_API}/api/accounts`, { headers })
+        const response = await get(`${process.env.NEXT_PUBLIC_API}/accounts`, { headers })
         const data = await response;
         res.status(200).json(data);
     } catch (error) {

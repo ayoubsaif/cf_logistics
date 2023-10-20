@@ -14,6 +14,13 @@ async function RequestFactory(url, { method = 'get', data, params, headers }) {
         if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
+            console.error("",{
+                "url": url,
+                "headers": headers,
+                "status": error.response.status,
+                "params": params,
+                "Data": error.response.data
+            });
             throw new Error(error.response.data.message);
         } else if (error.request) {
             // The request was made but no response was received

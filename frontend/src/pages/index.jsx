@@ -12,18 +12,22 @@ import {
 } from "@chakra-ui/react";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { NextSeo } from "next-seo";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Layout from "@/layout/Layout";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getStores } from "@/services/stores";
 import StoresList from "@/components/home/StoresList";
 
-export default function Home({ siteConfig, stores, user }) {
+export default function Home({ siteConfig, stores }) {
   siteConfig = {
     ...siteConfig,
     stores,
   };
+
+  const { data:session } = useSession();
+  const { user } = session || {};
+
   return (
     <>
       <NextSeo
@@ -161,11 +165,10 @@ function DottedBox() {
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
   if (session) {
-    const stores = await getStores(session.user.accessToken, session.user.accountId);
+    const stores = await getStores(session.user.accessToken, session.user.account.id);
     return {
       props: {
-        stores,
-        user: session?.user,
+        stores: stores || null,
       },
     };
   } else {

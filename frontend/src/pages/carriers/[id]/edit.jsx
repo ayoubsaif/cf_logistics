@@ -66,8 +66,8 @@ export async function getServerSideProps(context) {
             };
         }
         const carrierId = context.query.id;
-        const carrier = await getCarrierById(session.user.accountId, session.user.accessToken, carrierId);
-        const stores = await getStores(session.user.accessToken, session.user.accountId);
+        const carrier = await getCarrierById(session.user.account.id, session.user.accessToken, carrierId);
+        const stores = await getStores(session.user.accessToken, session.user.account.id);
         return {
             props: {
                 stores,

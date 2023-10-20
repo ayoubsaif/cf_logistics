@@ -65,7 +65,6 @@ export default function ProfileMenu({ session, signOut }) {
           </>
         )}
         <Accounts fontSize="md" />
-        <MenuDivider />
         <MenuGroup fontSize="md">
           <MenuItem
             onClick={() => signOut({ callbackUrl: "/" })}
