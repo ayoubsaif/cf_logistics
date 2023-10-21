@@ -32,6 +32,10 @@ $router->delete('/api/user/:id', 'UserController@deleteOne');
 $router->options('/api/accounts', 'AccountController@getSuccessResponse');
 $router->get('/api/accounts', 'AccountController@getManyByCurrentUser');
 
+# Admin > Accounts
+$router->options('/api/accounts/all', 'AccountController@getSuccessResponse');
+$router->get('/api/accounts/all', 'AccountController@getMany');
+
 $router->options('/api/account/:id', 'AccountController@getSuccessResponse');
 $router->get('/api/account/:id', 'AccountController@getOne');
 
