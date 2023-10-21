@@ -121,8 +121,7 @@ class UserController
             "email" => $user->email,
             "image" => $user->image,
             "role" => $user->role,
-            "accountName" => $user->accountName,
-            "accountId" => $user->accountId,
+            "account" => $user->account,
             "accessToken" => $jwt,
             "exp" => $token['exp'],
         ));

@@ -16,7 +16,7 @@ class UserModel
     public $createDate;
     public $image;
     public $role;
-    public $accountId;
+    public $account;
     public $accountName;
 
     # External Auth Provider Identifiers
@@ -107,7 +107,7 @@ class UserModel
     function assignFirstAccountRel()
     {
         try {
-            $query = "SELECT accounts.accountId AS accountId, accounts.name as accountName
+            $query = "SELECT accounts.accountId AS accountId, accounts.name as accountName, accounts.companyName as companyName
                     FROM accounts
                     INNER JOIN accounts_users_rel ON accounts.id = accounts_users_rel.accountId
                     WHERE accounts_users_rel.userId = ?
@@ -119,8 +119,11 @@ class UserModel
             $num = $stmt->rowCount();
             if ($num > 0) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $this->accountId = $row['accountId'];
-                $this->accountName = $row['accountName'];
+                $this->account = array(
+                    "id" => $row['accountId'],
+                    "name" => $row['accountName'],
+                    "company" => $row['companyName']
+                );
             }
         } catch (Exception $e) {
             echo json_encode(array("message" => $e->getMessage()));

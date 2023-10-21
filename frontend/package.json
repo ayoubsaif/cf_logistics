@@ -21,7 +21,7 @@
     "eslint-config-next": "13.4.2",
     "formik": "^2.2.9",
     "framer-motion": "^10.16.4",
-    "next": "13.4.2",
+    "next": "^13.5.6",
     "next-auth": "^4.22.1",
     "next-progress": "^2.3.1",
     "next-seo": "^6.0.0",
