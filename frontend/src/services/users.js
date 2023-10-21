@@ -1,5 +1,5 @@
 import axios from "axios";
-import { del } from "@/utils/RequestFactory";
+import { del, get } from "@/utils/RequestFactory";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
@@ -8,8 +8,7 @@ export async function getUsers(accessToken) {
     const options = {
       headers: { Authorization: `Bearer ${accessToken}` },
     };
-    const res = await axios.get(`${API_URL}/api/users`, { ...options });
-    return res.data;
+    return await get(`${API_URL}/users`, { ...options });
   } catch (error) {
     console.error(error);
     if (error.response && error.response.status === 404) {
