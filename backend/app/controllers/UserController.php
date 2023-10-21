@@ -255,7 +255,8 @@ class UserController
                 "lastName" => $user->lastName,
                 "email" => $user->email,
                 "role" => $user->role,
-                "image" => $user->image
+                "image" => $user->image,
+                "active" => $user->active,
             ));
         } else {
             http_response_code(404);
