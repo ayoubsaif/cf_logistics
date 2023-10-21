@@ -52,11 +52,11 @@ export default function ProfileMenu({ session, signOut }) {
         {session.user.role === "admin" && (
           <>
             <MenuGroup fontSize="md" title="Admin" icon={<AdminIcon />}>
-              <MenuItem as={NextLink} href={"/admin/users"} pl={5}
+              <MenuItem as={NextLink} href={"/users"} pl={5}
                 icon={<UsersIcon size={18} />}>
                 Usuarios
               </MenuItem>
-              <MenuItem as={NextLink} href={"/admin/accounts"} pl={5}
+              <MenuItem as={NextLink} href={"/accounts"} pl={5}
                 icon={<AccountsIcon size={18} />}>
                 Cuentas
               </MenuItem>
