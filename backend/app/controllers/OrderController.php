@@ -40,6 +40,7 @@ class OrderController
             if ($order) {
                 http_response_code(200);
                 echo json_encode(array(
+                    "ok" => true,
                     "orderNumber" => $order['orderNumber'],
                     "orderDate" => $order['orderDate'],
                     "orderOrigin" => $order['orderOrigin'],
