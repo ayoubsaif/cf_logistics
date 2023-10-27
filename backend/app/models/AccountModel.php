@@ -116,7 +116,6 @@ class AccountModel
         # create database
         try{
             $db_name = (getenv('DB_PREFIX') ? getenv('DB_PREFIX') : 'cfl_') . $this->uuid;
-            echo $db_name;
             $query = "CREATE DATABASE {$db_name}";
             $statement = $this->conn->prepare($query);
             if ($statement->execute()) {
