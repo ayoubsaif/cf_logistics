@@ -67,11 +67,8 @@ class AccountController
             if (!$UserPermmited) {
                 return;
             }
-            $data = $_POST;
-            # loop in all port array to conver it to object
-            foreach ($_POST as $key => $value) {
-                $data[$key] = $value;
-            }
+            $data = json_decode(file_get_contents('php://input'), true);
+            
             $account = new AccountModel();
             $account->name = $data['name'];
             $account->status = $data['status'] == 'true' ? 1 : 0;
