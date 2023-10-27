@@ -25,34 +25,35 @@ import {
     RiEditBoxLine as EditIcon,
     RiMore2Fill as MenuIcon,
 } from "react-icons/ri";
-import { deleteUser, getUsers } from "@/services/users";	
+import { deleteAccount, getAccounts } from "@/services/accounts";	
 import NextLink from "next/link";
 
-const UsersTable = ({ initialUsers, token }) => {
+const AccountsTable = ({ initialAccounts, token }) => {
     const { onOpen, isOpen, onClose } = useDisclosure();
-    const [ onDeleteUser, setOnDeleteUser ] = useState();
-    const [ users, setUsers ] = useState(initialUsers || []);
+    const [ onDeleteAccounts, setOnDeleteAccount ] = useState();
+    const [ accounts, setAccounts ] = useState(initialAccounts || []);
     const cancelRef = useRef();
     const toast = useToast();
 
+
     const onDelete = async (id) => {
-        const deleteResponse = await deleteUser(id, token);
+        const deleteResponse = await deleteAccount(id, token);
         if (deleteResponse) {
-          const initialUsers = await getUsers(token);
-          setUsers(initialUsers);
+          const initialAccounts = await getAccounts(token);
+          setAccounts(initialAccounts);
           onClose();
           toast({
-            title: "Usuario Eliminado",
-            description: `El usuario ha sido eliminado correctamente.`,
+            title: "Cuenta Eliminado",
+            description: `La cuenta ha sido eliminada correctamente.`,
             status: "error",
             duration: 3000,
             isClosable: true,
           });
-          setOnDeleteUser(null);
+          setOnDeleteAccount(null);
         } else {
             toast({
                 title: "Algo ha ido mal",
-                description: `No se ha podido eliminar el usuario. Por favor, inténtalo de nuevo más tarde.`,
+                description: `No se ha podido eliminar la cuenta. Por favor, inténtalo de nuevo más tarde.`,
                 status: "warning",
                 duration: 4000,
                 isClosable: true,
@@ -67,23 +68,21 @@ const UsersTable = ({ initialUsers, token }) => {
                     <Thead>
                         <Tr>
                             <Th>#ID</Th>
-                            <Th>Avatar</Th>
+                            <Th>ID Cuenta</Th>
                             <Th>Nombre</Th>
-                            <Th>Apellidos</Th>
-                            <Th>Email</Th>
-                            <Th>Role</Th>
+                            <Th>Nombre Legal</Th>
+                            <Th>VAT</Th>
                             <Th>Acciones</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
-                        {users?.items?.map((user) => (
-                            <Tr key={user.id}>
-                                <Td>#{user.id}</Td>
-                                <Td><Avatar name={user?.name} src={user?.image} /></Td>
-                                <Td>{user?.firstName}</Td>
-                                <Td>{user?.lastName}</Td>
-                                <Td>{user?.email}</Td>
-                                <Td>{user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}</Td>
+                        {accounts?.map((account) => (
+                            <Tr key={account.id}>
+                                <Td>#{account.id}</Td>
+                                <Td>{account.accountId.toUpperCase()}</Td>
+                                <Td>{account?.companyName}</Td>
+                                <Td>{account?.companyLegalName}</Td>
+                                <Td>{account?.companyVat}</Td>
                                 <Td>
                                     <Menu >
                                         <MenuButton
@@ -96,14 +95,14 @@ const UsersTable = ({ initialUsers, token }) => {
                                             <MenuItem 
                                                 icon={<Icon as={EditIcon} boxSize={5} />} 
                                                 as={NextLink}
-                                                href={`/users/${user?.id}/edit`}
+                                                href={`/accounts/${account?.id}/edit`}
                                             >
                                                 Editar
                                             </MenuItem>
                                             <MenuItem 
                                                 icon={<Icon as={DeleteIcon} boxSize={5} />}
                                                 onClick={() => {
-                                                    setOnDeleteUser(user);
+                                                    setOnDeleteAccount(account);
                                                     onOpen();
                                                 }}
                                             >
@@ -125,7 +124,7 @@ const UsersTable = ({ initialUsers, token }) => {
               <AlertDialogOverlay>
                 <AlertDialogContent>
                   <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-                    Eliminar usuario {onDeleteUser?.name}
+                    Eliminar cuenta {onDeleteAccounts?.companyName}
                   </AlertDialogHeader>
 
                   <AlertDialogBody>
@@ -136,7 +135,7 @@ const UsersTable = ({ initialUsers, token }) => {
                     <Button ref={cancelRef} onClick={onClose}>
                       Cancelar
                     </Button>
-                    <Button colorScheme='red' onClick={() => onDelete(onDeleteUser?.id)} ml={3}>
+                    <Button colorScheme='red' onClick={() => onDelete(onDeleteAccounts?.id)} ml={3}>
                       Eliminar
                     </Button>
                   </AlertDialogFooter>
@@ -147,4 +146,4 @@ const UsersTable = ({ initialUsers, token }) => {
     )
 }
 
-export default UsersTable;
+export default AccountsTable;
