@@ -78,8 +78,11 @@ class AccountController
             
             # check if account already exist by companyVat
             if ($account->checkIfExists($account->companyVat)) {
-                http_response_code(500);
-                echo json_encode(array("message" => "Cuenta con CIF {$account->companyVat} ya existe"));
+                http_response_code(200);
+                echo json_encode(array(
+                    "error" => true,
+                    "message" => "Cuenta con CIF {$account->companyVat} ya existe"
+                ));
                 return;
             }
 
@@ -87,6 +90,7 @@ class AccountController
             if ($accountCreated) {
                 http_response_code(200);
                 echo json_encode(array(
+                    "ok" => true,
                     "message" => "Account created successfully",
                     "account" => $accountCreated
                 ));
