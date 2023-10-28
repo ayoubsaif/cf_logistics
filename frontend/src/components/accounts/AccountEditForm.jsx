@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import {
     Flex,
     InputGroup,
-    InputRightElement,
+    Tooltip,
     Input,
     Text,
     Button,
@@ -30,6 +30,7 @@ export default function AccountCreateForm({data}) {
     const { data: session } = useSession();
     const user = session?.user;
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [isCopied, setIsCopied] = useState(false);
     const toast = useToast();
     const router = useRouter();
 
@@ -56,7 +57,13 @@ export default function AccountCreateForm({data}) {
         }
     }
 
-    console.log(data)
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(data?.accountId);
+        setIsCopied(true);
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 2000)
+    };
 
     return (
         <Box bgColor="bg.surface" p={5}
@@ -68,6 +75,15 @@ export default function AccountCreateForm({data}) {
                 <Stack spacing={5}>
                     <Flex w='full' justifyContent='space-between'>
                         <Heading as="h2" fontSize='2xl' fontWeight='bold' mb="2">Editar Cuenta - {data?.companyName}</Heading>
+                        <Tooltip hasArrow closeOnClick={false}
+                            label={isCopied ? '✓ Copiado' : 'Copiar'}
+                            borderRadius="md"
+                            bg={isCopied ? 'bg.success' : null}>
+                            <Heading  _hover={{ cursor: "pointer" }}
+                                as="h4" fontSize='xl' fontWeight='normal' mb="2" onClick={copyToClipboard}>
+                                {data?.accountId.toUpperCase()}
+                            </Heading>
+                        </Tooltip>
                     </Flex>
                     <Flex>
                         <FormControl>
@@ -81,21 +97,6 @@ export default function AccountCreateForm({data}) {
                         </FormControl>
                     </Flex>
                     <Flex gap={5} flexDirection={["column", "row"]}>
-                        <FormControl>
-                            <Text fontSize='md'>ID Cuenta</Text>
-                            <InputGroup colorScheme="brand">
-                                <Input
-                                    type='text'
-                                    placeholder='ID de la Cuenta'
-                                    focusBorderColor='brand.400' 
-                                    autoComplete="new-password"
-                                    defaultValue={data?.accountId}
-                                    isDisabled
-                                    {...register('accountId', { required: true })}
-                                />
-                            </InputGroup>
-                            {errors.accountId && <Text color="red.300" fontsize="xs" mt={1}>El Id de la cuenta es obligatorio</Text>}
-                        </FormControl>
                         <FormControl>
                             <Text fontSize='md'>Nombre</Text>
                             <InputGroup colorScheme="brand">

@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/router";
 
 import {
     Flex,
     InputGroup,
-    InputRightElement,
     Input,
     Text,
     Button,
@@ -24,20 +23,17 @@ import {
 } from "react-icons/ri";
 
 import { createAccount } from "@/services/accounts";
-import { useSession } from "next-auth/react";
 
 export default function AccountCreateForm() {
-    const { data: session } = useSession();
-    const user = session?.user;
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const {register, handleSubmit, formState: { errors }} = useForm();
     const toast = useToast();
     const router = useRouter();
 
     const onSubmit = async (data) => {
-        const create = await createAccount(data, user?.accessToken);
-        if (create) {
+        const create = await createAccount(data);
+        if (create.ok) {
             toast({
-                title: "Cuenta creado",
+                title: "Cuenta creada correctamente",
                 status: "success",
                 duration: 3000,
                 isClosable: true,
@@ -45,6 +41,14 @@ export default function AccountCreateForm() {
             setTimeout(() => {
                 router.push('/accounts');
             }, 500);
+        } else if (create.error) {
+            toast({
+                title: "Algo ha ido mal",
+                description: `${create.message}`,
+                status: "error",
+                duration: 4000,
+                isClosable: true,
+            });
         } else {
             toast({
                 title: "Algo ha ido mal",

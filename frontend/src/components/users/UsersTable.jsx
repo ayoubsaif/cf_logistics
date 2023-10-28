@@ -62,23 +62,21 @@ const UsersTable = ({ initialUsers, token }) => {
 
     return(
         <>
-            <TableContainer border='1px solid' borderRadius='lg' borderColor='gray.300'>
+            <TableContainer border='1px solid' borderRadius='lg' borderColor='gray.300' >
                 <Table variant='striped' colorScheme='gray'>
                     <Thead>
                         <Tr>
-                            <Th>#ID</Th>
                             <Th>Avatar</Th>
                             <Th>Nombre</Th>
                             <Th>Apellidos</Th>
                             <Th>Email</Th>
                             <Th>Role</Th>
-                            <Th>Acciones</Th>
+                            <Th></Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                         {users?.items?.map((user) => (
                             <Tr key={user.id}>
-                                <Td>#{user.id}</Td>
                                 <Td><Avatar name={user?.name} src={user?.image} /></Td>
                                 <Td>{user?.firstName}</Td>
                                 <Td>{user?.lastName}</Td>

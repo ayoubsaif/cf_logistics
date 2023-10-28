@@ -63,28 +63,26 @@ const AccountsTable = ({ initialAccounts, token }) => {
 
     return(
         <>
-            <TableContainer border='1px solid' borderRadius='lg' borderColor='gray.300'>
+            <TableContainer border="1px solid" borderRadius="lg" borderColor="gray.300">
                 <Table variant='striped' colorScheme='gray'>
                     <Thead>
                         <Tr>
-                            <Th>#ID</Th>
                             <Th>ID Cuenta</Th>
                             <Th>Nombre</Th>
                             <Th>Nombre Legal</Th>
                             <Th>VAT</Th>
-                            <Th>Acciones</Th>
+                            <Th></Th>
                         </Tr>
                     </Thead>
                     <Tbody>
                         {accounts?.map((account) => (
                             <Tr key={account.id}>
-                                <Td>#{account.id}</Td>
                                 <Td>{account.accountId.toUpperCase()}</Td>
                                 <Td>{account?.companyName}</Td>
                                 <Td>{account?.companyLegalName}</Td>
                                 <Td>{account?.companyVat}</Td>
                                 <Td>
-                                    <Menu >
+                                    <Menu>
                                         <MenuButton
                                             as={IconButton}
                                             aria-label='Options'

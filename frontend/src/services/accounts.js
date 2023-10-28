@@ -1,5 +1,4 @@
-import axios from "axios";
-import { get } from "@/utils/RequestFactory";
+import { get, post } from "@/utils/RequestFactory";
 
 const API_URL = process.env.NEXT_PUBLIC_API;
 
@@ -50,8 +49,18 @@ export async function getAccountById(id, accessToken) {
 
 export async function updateRelatedAccounts(data) {
   try {
-    const res = await axios.post(`/api/accounts/relate`, data);
+    const res = await post(`/api/accounts/relate`, data);
     return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export async function createAccount(data) {
+  try {
+    const res = await post(`/api/account`, data, {});
+    return res;
   } catch (error) {
     console.error(error);
     throw error;

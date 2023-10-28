@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/pages/api/auth/[...nextauth]"
-import { get, post } from "@/utils/RequestFactory";
+import { post } from "@/utils/RequestFactory";
 
 export default async function handler(req, res) {
 
@@ -16,10 +16,10 @@ export default async function handler(req, res) {
     } = req;
 
     switch (method) {
-        case "GET":
+        case "POST":
             try {
-                const response = await get(
-                    `${process.env.NEXT_PUBLIC_API}/accounts`,
+                const response = await post(
+                    `${process.env.NEXT_PUBLIC_API}/account`, body,
                     {
                         headers: {
                             Accountid: req.headers.accountid,
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
             }
             break;
         default:
-            res.setHeader("Allow", ["GET"]);
+            res.setHeader("Allow", ["POST"]);
             res.status(405).end(`Method ${method} Not Allowed`);
     }
 }
